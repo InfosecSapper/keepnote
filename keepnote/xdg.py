@@ -1,7 +1,7 @@
 """
 
     Simple implementation of the XDG Base Directory Specification
-
+    
     http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html
 
 """
@@ -29,6 +29,7 @@
 import os
 import sys
 
+
 # constants
 ENV_CONFIG = u"XDG_CONFIG_HOME"
 ENV_CONFIG_DIRS = u"XDG_CONFIG_DIRS"
@@ -47,11 +48,9 @@ g_data_dirs = None
 
 class XdgError (StandardError):
     pass
-
+    
 
 FS_ENCODING = object()
-
-
 def ensure_unicode(text, encoding="utf8"):
     """Ensures a string is unicode"""
 
@@ -64,6 +63,7 @@ def ensure_unicode(text, encoding="utf8"):
         else:
             return unicode(text, encoding)
     return text
+
 
 
 def get_config_dirs(home=None, cache=True):
@@ -86,11 +86,11 @@ def get_config_dirs(home=None, cache=True):
         if home is None:
             home = ensure_unicode(os.getenv("HOME"), FS_ENCODING)
             if home is None:
-                raise XdgError("HOME environment variable must be specified")
+                raise EnvError("HOME environment variable must be specified")
         config = os.path.join(home, DEFAULT_CONFIG_DIR)
 
     # get alternate user config dirs
-    config_dirs = ensure_unicode(os.getenv(ENV_CONFIG_DIRS,
+    config_dirs = ensure_unicode(os.getenv(ENV_CONFIG_DIRS, 
                                            DEFAULT_CONFIG_DIRS),
                                  FS_ENCODING)
 
@@ -104,6 +104,7 @@ def get_config_dirs(home=None, cache=True):
         g_config_dirs = config_dirs
 
     return config_dirs
+
 
 
 def get_data_dirs(home=None, cache=True):
@@ -126,7 +127,7 @@ def get_data_dirs(home=None, cache=True):
         if home is None:
             home = ensure_unicode(os.getenv("HOME"), FS_ENCODING)
             if home is None:
-                raise XdgError("HOME environment variable must be specified")
+                raise EnvError("HOME environment variable must be specified")
         data = os.path.join(home, DEFAULT_DATA_DIR)
 
     # get alternate user config dirs
@@ -159,7 +160,7 @@ def lookup_file(filename, paths, default=False):
         return os.path.join(paths[0], filename)
     else:
         return None
-
+    
 
 def get_config_file(filename, config_dirs=None, default=False,
                     home=None, cache=True):
@@ -169,6 +170,7 @@ def get_config_file(filename, config_dirs=None, default=False,
 
     config_dir  -- list of directories to search for file
     """
+
     if config_dirs is None:
         config_dirs = get_config_dirs(home=home, cache=cache)
 
@@ -183,6 +185,7 @@ def get_data_file(filename, data_dirs=None, default=False,
 
     config_dir  -- list of directories to search for file
     """
+
     if data_dirs is None:
         data_dirs = get_data_dirs(home=home, cache=cache)
 
@@ -194,6 +197,7 @@ def make_config_dir(dirname, config_dirs=None,
     """
     Make a configuration directory
     """
+
     if config_dirs is None:
         config_dirs = get_config_dirs(home=home, cache=cache)
     config_dir = os.path.join(config_dirs[0], dirname)
@@ -204,12 +208,19 @@ def make_config_dir(dirname, config_dirs=None,
 
 def make_data_dir(dirname, data_dirs=None,
                   home=None, cache=True):
+    
     """
     Make a data directory
     """
+    
     if data_dirs is None:
         data_dirs = get_data_dirs(home=home, cache=cache)
     data_dir = os.path.join(data_dirs[0], dirname)
 
     if not os.path.exists(data_dir):
         os.makedirs(data_dir, mode=0700)
+
+
+
+
+

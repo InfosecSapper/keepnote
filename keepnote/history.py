@@ -25,6 +25,7 @@
 #
 
 
+
 class NodeHistory (object):
     """Data structure of node history"""
 
@@ -33,14 +34,15 @@ class NodeHistory (object):
         self._pos = 0
         self._suspend = 0
         self._maxsize = maxsize
+        
 
     def add(self, nodeid):
-
+        
         if self._suspend == 0:
             # truncate list to current position
             if self._list:
                 self._list = self._list[:self._pos+1]
-
+            
             # add page to history
             self._list.append(nodeid)
             self._pos = len(self._list) - 1
@@ -56,7 +58,7 @@ class NodeHistory (object):
             self._pos = 0
         if self._pos >= len(self._list):
             self._pos = len(self._list) - 1
-
+        
         if self._list:
             return self._list[self._pos]
         else:
@@ -66,7 +68,7 @@ class NodeHistory (object):
         self._suspend += 1
 
     def end_suspend(self):
-        self._suspend -= 1
+        self._suspend -=1
         assert self._suspend >= 0
 
     def has_back(self):
@@ -74,3 +76,5 @@ class NodeHistory (object):
 
     def has_forward(self):
         return self._pos < len(self._list) - 1
+        
+

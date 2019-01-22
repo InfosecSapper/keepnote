@@ -1,6 +1,6 @@
 """
 
-    KeepNote
+    KeepNote    
     Preference data structure
 
 """
@@ -41,6 +41,7 @@ def get_pref(pref, *args, **kargs):
 
     try:
         d = pref
+        parent = None
         if "default" in kargs or "define" in kargs:
             # set default values when needed
             # define keyword causes default value to be a OrderDict()
@@ -81,6 +82,7 @@ def get_pref(pref, *args, **kargs):
 
 def set_pref(pref, *args):
     """Set config value in preferences"""
+
     if len(args) == 0:
         return
     elif len(args) == 1:
@@ -103,20 +105,23 @@ class Pref (object):
         else:
             self._data = data
 
+
     def get(self, *args, **kargs):
         """
         Get config value from preferences
 
         default -- set a default value if it does not exist
         define  -- create a new dict if the key does not exist
-        type    -- ensure return value has this type,
+        type    -- ensure return value has this type, 
                    otherwise return/set default
         """
         return get_pref(self._data, *args, **kargs)
 
+
     def set(self, *args):
         """Set config value in preferences"""
         return set_pref(self._data, *args)
+    
 
     def clear(self, *args):
         """Clear the config value"""
