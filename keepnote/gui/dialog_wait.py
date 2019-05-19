@@ -25,7 +25,8 @@
 #
 
 # python imports
-import time
+import os, sys, threading, time, traceback
+
 
 # pygtk imports
 import pygtk
@@ -36,15 +37,17 @@ import gobject
 # keepnote imports
 import keepnote
 from keepnote import get_resource
-
+from keepnote import tasklib    
+    
 
 class WaitDialog (object):
     """General dialog for background tasks"""
-
+    
     def __init__(self, parent_window):
         self.parent_window = parent_window
         self._task = None
 
+    
     def show(self, title, message, task, cancel=True):
         self.xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                  "wait_dialog", keepnote.GETTEXT_DOMAIN)
@@ -71,10 +74,12 @@ class WaitDialog (object):
 
         self._task.change_event.remove(self._on_task_update)
 
+
     def _on_idle(self):
         """Idle thread"""
+        
         lasttime = [time.time()]
-        pulse_rate = 0.5  # seconds per sweep
+        pulse_rate = 0.5 # seconds per sweep
         update_rate = 100
 
         def gui_update():
@@ -100,8 +105,8 @@ class WaitDialog (object):
             # filter for messages we process
             messages = filter(lambda x: isinstance(x, tuple) and len(x) == 2,
                               self._task.get_messages())
-            texts = filter(lambda (a, b): a == "text", messages)
-            details = filter(lambda (a, b): a == "detail", messages)
+            texts = filter(lambda (a,b): a == "text", messages)
+            details = filter(lambda (a,b): a == "detail", messages)
 
             # update text
             if len(texts) > 0:
@@ -113,14 +118,19 @@ class WaitDialog (object):
             return True
 
         gobject.timeout_add(update_rate, gui_update)
+            
 
     def _on_task_update(self):
         pass
 
     def _on_close(self, window):
+        
         self._task.stop()
 
     def on_cancel_button_clicked(self, button):
         """Attempt to stop the task"""
+
         self.text.set_text("Canceling...")
         self._task.stop()
+
+        
