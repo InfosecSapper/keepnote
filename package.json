@@ -13,11 +13,7 @@
     "gulp-watch": "^4.2.1",
     "jasmine": "^2.2.1",
     "jest-cli": "git://github.com/facebook/jest.git",
-<<<<<<< HEAD
-    "jquery": ">=3.0.0",
-=======
     "jquery": ">=3.4.0",
->>>>>>> e0a54e730134dd9cd5ee6f4dd5753f8ec21f8605
     "jsdom": "^3.1.2",
     "main-bower-files": "^2.5.0",
     "react-tools": "^0.13.1",
