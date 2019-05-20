@@ -252,7 +252,7 @@ class Extension (extension.Extension):
             node = notebooklib.attach_file(uri, parent)
             node.rename(file_type.filename)
             window.get_viewer().goto_node(node)
-        except Exception, e:
+        except Exception as e:
             window.error("Error while attaching file '%s'." % uri, e)
 
 
@@ -494,7 +494,7 @@ class NewFileSection (dialog_app_options.Section):
                 try:
                     filetype.example_file = self.ext.install_example_file(
                         filetype.example_file)
-                except Exception, e:
+                except Exception as e:
                     app.error("Cannot install example file '%s'" % 
                               filetype.example_file, e)
                     bad.append(filetype)

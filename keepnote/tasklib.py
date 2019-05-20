@@ -149,7 +149,7 @@ class Task (object):
             if self._autofinish:
                 self.finish()
             
-        except Exception, e:
+        except Exception as e:
             self.set_exc_info()
             self.change_event.notify()
 

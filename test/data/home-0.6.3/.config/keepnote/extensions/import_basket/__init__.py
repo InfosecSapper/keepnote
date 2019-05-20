@@ -66,7 +66,7 @@ try:
     from xml.etree import ElementTree
     from xml.etree.ElementTree import XML, fromstring, tostring
     import xml.etree.ElementTree as ET # Python 2.5
-except ImportError, e:
+except ImportError as e:
     # Python version < 2.5
     from elementtree import ElementTree
     from elementtree.ElementTree import XML, fromstring, tostring
@@ -100,7 +100,7 @@ def unescape(text):
                 else:
                     return unichr(int(text[2:-1]))
             except ValueError:
-                print "erreur de valeur"
+                print("erreur de valeur")
                 pass
         else:
             # named entity
@@ -115,7 +115,7 @@ def unescape(text):
                     # print text[1:-1]
                     text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
             except KeyError:
-                print "keyerror"
+                print("keyerror")
                 pass
         return text # leave as is
     return re.sub("&#?\w+;", fixup, text)
@@ -192,9 +192,9 @@ def import_basket_directory(window, basket_directory):
     basket_xml_file = basket_directory + os.sep + "baskets.xml"
     try:
         fd = open(basket_xml_file, r'r')
-    except IOError, e:
+    except IOError as e:
         errno, strerror = e
-        print "I/O error(%s): %s" % (errno, strerror)
+        print("I/O error(%s): %s" % (errno, strerror))
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "Sorry, this is not a data directory of Basket Notepad, baskets.xml not found!")
         dialog.run()
         dialog.destroy()
@@ -347,7 +347,7 @@ class BasketIndexParser():
                 #xnode.set_attr('title',unescape(name))
         nname = strip_accents(name)
         if nname != name:
-            print "oldname: %s newname: %s"%(repr(name),nname)
+            print("oldname: %s newname: %s" % (repr(name),nname))
         xnode.rename(nname)
         return xnode
 
@@ -701,7 +701,7 @@ def text_file_read(filename):
         try:
             unicode_text, encoding = guess_encoding(the_text)
         except UnicodeError:
-            print "Sorry - we can't work out the encoding."
+            print("Sorry - we can't work out the encoding.")
             raise
     else:                   
         # we found a BOM so we know the encoding

@@ -32,7 +32,7 @@ from itertools import chain
 try:
     import pysqlite2
     import pysqlite2.dbapi2 as sqlite
-except Exception, e:
+except Exception as e:
     import sqlite3  as sqlite
 #sqlite.enable_shared_cache(True)
 #sqlite.threadsafety = 0
@@ -93,7 +93,7 @@ def test_fts3(cur, tmpname="fts3test"):
             "CREATE VIRTUAL TABLE %s USING fts3(col TEXT);" % tmpname)
         cur.execute("DROP TABLE %s;" % tmpname)
         return True
-    except Exception, e:
+    except Exception as e:
         return False
 
 

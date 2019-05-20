@@ -33,7 +33,7 @@ try:
     import win32gui
     import win32con
     import win32ui
-except ImportError, e:
+except ImportError as e:
     pass
 
 _g_class_num = 0

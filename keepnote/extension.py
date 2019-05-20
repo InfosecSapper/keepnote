@@ -70,12 +70,12 @@ def init_user_extensions(pref_dir=None, home=None):
     extensions_dir = keepnote.get_user_extensions_dir(pref_dir)
     if not os.path.exists(extensions_dir):
         # make user extensions directory
-        os.makedirs(extensions_dir, 0700)
+        os.makedirs(extensions_dir, 0o0700)
 
     extensions_data_dir = keepnote.get_user_extensions_data_dir(pref_dir)
     if not os.path.exists(extensions_data_dir):
         # make user extensions data directory
-        os.makedirs(extensions_data_dir, 0700)
+        os.makedirs(extensions_data_dir, 0o0700)
 
 
 
@@ -96,9 +96,8 @@ def import_extension(app, name, filename):
     
     try:
         infile = open(filename2)
-    except Exception, e:
-        raise keepnote.KeepNotePreferenceError("cannot load extension '%s'" %
-                                               filename, e)
+    except Exception as e:
+        raise keepnote.KeepNotePreferenceError("cannot load extension '%s'" % filename, e)
 
     try:
         mod = imp.load_module(name, infile, filename2,
@@ -109,10 +108,9 @@ def import_extension(app, name, filename):
         infile.close()
         return ext
                 
-    except Exception, e:
+    except Exception as e:
         infile.close()
-        raise keepnote.KeepNotePreferenceError("cannot load extension '%s'" %
-                                               filename, e)
+        raise keepnote.KeepNotePreferenceError("cannot load extension '%s'" % filename, e)
 
 
 def get_extension_info_file(filename):

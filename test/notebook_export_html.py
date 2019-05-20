@@ -20,15 +20,15 @@ class TestCaseNotebookIndex (unittest.TestCase):
         app.init()
         ext = app.get_extension("export_html")
         
-        print "loading notebook..."
+        print("loading notebook...")
         book = notebooklib.NoteBook()
         book.load("test/data/notebook-v3")
 
-        print "clearing output..."
+        print("clearing output...")
         if os.path.exists(export_filename):
             shutil.rmtree(export_filename)
 
-        print "exporting..."
+        print("exporting...")
         ext.export_notebook(book, export_filename)
         
         

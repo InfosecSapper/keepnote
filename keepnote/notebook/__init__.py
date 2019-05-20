@@ -242,9 +242,9 @@ def get_notebook_version(filename):
 
     try:
         tree = ET.ElementTree(file=filename)
-    except IOError, e:
+    except IOError as e:
         raise NoteBookError(_("Cannot read notebook preferences"), e)
-    except Exception, e:
+    except Exception as e:
         raise NoteBookError(_("Notebook preference data is corrupt"), e)
 
     return get_notebook_version_etree(tree)
@@ -345,7 +345,7 @@ def attach_file(filename, node, index=None):
         child.save(True)
         return child
 
-    except Exception, e:
+    except Exception as e:
         # remove child
         keepnote.log_error(e)
         if child:
@@ -713,7 +713,7 @@ class NoteBookNode (object):
                     out.write(data)
                 infile.close()
                 out.close()
-        except Exception, e:
+        except Exception as e:
             raise NoteBookError(_("Cannot copy file '%s'" % filename), e)
         
         # set attr
@@ -1564,7 +1564,7 @@ class NoteBook (NoteBookNode):
                                             {"title": TRASH_NAME})
                 self._add_child(self._trash)
 
-            except NoteBookError, e:
+            except NoteBookError as e:
                 raise NoteBookError(_("Cannot create Trash folder"), e)
 
     
@@ -1802,9 +1802,9 @@ class NoteBook (NoteBookNode):
                       u'</notebook>\n')
             out.close()
 
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             raise NoteBookError(_("Cannot save notebook preferences"), e)
-        except Exception, e:
+        except Exception as e:
             raise NoteBookError(_("File format error"), e)
 
     
@@ -1816,10 +1816,10 @@ class NoteBook (NoteBookNode):
                 infile = self.open_file(PREF_FILE, "r", codec="utf-8")
             root = ET.fromstring(infile.read())
             tree = ET.ElementTree(root)
-        except IOError, e:
+        except IOError as e:
             raise NoteBookError(_("Cannot read notebook preferences %s")
                                 % self.get_file(PREF_FILE) , e)
-        except Exception, e:
+        except Exception as e:
             keepnote.log_error(e)
             #if recover:
             #    if infile:

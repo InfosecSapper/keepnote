@@ -40,7 +40,7 @@ class TestCaseWaitDialog (unittest.TestCase):
                     return False
                 gobject.idle_add(func2)
             elif depth == 1:
-                print "HERE"
+                print("HERE")
                 gobject.idle_add(lambda: app.message("Hello", "Hi"))
 
             t = 0.0

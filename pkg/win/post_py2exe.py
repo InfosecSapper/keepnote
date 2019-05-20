@@ -11,7 +11,7 @@ dest = "dist/keepnote-%s.win/" % keepnote.PROGRAM_VERSION_TEXT
 
 def include(src, dest, exclude=[]):
     if not os.path.exists(dest):
-        print "copying %s..." % dest
+        print("copying %s..." % dest)
         
         # ensure base exists
         base = os.path.split(dest)[0]
@@ -25,7 +25,7 @@ def include(src, dest, exclude=[]):
 
 def prune(path):
     if os.path.exists(path):
-        print "pruning %s..." % path
+        print("pruning %s..." % path)
         if os.path.isdir(path):
             shutil.rmtree(path)
         else:

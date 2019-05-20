@@ -22,15 +22,15 @@ class NoteBookReload (unittest.TestCase):
         
         app = keepnote.KeepNote("keepnote")
         book = app.get_notebook(filename)
-        print "opened '%s'" % book.get_title()
-        print "\t".join(["%d. '%s'" % (i+1, x.get_title()) 
-                         for i, x in enumerate(app.iter_notebooks())])
+        print("opened '%s'" % book.get_title())
+        print("\t".join(["%d. '%s'" % (i+1, x.get_title())
+                         for i, x in enumerate(app.iter_notebooks())]))
         app.close_notebook(book)
 
-        print "notebook closed"
+        print("notebook closed")
 
-        print "\t".join(["%d. '%s'" % (i+1, x.get_title()) 
-                         for i, x in enumerate(app.iter_notebooks())])
+        print("\t".join(["%d. '%s'" % (i+1, x.get_title())
+                         for i, x in enumerate(app.iter_notebooks())]))
 
         self.assert_(len(list(app.iter_notebooks())) == 0)
 

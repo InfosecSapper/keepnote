@@ -122,5 +122,5 @@ class DragDropTestDialog (object):
         data = selection_data.data
         buf.insert_at_cursor("sel.targets = " + repr(selection_data.get_targets()) + "\n")
         buf.insert_at_cursor("type(sel.data) = " + str(type(data))+"\n")        
-        print "sel.data = " + repr(data)[:1000]+"\n"
+        print("sel.data = " + repr(data)[:1000]+"\n")
         buf.insert_at_cursor("sel.data = " + repr(data)[:5000]+"\n")

@@ -30,7 +30,7 @@ class Speed (unittest.TestCase):
         walk(book)
         
         t = time.time() - start
-        print "seconds: ", t
+        print("seconds: ", t)
         book.close()
         
 
@@ -47,13 +47,13 @@ class Speed (unittest.TestCase):
         start = time.time()
 
         n = book.get_node_by_id("76363514-ac2c-4090-a348-58aa1721db68")
-        print n
+        print(n)
         for i in range(100):
-            print i
+            print(i)
             notebook.new_page(n, str(i))
 
         t = time.time() - start
-        print "seconds: ", t
+        print("seconds: ", t)
         book.close()
 
 

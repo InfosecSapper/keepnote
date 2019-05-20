@@ -143,7 +143,7 @@ class Index (unittest.TestCase):
         book.load(_notebook_file)
 
         for node in book.index_all():
-            print node
+            print(node)
 
         book.close()
 
@@ -204,7 +204,7 @@ class Index (unittest.TestCase):
 
         def process(book, name):
             for i in range(100):
-                print i, name
+                print(i, name)
                 results = list(book.search_node_contents('world'))
                 test.assertTrue(len(results) == 2)
                 time.sleep(.001)
@@ -213,7 +213,7 @@ class Index (unittest.TestCase):
             def run(self):
                 try:
                     process(book, 'B')
-                except Exception, e:
+                except Exception as e:
                     error[0] = True
                     traceback.print_exception(type(e), e, sys.exc_info()[2])
                     raise e
@@ -235,8 +235,8 @@ class Index (unittest.TestCase):
         book2 = notebook.NoteBook()
         book2.load(_notebook_file)
 
-        print list(book1.iter_attr())
-        print list(book2.iter_attr())
+        print(list(book1.iter_attr()))
+        print(list(book2.iter_attr()))
 
         book1.close()
         book2.close()

@@ -199,9 +199,9 @@ def get_node_filename(node_path, filename):
 #=============================================================================
 # functions for ensuring valid filenames in notebooks
 
-REGEX_SLASHES = re.compile(ur"[/\\]")
-REGEX_BAD_CHARS = re.compile(ur"[\*\?'&<>|`:;]")
-REGEX_LEADING_UNDERSCORE = re.compile(ur"^__+")
+REGEX_SLASHES = re.compile(r"[/\\]")
+REGEX_BAD_CHARS = re.compile(r"[*?'&<>|`:;]")
+REGEX_LEADING_UNDERSCORE = re.compile(r"^__+")
 
 def get_valid_filename(filename, default=u"folder", 
                        maxlen=MAX_LEN_NODE_FILENAME):
@@ -642,7 +642,7 @@ class NoteBookConnectionFS (NoteBookConnection):
                              (filename, new_filename))
         try:
             os.rename(filename, new_filename)
-        except OSError, e:
+        except OSError as e:
             raise ConnectionError(u"unable to store lost file '%s'" 
                                   % filename, e)
         
@@ -728,7 +728,7 @@ class NoteBookConnectionFS (NoteBookConnection):
             os.makedirs(path)
             self._write_attr(self._get_node_attr_file(nodeid, path), attr)
             self._path_cache.add(nodeid, basename, parentid)
-        except OSError, e:
+        except OSError as e:
             raise ConnectionError(_("Cannot create node"), e)
         
         # finish initializing root
@@ -844,7 +844,7 @@ class NoteBookConnectionFS (NoteBookConnection):
 
         try:
             os.rename(path, new_path)
-        except Exception, e:
+        except Exception as e:
             raise ConnectionError(
                 _(u"Cannot rename '%s' to '%s'" % (path, new_path)), e)
         
@@ -870,7 +870,7 @@ class NoteBookConnectionFS (NoteBookConnection):
 
         try:
             shutil.rmtree(self._get_node_path(nodeid))
-        except Exception, e:
+        except Exception as e:
             raise ConnectionError(
                 _(u"Do not have permission to delete"), e)
 
@@ -905,7 +905,7 @@ class NoteBookConnectionFS (NoteBookConnection):
         
         try:    
             files = os.listdir(path)
-        except Exception, e:
+        except Exception as e:
             raise ConnectionError(
                 _(u"Do not have permission to read folder contents: %s") 
                 % path, e)           
@@ -915,7 +915,7 @@ class NoteBookConnectionFS (NoteBookConnection):
             if os.path.exists(get_node_meta_file(path2)):
                 try:
                     yield self._read_node(nodeid, path2, _full=_full)
-                except ConnectionError, e:
+                except ConnectionError as e:
                     keepnote.log_error(u"error reading %s" % path2)
                     continue
                     # TODO: raise warning, not all children read
@@ -1041,7 +1041,7 @@ class NoteBookConnectionFS (NoteBookConnection):
             plist.dump(self._attr_mask, out, indent=2, depth=0)
             out.write(u'</node>\n')
             out.close()
-        except Exception, e:
+        except Exception as e:
             raise ConnectionError(
                 _("Cannot write meta data" + " " + filename + ":" + str(e)), e)
 
@@ -1051,7 +1051,7 @@ class NoteBookConnectionFS (NoteBookConnection):
         
         try:
             tree = ET.ElementTree(file=filename)
-        except Exception, e:
+        except Exception as e:
             #if recover:
             #    self._recover_attr(filename)
             #    return self._read_attr(filename, recover=False)
@@ -1124,7 +1124,7 @@ class NoteBookConnectionFS (NoteBookConnection):
             # NOTE: always use binary mode to ensure no 
             # Window-specific line ending conversion
             stream = safefile.open(fullname, mode + "b", codec=codec)
-        except Exception, e:
+        except Exception as e:
             raise FileError(
                 "cannot open file '%s' '%s': %s" % (nodeid, filename, str(e)), e)
         
@@ -1150,7 +1150,7 @@ class NoteBookConnectionFS (NoteBookConnection):
             else:
                 # filename may not exist, delete is successful by default
                 pass
-        except Exception, e:
+        except Exception as e:
             raise FileError("error deleting file '%s' '%s'" % 
                             (nodeid, filename), e)
 
@@ -1173,7 +1173,7 @@ class NoteBookConnectionFS (NoteBookConnection):
 
             # rename file
             os.rename(filepath1, filepath2)
-        except Exception, e:
+        except Exception as e:
             raise FileError("could not move file '%s' '%s'" %
                             (nodeid1, filename1), e)
         
@@ -1220,7 +1220,7 @@ class NoteBookConnectionFS (NoteBookConnection):
         try:
             if not os.path.isdir(fullname):
                 os.makedirs(fullname)
-        except Exception, e:
+        except Exception as e:
             raise FileError(
                 "cannot create dir '%s' '%s'" % (nodeid, filename), e)
         
@@ -1269,7 +1269,7 @@ class NoteBookConnectionFS (NoteBookConnection):
                 # filename2 could be an existing directory
 
                 shutil.copytree(fullname1, fullname2)
-        except Exception, e:
+        except Exception as e:
             raise FileError(
                 "unable to copy file '%s' '%s'" % (nodeid1, filename1), e)
 

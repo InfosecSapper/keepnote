@@ -111,7 +111,7 @@ class Extension (keepnote.gui.extension.Extension):
 
                 try:
                     self.app.add_command(command)
-                except Exception, e:
+                except Exception as e:
                     self.app.error("Could not add command '%s'" % command.name,
                                    e, sys.exc_info()[2])
 
@@ -257,7 +257,7 @@ class Extension (keepnote.gui.extension.Extension):
         text = args[1]
         nodes = list(notebook.search_node_titles(text))
         for nodeid, title in nodes:
-            print "%s\t%s" % (title, keepnote.notebook.get_node_url(nodeid))
+            print("%s\t%s" % (title, keepnote.notebook.get_node_url(nodeid)))
 
 
     def view_nodeid(self, app, nodeid):

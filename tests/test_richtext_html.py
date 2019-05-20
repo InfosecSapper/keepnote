@@ -437,8 +437,7 @@ class Html (BufferBase):
 
         self.buffer.toggle_bullet_list()
 
-        print [display_item(x) for x in iter_buffer_contents(
-            self.buffer, None, None, ignore_tag)]
+        print([display_item(x) for x in iter_buffer_contents(self.buffer, None, None, ignore_tag)])
 
         self.buffer.undo()
 
@@ -485,7 +484,7 @@ class Html (BufferBase):
         it2.forward_chars(2)
 
         tag = self.buffer.tag_table.lookup("indent 2 none")
-        print tag.is_par_related()
+        print(tag.is_par_related())
         self.buffer.apply_tag_selected(tag, it, it2)
 
         contents1 = list(iter_buffer_contents(self.buffer,
@@ -703,4 +702,4 @@ class Speed (TestCase):
         io.load(None, buf,
                 "test/data/notebook-v4/stress tests/"
                 "A huge page of formatted text/page.html")
-        print time.time() - t
+        print(time.time() - t)

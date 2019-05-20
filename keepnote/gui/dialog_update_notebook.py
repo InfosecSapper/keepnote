@@ -148,10 +148,9 @@ class UpdateNoteBookDialog (object):
             def func(task):
                 try:
                     shutil.copytree(notebook_filename, new_filename)
-                except Exception, e:
-                    print >>sys.stderr, e
-                    print >>sys.stderr, "'%s' '%s'" % (notebook_filename,
-                                                       new_filename)
+                except Exception as e:
+                    print(e, file=sys.stderr)
+                    print("'%s' '%s'" % (notebook_filename,new_filename), file=sys.stderr)
                     raise
             task = tasklib.Task(func)
             dialog2 = dialog_wait.WaitDialog(self.dialog)

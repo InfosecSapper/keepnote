@@ -77,7 +77,7 @@ class Extension (keepnote.gui.extension.Extension):
                     continue
                 try:
                     self.app.add_command(command)
-                except Exception, e:
+                except Exception as e:
                     self.app.error("Could not add command '%s'" % command.name,
                                    e, sys.exc_info()[2])
 

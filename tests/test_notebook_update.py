@@ -174,7 +174,7 @@ class Update (unittest.TestCase):
         try:
             book.load(notebook_filename)
         except notebook.NoteBookVersionError:
-            print "Correctly detects version error"
+            print("Correctly detects version error")
         else:
-            print "Error not detected"
+            print("Error not detected")
             self.assert_(False)

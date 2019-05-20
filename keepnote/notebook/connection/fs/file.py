@@ -57,10 +57,8 @@ class FileFS(object):
             # NOTE: always use binary mode to ensure no
             # Window-specific line ending conversion
             stream = safefile.open(fullname, mode + "b", codec=codec)
-        except Exception, e:
-            raise FileError(
-                "cannot open file '%s' '%s': %s" %
-                (nodeid, filename, str(e)), e)
+        except Exception as e:
+            raise FileError("cannot open file '%s' '%s': %s" % (nodeid, filename, str(e)), e)
 
         return stream
 
@@ -77,9 +75,8 @@ class FileFS(object):
             else:
                 # filename may not exist, delete is successful by default
                 pass
-        except Exception, e:
-            raise FileError("error deleting file '%s' '%s'" %
-                            (nodeid, filename), e)
+        except Exception as e:
+            raise FileError("error deleting file '%s' '%s'" % (nodeid, filename), e)
 
     def create_dir(self, nodeid, filename, _path=None):
         """Create directory within node."""
@@ -92,9 +89,8 @@ class FileFS(object):
         try:
             if not os.path.isdir(fullname):
                 os.makedirs(fullname)
-        except Exception, e:
-            raise FileError(
-                "cannot create dir '%s' '%s'" % (nodeid, filename), e)
+        except Exception as e:
+            raise FileError("cannot create dir '%s' '%s'" % (nodeid, filename), e)
 
     def list_dir(self, nodeid, filename="/", _path=None):
         """List data files in node."""
@@ -147,9 +143,8 @@ class FileFS(object):
 
             # rename file
             os.rename(filepath1, filepath2)
-        except Exception, e:
-            raise FileError("could not move file '%s' '%s'" %
-                            (nodeid1, filename1), e)
+        except Exception as e:
+            raise FileError("could not move file '%s' '%s'" % (nodeid1, filename1), e)
 
     def copy_file(self, nodeid1, filename1, nodeid2, filename2,
                   _path1=None, _path2=None):
@@ -178,6 +173,5 @@ class FileFS(object):
                 # TODO: handle case where filename1 = "/" and
                 # filename2 could be an existing directory
                 shutil.copytree(fullname1, fullname2)
-        except Exception, e:
-            raise FileError(
-                "unable to copy file '%s' '%s'" % (nodeid1, filename1), e)
+        except Exception as e:
+            raise FileError("unable to copy file '%s' '%s'" % (nodeid1, filename1), e)

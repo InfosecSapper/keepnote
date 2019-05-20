@@ -143,9 +143,8 @@ class Tag (object):
             
             try:
                 self._read_data(self._object, data)
-            except Exception, e:
-                raise XmlError("Error parsing tag '%s': %s" % (self.name,
-                                                               str(e)))
+            except Exception as e:
+                raise XmlError("Error parsing tag '%s': %s" % (self.name, str(e)))
     
     def add(self, tag):
         """Add a tag child to this tag"""
@@ -356,11 +355,11 @@ class XmlObject (object):
 
         try:
             parser.ParseFile(infile)
-        except xml.parsers.expat.ExpatError, e:
+        except xml.parsers.expat.ExpatError as e:
             raise XmlError("Error reading file '%s': %s" % (filename, str(e)))
 
         if len(self._current_tags) > 1:
-            print [x.name for x in self._current_tags]
+            print([x.name for x in self._current_tags])
             raise XmlError("Incomplete file '%s'" % filename)
         
         infile.close()

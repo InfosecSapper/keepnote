@@ -16,4 +16,4 @@ variables = {
 for old, new in variables.items():
     src = src.replace(old, new)
 
-print src
+print(src)

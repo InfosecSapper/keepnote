@@ -212,7 +212,7 @@ class SqliteDict(object, DictMixin):
         logger.info("deleting %s" % self.filename)
         try:
             os.remove(self.filename)
-        except IOError, e:
+        except IOError as e:
             logger.warning("failed to delete %s: %s" % (self.filename, e))
 
     def __del__(self):
@@ -367,4 +367,4 @@ if __name__ in '__main___':
         d.clear()
         assert not d
         d.close()
-    print 'all tests passed :-)'
+    print("All tests passed")

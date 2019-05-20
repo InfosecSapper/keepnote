@@ -444,7 +444,7 @@ class NavigableString(unicode, PageElement):
         if attr == 'string':
             return self
         else:
-            raise AttributeError, "'%s' object has no attribute '%s'" % (self.__class__.__name__, attr)
+            raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__.__name__, attr))
 
     def __unicode__(self):
         return str(self).decode(DEFAULT_OUTPUT_ENCODING)
@@ -521,7 +521,7 @@ class Tag(PageElement):
 
     def __init__(self, parser, name, attrs=None, parent=None,
                  previous=None):
-        "Basic constructor."
+        """Basic constructor."""
 
         # We don't actually store the parser object: that lets extracted
         # chunks be garbage-collected
@@ -540,10 +540,7 @@ class Tag(PageElement):
         self.escapeUnrecognizedEntities = parser.escapeUnrecognizedEntities
 
         # Convert any HTML, XML, or numeric entities in the attribute values.
-        convert = lambda(k, val): (k,
-                                   re.sub("&(#\d+|#x[0-9a-fA-F]+|\w+);",
-                                          self._convertEntities,
-                                          val))
+        convert = lambda(k, val): (k, re.sub("&(#\d+|#x[0-9a-fA-F]+|\w+);", self._convertEntities, val))
         self.attrs = map(convert, self.attrs)
 
     def getString(self):
@@ -649,7 +646,7 @@ class Tag(PageElement):
             return self.find(tag[:-3])
         elif tag.find('__') != 0:
             return self.find(tag)
-        raise AttributeError, "'%s' object has no attribute '%s'" % (self.__class__, tag)
+        raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__, tag))
 
     def __eq__(self, other):
         """Returns true iff this tag has the same name, the same attributes,
@@ -964,8 +961,7 @@ class SoupStrainer:
             if self._matches(markup, self.text):
                 found = markup
         else:
-            raise Exception, "I don't know how to match against a %s" \
-                  % markup.__class__
+            raise Exception("I don't know how to match against a %s" % markup.__class__)
         return found
 
     def _matches(self, markup, matchAgainst):
@@ -1814,19 +1810,15 @@ class UnicodeDammit:
 
         # Convert smart quotes to HTML if coming from an encoding
         # that might have them.
-        if self.smartQuotesTo and proposed.lower() in("windows-1252",
-                                                      "iso-8859-1",
-                                                      "iso-8859-2"):
-            markup = re.compile("([\x80-\x9f])").sub \
-                     (lambda(x): self._subMSChar(x.group(1)),
-                      markup)
+        if self.smartQuotesTo and proposed.lower() in("windows-1252", "iso-8859-1", "iso-8859-2"):
+            markup = re.compile("([\x80-\x9f])").sub(lambda(x): self._subMSChar(x.group(1)), markup)
 
         try:
             # print "Trying to convert document to %s" % proposed
             u = self._toUnicode(markup, proposed)
             self.markup = u
             self.originalEncoding = proposed
-        except Exception, e:
+        except Exception as e:
             # print "That didn't work!"
             # print e
             return None
@@ -2008,4 +2000,4 @@ class UnicodeDammit:
 if __name__ == '__main__':
     import sys
     soup = BeautifulSoup(sys.stdin)
-    print soup.prettify()
+    print(soup.prettify())

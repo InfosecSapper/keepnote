@@ -114,13 +114,13 @@ class Heal (unittest.TestCase):
         # initialize a notebook
         make_clean_dir(_tmpdir + "/notebook_tamper")
 
-        print "creating notebook"
+        print("creating notebook")
         book = notebook.NoteBook()
         book.create(_tmpdir + "/notebook_tamper/n1")
         make_notebook(book, struct)
         book.close()
 
-        print "system"
+        print("system")
         os.system((
             "sqlite3 %s/notebook_tamper/n1/__NOTEBOOK__/index.sqlite "
             "'select mtime from NodeGraph where parentid == \"" +
@@ -128,16 +128,16 @@ class Heal (unittest.TestCase):
 
         time.sleep(1)
 
-        print fs.get_path_mtime(_tmpdir + u"/notebook_tamper/n1")
-        fs.mark_path_outdated(_tmpdir + u"/notebook_tamper/n1")
-        print fs.get_path_mtime(_tmpdir + u"/notebook_tamper/n1")
+        print(fs.get_path_mtime(_tmpdir + u"/notebook_tamper/n1"))
+        print(fs.mark_path_outdated(_tmpdir + u"/notebook_tamper/n1"))
+        print(fs.get_path_mtime(_tmpdir + u"/notebook_tamper/n1"))
 
-        print "reopening notebook 1"
+        print("reopening notebook 1")
         book = notebook.NoteBook()
         book.load(_tmpdir + "/notebook_tamper/n1")
         book.close()
 
-        print "reopening notebook 2"
+        print("reopening notebook 2")
         book = notebook.NoteBook()
         book.load(_tmpdir + "/notebook_tamper/n1")
         book.close()

@@ -794,14 +794,14 @@ class HtmlTagImgReader (HtmlTagReader):
             elif key == "width":
                 try:
                     width = int(value)
-                except ValueError, e:
+                except ValueError as e:
                     # ignore width if we cannot parse it
                     pass
                 
             elif key == "height":
                 try:
                     height = int(value)
-                except ValueError, e:
+                except ValueError as e:
                     # ignore height if we cannot parse it
                     pass
                 
@@ -950,7 +950,7 @@ class HtmlBuffer (HTMLParser):
             self.feed(infile.read())
             self.close()
             
-        except Exception, e:
+        except Exception as e:
             log_error(e, sys.exc_info()[2])
             # reraise error if not ignored
             self.close()

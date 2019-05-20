@@ -376,15 +376,15 @@ def list_commands(app):
     commands = app.get_commands()
     commands.sort(key=lambda x: x.name)
 
-    print
-    print "available commands:"
+    print()
+    print("available commands:")
     for command in commands:
-        print " " + command.name,
+        print(" " + command.name,)
         if command.metavar:
-            print " " + command.metavar,            
+            print(" " + command.metavar,)
         if command.help:
-            print " -- " + command.help,
-        print
+            print(" -- " + command.help,)
+        print()
 
 
 
@@ -435,10 +435,10 @@ def main(argv):
 # catch any exceptions that occur
 try:
     main(sys.argv)
-except exceptions.SystemExit, e:
+except exceptions.SystemExit as e:
     # sys.exit() was called
     pass
-except Exception, e:
+except Exception as e:
     traceback.print_exc()
     sys.stderr.flush()
 

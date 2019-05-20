@@ -16,8 +16,8 @@ _datapath = os.path.join(TMP_DIR, 'notebook_struct')
 
 
 def display_notebook(node, depth=0):
-    print "  " * depth,
-    print node.get_title()
+    print("  " * depth,)
+    print(node.get_title())
 
     for child in node.get_children():
         display_notebook(child, depth+1)
@@ -41,7 +41,7 @@ class Test (unittest.TestCase):
         # initialize a notebook
         make_clean_dir(_datapath)
 
-        print "creating notebook"
+        print("creating notebook")
         book = notebook.NoteBook()
         book.create(_datapath + "/n1")
         make_notebook(book, struct)
@@ -51,7 +51,7 @@ class Test (unittest.TestCase):
 
         book.close()
 
-        print "load"
+        print("load")
         book = notebook.NoteBook()
         book.load(_datapath + "/n1")
 
@@ -71,7 +71,7 @@ class Test (unittest.TestCase):
         # initialize a notebook
         make_clean_dir(_datapath)
 
-        print "creating notebook"
+        print("creating notebook")
         book = notebook.NoteBook()
         book.create(_datapath + "/n1")
         make_notebook(book, struct)
@@ -81,7 +81,7 @@ class Test (unittest.TestCase):
 
         book.close()
 
-        print "load"
+        print("load")
         book = notebook.NoteBook()
         book.load(_datapath + "/n1")
         display_notebook(book)
@@ -96,7 +96,7 @@ class Test (unittest.TestCase):
         # initialize a notebook
         make_clean_dir(_datapath)
 
-        print "creating notebook"
+        print("creating notebook")
         book = notebook.NoteBook()
         book.create(_datapath + "/n1")
         make_notebook(book, struct)
@@ -106,12 +106,12 @@ class Test (unittest.TestCase):
 
         book.close()
 
-        print "load"
+        print("load")
         book = notebook.NoteBook()
         book.load(_datapath + "/n1")
 
         c1 = book.get_node_by_id(c1id)
-        print "found", c1.get_title()
+        print("found", c1.get_title())
 
         book.close()
 
@@ -136,7 +136,7 @@ class Test (unittest.TestCase):
         conn.create_node(nodeid, {"nodeid": nodeid,
                                   "aaa": 3.4})
         attr = conn.read_node(nodeid)
-        print attr
+        print(attr)
 
         # check orphan node dir
         assert os.path.exists(
@@ -147,16 +147,16 @@ class Test (unittest.TestCase):
         attr["aaa"] = 0
         conn.update_node(nodeid, attr)
         attr = conn.read_node(nodeid)
-        print attr
+        print(attr)
 
         # check orphan node dir
-        print open(_datapath + "/conn/__NOTEBOOK__/orphans/%s/%s/node.xml"
-                   % (nodeid[:2], nodeid[2:])).read()
+        print(open(_datapath + "/conn/__NOTEBOOK__/orphans/%s/%s/node.xml"
+                   % (nodeid[:2], nodeid[2:])).read())
 
         # move orphan out of orphandir
         attr["parentids"] = [rootid]
         conn.update_node(nodeid, attr)
-        print conn.read_node(nodeid)
+        print(conn.read_node(nodeid))
 
         # check orphan node dir is gone
         assert not os.path.exists(
@@ -166,7 +166,7 @@ class Test (unittest.TestCase):
         # move node into orphandir
         attr["parentids"] = []
         conn.update_node(nodeid, attr)
-        print conn.read_node(nodeid)
+        print(conn.read_node(nodeid))
 
         # check orphan node dir is gone
         self.assertTrue(os.path.exists(

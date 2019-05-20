@@ -36,7 +36,7 @@ import traceback
 try:
     import pysqlite2
     import pysqlite2.dbapi2 as sqlite
-except Exception, e:
+except Exception as e:
     import sqlite3  as sqlite
 #sqlite.enable_shared_cache(True)
 #sqlite.threadsafety = 0
@@ -198,7 +198,7 @@ class NoteBookIndex (object):
             #self.con.execute(u"PRAGMA read_uncommitted = true;")
 
             self.init_index(auto_clear=auto_clear)
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -230,7 +230,7 @@ class NoteBookIndex (object):
                     self.con.commit()
                 except:
                     self.open()
-        except Exception, e:
+        except Exception as e:
             self._on_corrupt(e, sys.exc_info()[2])
 
         
@@ -314,7 +314,7 @@ class NoteBookIndex (object):
                                 fts3(nodeid TEXT, content TEXT,
                                      tokenize=porter);""")
                 self._has_fulltext = True
-            except Exception, e:
+            except Exception as e:
                 keepnote.log_error(e)
                 self._has_fulltext = False
 
@@ -336,11 +336,10 @@ class NoteBookIndex (object):
             #if not self._need_index:
             #    self._need_index = self.check_index()
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
 
-            keepnote.log_message("reinitializing index '%s'\n" %
-                                 self._index_file)
+            keepnote.log_message("reinitializing index '%s'\n" % self._index_file)
             self.clear()
 
     
@@ -497,9 +496,8 @@ class NoteBookIndex (object):
             infile = self._nconn.read_data_as_plain_text(nodeid)
             self.index_node_text(nodeid, attr, infile)
             
-        except Exception, e:
-            keepnote.log_error("error index node %s '%s'" % 
-                               (nodeid, attr.get("title", "")))
+        except Exception as e:
+            keepnote.log_error("error index node %s '%s'" % (nodeid, attr.get("title", "")))
             self._on_corrupt(e, sys.exc_info()[2])
 
 
@@ -522,7 +520,7 @@ class NoteBookIndex (object):
             #    u"SELECT nodeid FROM NodeGraph WHERE parentid=?", (nodeid,)):
             #    self.remove_node(childid)
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
 
 
@@ -531,7 +529,7 @@ class NoteBookIndex (object):
         try:
             text = attr.get("title", "") + "\n" + "".join(infile)
             self.insert_text(nodeid, text)
-        except Exception, e:
+        except Exception as e:
             keepnote.log_error()
 
 
@@ -590,7 +588,7 @@ class NoteBookIndex (object):
             path.reverse()
             return path
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -632,7 +630,7 @@ class NoteBookIndex (object):
             path.reverse()
             return path
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -657,7 +655,7 @@ class NoteBookIndex (object):
                     "basename": row[2],
                     "mtime": row[3]}
             
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -678,7 +676,7 @@ class NoteBookIndex (object):
                                 WHERE parentid=?""", (nodeid,))
             return list(self.cur.fetchall())
             
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -691,7 +689,7 @@ class NoteBookIndex (object):
                                 WHERE parentid=?""", (nodeid,))
             return self.cur.fetchone() != None
             
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 
@@ -712,7 +710,7 @@ class NoteBookIndex (object):
 
             return list(self.cur.fetchall())
 
-        except sqlite.DatabaseError, e:
+        except sqlite.DatabaseError as e:
             self._on_corrupt(e, sys.exc_info()[2])
             raise
 

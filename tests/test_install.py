@@ -12,7 +12,7 @@ from . import TMP_DIR, SRC_DIR, make_clean_dir
 class Install (unittest.TestCase):
 
     def system(self, cmd, err_code=0):
-        print cmd
+        print(cmd)
         self.assertEqual(os.system(cmd), err_code)
 
     def test_distutil_sdist(self):

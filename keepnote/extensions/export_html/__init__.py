@@ -157,13 +157,13 @@ class Extension (extension.Extension):
                 window.set_status("Notebook exported")
                 return True
 
-            except NoteBookError, e:
+            except NoteBookError as e:
                 window.set_status("")
                 window.error("Error while exporting notebook:\n%s" % e.msg, e,
                              tracebk)
                 return False
 
-            except Exception, e:
+            except Exception as e:
                 window.set_status("")
                 window.error("unknown error", e, tracebk)
                 return False
@@ -407,7 +407,7 @@ def export_notebook(notebook, filename, task):
     # make sure all modifications are saved first
     try:
         notebook.save()
-    except Exception, e:
+    except Exception as e:
         raise NoteBookError("Could not save notebook before archiving", e)
 
 
@@ -431,7 +431,7 @@ def export_notebook(notebook, filename, task):
         try:
             dom = minidom.parse(filename)
                         
-        except Exception, e:
+        except Exception as e:
             # error parsing file, use simple file export
             export_files(filename, filename2)
             

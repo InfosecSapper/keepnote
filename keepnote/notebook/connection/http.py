@@ -213,7 +213,7 @@ class HttpHandler (BaseHTTPServer.BaseHTTPRequestHandler):
                 self.wfile.write(stream.read())
                 stream.close()
 
-        except Exception, e:
+        except Exception as e:
             keepnote.log_error()
             self.send_error(404, "node not found " + str(e))
 
@@ -251,7 +251,7 @@ class HttpHandler (BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header("content_type", "text/plain")
             self.end_headers()
             
-        except Exception, e:
+        except Exception as e:
             # FIX response
             keepnote.log_error()
             self.send_error(httplib.NOT_FOUND, "cannot create node: " + str(e))
@@ -303,7 +303,7 @@ class HttpHandler (BaseHTTPServer.BaseHTTPRequestHandler):
             self.end_headers()
             
             
-        except Exception, e:
+        except Exception as e:
             # FIX response
             keepnote.log_error()
             self.send_error(httplib.NOT_FOUND, "cannot create node: " + str(e))
@@ -325,7 +325,7 @@ class HttpHandler (BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header("content_type", "text/plain")
             self.end_headers()
             
-        except Exception, e:
+        except Exception as e:
             # TDOD: fix response
             keepnote.log_error()
             self.send_error(httplib.NOT_FOUND, "cannot delete node: " + str(e))
@@ -350,7 +350,7 @@ class HttpHandler (BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header("content_type", "text/plain")
             self.end_headers()
             
-        except Exception, e:
+        except Exception as e:
             # TODO: fix response
             keepnote.log_error()
             self.send_error(httplib.NOT_FOUND, "cannot find node: " + str(e))
@@ -439,9 +439,8 @@ class NoteBookConnectionHttp (NoteBookConnection):
                 attr = plist.load(result)
                 self._title_cache.update_attr(attr)
                 return attr
-            except Exception, e:
-                raise connlib.ConnectionError(
-                    "unexpected error '%s'" % str(e), e)
+            except Exception as e:
+                raise connlib.ConnectionError("unexpected error '%s'" % str(e), e)
         else:
             raise connlib.UnknownNode(nodeid)
 
@@ -579,9 +578,8 @@ class NoteBookConnectionHttp (NoteBookConnection):
         if result.status == httplib.OK:
             try:
                 return plist.load(result)
-            except Exception, e:
-                raise connlib.ConnectionError(
-                    "unexpected response '%s'" % str(e), e)
+            except Exception as e:
+                raise connlib.ConnectionError("unexpected response '%s'" % str(e), e)
         else:
             raise connlib.FileError("cannot list node")
         
@@ -609,9 +607,8 @@ class NoteBookConnectionHttp (NoteBookConnection):
         if result.status == httplib.OK:
             try:
                 return plist.load(result)
-            except Exception, e:
-                raise connlib.ConnectionError(
-                    "unexpected response '%s'" % str(e), e)
+            except Exception as e:
+                raise connlib.ConnectionError("unexpected response '%s'" % str(e), e)
 
 
     def index(self, query):

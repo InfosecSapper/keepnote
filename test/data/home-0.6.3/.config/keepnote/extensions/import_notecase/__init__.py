@@ -67,7 +67,7 @@ def unescape(text):
             else:
                return unichr(int(text[2:-1]))
          except ValueError:
-            print "erreur de valeur"
+            print("erreur de valeur")
             pass
       else:
          # named entity
@@ -82,7 +82,7 @@ def unescape(text):
                # print text[1:-1]
                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
          except KeyError:
-            print "keyerror"
+            print("keyerror")
             pass
       return text # leave as is
    return re.sub("&#?\w+;", fixup, text)
@@ -172,7 +172,7 @@ class Extension (keepnote.gui.extension.Extension):
                 if notebook is not None:
                     import_ncd_file(window, ncd_file)
                 else:
-                    print "WARNING: you need an notebook before you can import"
+                    print("WARNING: you need an notebook before you can import")
             # self.close_notebook()
         dialog.destroy()
 

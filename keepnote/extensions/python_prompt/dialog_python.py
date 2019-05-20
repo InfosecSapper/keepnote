@@ -221,16 +221,15 @@ class PythonDialog (object):
 
     def print_info(self):
 
-        print "COMMON INFORMATION"
-        print "=================="
-        print
-
+        print("COMMON INFORMATION")
+        print("==================")
+        print()
         keepnote.print_runtime_info(sys.stdout)
-
-        print "Open notebooks"
-        print "--------------"
-        print "\n".join(n.get_path() for n in self.app.iter_notebooks())
-        
+        print()
+        print("Open notebooks")
+        print("--------------")
+        print("\n".join(n.get_path() for n in self.app.iter_notebooks()))
+        print()
 
 
 def execute(code, vars, stdout, stderr):
@@ -242,7 +241,7 @@ def execute(code, vars, stdout, stderr):
     sys.stderr = stderr
     try:
         exec(code, vars)
-    except Exception, e:
+    except Exception as e:
         keepnote.log_error(e, sys.exc_info()[2], stderr)
     sys.stdout = __stdout
     sys.stderr = __stderr

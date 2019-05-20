@@ -74,7 +74,7 @@ class TestCaseNotebookChanges (unittest.TestCase):
 
         def walk(node):
             if node.get_attr("content_type") == "text/xhtml+xml":
-                print "rewrite", node.get_data_file()
+                print("rewrite", node.get_data_file())
                 
                 filename = node.get_data_file()
                 self.buffer.clear()
@@ -91,7 +91,7 @@ class TestCaseNotebookChanges (unittest.TestCase):
         walk(book)
 
         # should be no differences
-        print "differences"
+        print("differences")
         os.system("diff -r test/data/notebook-v1 test/tmp/notebook-v1-2 > test/tmp/notebook-v1-2.tmp")
         #self.assertEquals(os.system("diff test/tmp/notebook-v1-2.tmp test/data/notebook-v1-2.diff"), 0)
 

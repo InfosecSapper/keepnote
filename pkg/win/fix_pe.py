@@ -15,13 +15,13 @@ exe_file = 'dist/keepnote-%s.win/keepnote.exe' % PROGRAM_VERSION_TEXT
 # read PE file
 pe =  pefile.PE(exe_file)
 
-print "old OPTIONAL_HEADER.SizeOfImage =", hex(pe.OPTIONAL_HEADER.SizeOfImage)
+print("old OPTIONAL_HEADER.SizeOfImage =", hex(pe.OPTIONAL_HEADER.SizeOfImage))
 
 # recalculate image size
 size = pe.sections[-1].VirtualAddress + pe.sections[-1].Misc_VirtualSize
 pe.OPTIONAL_HEADER.SizeOfImage = size
 
-print "new OPTIONAL_HEADER.SizeOfImage =", hex(size)
+print("new OPTIONAL_HEADER.SizeOfImage =", hex(size))
 
 
 # write new PE file

@@ -293,7 +293,7 @@ class RichTextIO (object):
                                     textbuffer.tag_table,
                                     title=title)
             out.close()
-        except IOError, e:
+        except IOError as e:
             raise RichTextError("Could not save '%s'." % filename, e)
         
         textbuffer.set_modified(False)
@@ -333,7 +333,7 @@ class RichTextIO (object):
             # put cursor at begining
             textbuffer.place_cursor(textbuffer.get_start_iter())
             
-        except (HtmlError, IOError, Exception), e:
+        except (HtmlError, IOError, Exception) as e:
             err = e
             textbuffer.clear()
             if textview:
@@ -1056,7 +1056,7 @@ class RichTextView (gtk.TextView):
             self._textbuffer.end_user_action()
         
             self.scroll_mark_onscreen(self._textbuffer.get_insert())
-        except Exception, e:
+        except Exception as e:
             pass
             
     

@@ -368,7 +368,7 @@ class BaseTreeModel (gtk.GenericTreeModel):
         
         for i in path[1:]:
             if i >= len(node.get_children()):
-                print path
+                print(path)
                 raise ValueError()
             node = node.get_children()[i]
 
@@ -454,7 +454,7 @@ class BaseTreeModel (gtk.GenericTreeModel):
         else:
             children = parent.get_children()
             if n >= len(children):
-                print "out of bounds", parent.get_title(), n
+                print("out of bounds", parent.get_title(), n)
                 return None
             else:
                 return children[n]

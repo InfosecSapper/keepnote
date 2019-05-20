@@ -81,7 +81,7 @@ class Extension (extension.Extension):
             try:
                 self.on_add_ui(window)
                 self.__uis.add(window)
-            except Exception, e:
+            except Exception as e:
                 keepnote.log_error(e, sys.exc_info()[2])
         self.__windows.add(window)
 
@@ -93,7 +93,7 @@ class Extension (extension.Extension):
             if window in self.__uis:
                 try:
                     self.on_remove_ui(window)
-                except Exception, e:
+                except Exception as e:
                     keepnote.log_error(e, sys.exc_info()[2])
                 self.__uis.remove(window)
             self.__windows.remove(window)

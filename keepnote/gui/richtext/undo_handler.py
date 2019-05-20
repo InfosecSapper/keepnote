@@ -206,8 +206,7 @@ class TagAction (Action):
         start = self.textbuffer.get_iter_at_offset(self.start_offset)
         end = self.textbuffer.get_iter_at_offset(self.end_offset)
 
-        # TODO: I can probably discard iter's.  Maybe make argument to
-        # iter_buffer_contents
+        # TODO: I can probably discard iter's.  Maybe make argument to iter_buffer_contents
         self.contents = filter(lambda (kind, it, param): 
             kind in ("begin", "end") and param == self.tag,
             buffer_contents_iter_to_offset(
