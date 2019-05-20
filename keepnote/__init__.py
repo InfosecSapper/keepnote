@@ -202,7 +202,7 @@ def ensure_unicode(text, encoding="utf8"):
 
 def unicode_gtk(text):
     """
-    Converts a string from gtk (utf8) to unicode
+    Converts a string from Gtk (utf8) to unicode
 
     All strings from the pygtk API are returned as byte strings (str) 
     encoded as utf8.  KeepNote has the convention to keep all strings as
@@ -248,11 +248,11 @@ def print_runtime_info(out=None):
               "-------------\n"
               "keepnote: " + keepnote.__file__+"\n")
     try:
-        import gtk
-        out.write("gtk: "+ gtk.__file__+"\n")
-        out.write("gtk.gtk_version: "+repr(gtk.gtk_version)+"\n")
+        from gi.repository import Gtk
+        out.write("Gtk: "+ Gtk.__file__+"\n")
+        out.write("Gtk.gtk_version: "+repr(Gtk.gtk_version)+"\n")
     except:
-        out.write("gtk: NOT PRESENT\n")
+        out.write("Gtk: NOT PRESENT\n")
     
     from keepnote.notebook.connection.fs.index import sqlite
     out.write("sqlite: " + sqlite.__file__+"\n"
@@ -1073,7 +1073,7 @@ class KeepNote (object):
                 % (app.title, app.prog, filename, unicode(e)), e)
 
         # wait for process to return
-        # TODO: perform waiting in gtk loop
+        # TODO: perform waiting in Gtk loop
         # NOTE: I do not wait for any program yet
         if wait:
             return proc.wait()

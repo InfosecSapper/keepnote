@@ -27,8 +27,8 @@
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
 
 
 # import textbuffer tools
@@ -89,7 +89,7 @@ class FontHandler (gobject.GObject):
 
         self._buf = textbuffer
         self._current_tags = []
-        self._default_attr = gtk.TextAttributes()
+        self._default_attr = Gtk.TextAttributes()
         self._font_class = RichTextBaseFont
 
         self._insert_mark = self._buf.get_insert()
@@ -300,7 +300,7 @@ class FontHandler (gobject.GObject):
         current_tags = set(self._current_tags)        
         
         # get the text attributes and font at the iter
-        attr = gtk.TextAttributes()
+        attr = Gtk.TextAttributes()
         self._default_attr.copy_values(attr)
         it.get_attributes(attr)
         tags = it.get_tags()

@@ -27,8 +27,8 @@
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
 
 # keepnote imports
 import keepnote

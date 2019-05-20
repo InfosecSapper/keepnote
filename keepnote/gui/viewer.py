@@ -36,8 +36,8 @@ import uuid
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-from gtk import gdk
-import gtk
+from Gtk import gdk
+from gi.repository import Gtk
 import gobject
 
 
@@ -52,10 +52,10 @@ _ = keepnote.translate
 
 
 
-class Viewer (gtk.VBox):
+class Viewer (Gtk.VBox):
 
     def __init__(self, app, parent, viewerid=None, viewer_name="viewer"):
-        gtk.VBox.__init__(self, False, 0)
+        Gtk.VBox.__init__(self, False, 0)
         self._app = app
         self._main_window = parent
         self._viewerid = viewerid if viewerid else unicode(uuid.uuid4())

@@ -28,8 +28,8 @@
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
 
 
 # richtext imports
@@ -49,7 +49,7 @@ BULLET_FONT_SIZE = 10
 
 
 def color_to_string(color):
-    """Converts a gtk.Color to a RGB string (#rrrrggggbbbb)"""
+    """Converts a Gtk.Color to a RGB string (#rrrrggggbbbb)"""
     
     redstr = hex(color.red)[2:]
     greenstr = hex(color.green)[2:]
@@ -89,8 +89,8 @@ def get_text_scale():
     """Returns current text scale"""
     global _text_scale
     if _text_scale is None:
-        _text_scale = (float(gtk.gdk.screen_height()) / 
-                       gtk.gdk.screen_height_mm()) / 2.95566
+        _text_scale = (float(Gtk.gdk.screen_height()) / 
+                       Gtk.gdk.screen_height_mm()) / 2.95566
 
     return _text_scale
 
@@ -141,22 +141,22 @@ class RichTextTagTable (RichTextBaseTagTable):
         self.tag_class_add("mod",
             RichTextModTag("tt", family="Monospace"))
         self.tag_class_add("mod",
-            RichTextModTag("nowrap", wrap_mode=gtk.WRAP_NONE))
+            RichTextModTag("nowrap", wrap_mode=Gtk.WRAP_NONE))
         
 
         # justify tags
         self.tag_class_add("justify",
                            RichTextJustifyTag("left",
-                                              justification=gtk.JUSTIFY_LEFT))
+                                              justification=Gtk.JUSTIFY_LEFT))
         self.tag_class_add("justify",
                            RichTextJustifyTag("center",
-                                              justification=gtk.JUSTIFY_CENTER))
+                                              justification=Gtk.JUSTIFY_CENTER))
         self.tag_class_add("justify",
                            RichTextJustifyTag("right",
-                                              justification=gtk.JUSTIFY_RIGHT))
+                                              justification=Gtk.JUSTIFY_RIGHT))
         self.tag_class_add("justify",
                            RichTextJustifyTag("fill",
-                                              justification=gtk.JUSTIFY_FILL))
+                                              justification=Gtk.JUSTIFY_FILL))
         
         
         self.bullet_tag = self.tag_class_add("bullet", RichTextBulletTag())
@@ -189,10 +189,10 @@ class RichTextJustifyTag (RichTextTag):
     """
 
     justify2name = {
-        gtk.JUSTIFY_LEFT: "left", 
-        gtk.JUSTIFY_RIGHT: "right", 
-        gtk.JUSTIFY_CENTER: "center", 
-        gtk.JUSTIFY_FILL: "fill"
+        Gtk.JUSTIFY_LEFT: "left", 
+        Gtk.JUSTIFY_RIGHT: "right", 
+        Gtk.JUSTIFY_CENTER: "center", 
+        Gtk.JUSTIFY_FILL: "fill"
     }
 
     justify_names = set(["left", "right", "center", "fill"])

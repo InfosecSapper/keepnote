@@ -42,11 +42,11 @@ from keepnote.gui import extension
 try:
     import pygtk
     pygtk.require('2.0')
-    import gtk
+    from gi.repository import Gtk
 
     from keepnote.gui import dialog_app_options
 except ImportError:
-    # do not fail on gtk import error,
+    # do not fail on Gtk import error,
     # extension should be usable for non-graphical uses
     pass
 
@@ -165,7 +165,7 @@ class Extension (extension.Extension):
 
         widget = self._widget_focus.get(window, None)
 
-        if isinstance(widget, gtk.TextView):
+        if isinstance(widget, Gtk.TextView):
             stamp = time.strftime(self.format, time.localtime())
             widget.get_buffer().insert_at_cursor(stamp)
 
@@ -182,23 +182,23 @@ class EditorInsertDateSection (dialog_app_options.Section):
         self.ext = ext
 
         w = self.get_default_widget()
-        v = gtk.VBox(False, 5)
+        v = Gtk.VBox(False, 5)
         w.add(v)
 
-        table = gtk.Table(1, 2)
+        table = Gtk.Table(1, 2)
         v.pack_start(table, False, True, 0)
 
-        label = gtk.Label("Date format:")
+        label = Gtk.Label("Date format:")
         table.attach(label, 0, 1, 0, 1,
                      xoptions=0, yoptions=0,
                      xpadding=2, ypadding=2)
 
-        self.format = gtk.Entry()
+        self.format = Gtk.Entry()
         table.attach(self.format, 1, 2, 0, 1,
-                     xoptions=gtk.FILL, yoptions=0,
+                     xoptions=Gtk.FILL, yoptions=0,
                      xpadding=2, ypadding=2)
 
-        xml = gtk.glade.XML(dialog_app_options.get_resource("rc", "keepnote.glade"),
+        xml = Gtk.glade.XML(dialog_app_options.get_resource("rc", "keepnote.glade"),
                             "date_and_time_key", keepnote.GETTEXT_DOMAIN)
         key = xml.get_widget("date_and_time_key")
         key.set_size_request(400, 200)

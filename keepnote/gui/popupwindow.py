@@ -2,22 +2,22 @@
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk
+from gi.repository import Gtk
 
 
 
 
 
-class PopupWindow (gtk.Window):
+class PopupWindow (Gtk.Window):
     """A customizable popup window"""
 
     def __init__(self, parent):
-        gtk.Window.__init__(self, gtk.WINDOW_POPUP)
-        self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_MENU)
+        Gtk.Window.__init__(self, Gtk.WINDOW_POPUP)
+        self.set_type_hint(Gtk.gdk.WINDOW_TYPE_HINT_MENU)
         self.set_transient_for(parent.get_toplevel())
-        self.set_flags(gtk.CAN_FOCUS)
-        self.add_events(gtk.gdk.KEY_PRESS_MASK | 
-                        gtk.gdk.KEY_RELEASE_MASK)
+        self.set_flags(Gtk.CAN_FOCUS)
+        self.add_events(Gtk.gdk.KEY_PRESS_MASK | 
+                        Gtk.gdk.KEY_RELEASE_MASK)
 
 
         self._parent = parent
@@ -46,8 +46,8 @@ class PopupWindow (gtk.Window):
         self._y2 = y2
 
         # get screen dimensions
-        screenw = gtk.gdk.screen_width()
-        screenh = gtk.gdk.screen_height()
+        screenw = Gtk.gdk.screen_width()
+        screenh = Gtk.gdk.screen_height()
 
         # account for window
         wx, wy = win.get_origin()

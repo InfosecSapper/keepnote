@@ -259,13 +259,13 @@ takenote-0.4.2 (2008/9/27)
  - a few Look and Feel options
    - use lines treeview
    - use ruler hints in listview
-   - use gtk stock icons
+   - use Gtk stock icons
  - image scaling can now automatically round ("snap") to nearest size multiple
  - system tray icon (requires pygtk > 2.10)
  - first implementation of an extensions mechanism
    - backup_tar implemented as extension now
  - spell check saves across sessions
- - gtk accelerator keys saving across sessions
+ - Gtk accelerator keys saving across sessions
 
 
 takenote-0.4.1 (2008/08/09)

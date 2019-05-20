@@ -36,7 +36,7 @@ import string,random
 import keepnote
 import keepnote.gui.extension
 from keepnote import notebook as notebooklib
-import os,gtk
+import os,Gtk
 import pygtk
 pygtk.require('2.0')
 
@@ -107,7 +107,7 @@ class Extension (keepnote.gui.extension.Extension):
     def on_add_ui(self, window):
         """Initialize extension for a particular window"""
             
-        self._action_groups[window] = gtk.ActionGroup("MainWindow")
+        self._action_groups[window] = Gtk.ActionGroup("MainWindow")
         self._action_groups[window].add_actions([
             ("Import ncd", None, "Import from .ncd file NoteCase 1.9.8",
              "", None,
@@ -149,24 +149,24 @@ class Extension (keepnote.gui.extension.Extension):
 
         """Imports NoteCase free version ncd file"""
         
-        dialog = gtk.FileChooserDialog(
+        dialog = Gtk.FileChooserDialog(
             "import ncd file", None, 
-            action=gtk.FILE_CHOOSER_ACTION_OPEN, 
-            buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+            action=Gtk.FILE_CHOOSER_ACTION_OPEN, 
+            buttons=(Gtk.STOCK_CANCEL,Gtk.RESPONSE_CANCEL,Gtk.STOCK_OPEN,Gtk.RESPONSE_OK))
         
-        file_filter = gtk.FileFilter()
+        file_filter = Gtk.FileFilter()
         file_filter.add_pattern("*.ncd")
         file_filter.set_name("NoteCase free version 1.9.8(*.ncd)")
         dialog.add_filter(file_filter)
         
-        file_filter = gtk.FileFilter()
+        file_filter = Gtk.FileFilter()
         file_filter.add_pattern("*")
         file_filter.set_name("All files (*.*)")
         dialog.add_filter(file_filter)
         
         response = dialog.run()
         
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.RESPONSE_OK:
             if dialog.get_filename():
                 ncd_file = dialog.get_filename()
                 if notebook is not None:
@@ -191,7 +191,7 @@ def import_ncd_file(window,file):
         counter -= 1
     fd.close()
     if ncd_identified == False:
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK,"Sorry, this is not a data file from the free version of NoteCase")
+        dialog = Gtk.MessageDialog(None, Gtk.DIALOG_MODAL, Gtk.MESSAGE_INFO, Gtk.BUTTONS_OK,"Sorry, this is not a data file from the free version of NoteCase")
         dialog.run()
         dialog.destroy()
         return

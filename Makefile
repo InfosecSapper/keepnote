@@ -129,7 +129,7 @@ share:
 	mkdir -p share/icons/gnome/16x16/
 	cp -r -L /usr/share/icons/gnome/16x16/mimetypes share/icons/gnome/16x16/
 	mkdir -p share/icons/gnome/16x16/actions
-	cp -L /usr/share/icons/gnome/16x16/actions/gtk-execute.png share/icons/gnome/16x16/actions
+	cp -L /usr/share/icons/gnome/16x16/actions/Gtk-execute.png share/icons/gnome/16x16/actions
 
 #=============================================================================
 # wine build

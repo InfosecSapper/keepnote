@@ -32,8 +32,8 @@ import gettext
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk.glade
-from gtk import gdk
+from gi.repository import Gtk.glade
+from Gtk import gdk
 
 # keepnote imports
 import keepnote
@@ -51,13 +51,13 @@ _ = keepnote.translate
 
 
 def on_browse(parent, title, filename, entry,
-              action=gtk.FILE_CHOOSER_ACTION_OPEN):
+              action=Gtk.FILE_CHOOSER_ACTION_OPEN):
     """Callback for selecting file browser associated with a text entry"""
 
-    dialog = gtk.FileChooserDialog(title, parent, 
+    dialog = Gtk.FileChooserDialog(title, parent, 
         action=action,
-        buttons=(_("Cancel"), gtk.RESPONSE_CANCEL,
-                 _("Open"), gtk.RESPONSE_OK))
+        buttons=(_("Cancel"), Gtk.RESPONSE_CANCEL,
+                 _("Open"), Gtk.RESPONSE_OK))
     dialog.set_transient_for(parent)
     dialog.set_modal(True)
 
@@ -67,7 +67,7 @@ def on_browse(parent, title, filename, entry,
     if os.path.isabs(filename):            
         dialog.set_filename(filename)
 
-    if dialog.run() == gtk.RESPONSE_OK and dialog.get_filename():
+    if dialog.run() == Gtk.RESPONSE_OK and dialog.get_filename():
         entry.set_text(dialog.get_filename())
 
     dialog.destroy()
@@ -82,12 +82,12 @@ class Section (object):
         self.label = label
         self.icon = icon
 
-        self.frame = gtk.Frame("")
+        self.frame = Gtk.Frame("")
         self.frame.get_label_widget().set_text("<b>%s</b>" % label)
         self.frame.get_label_widget().set_use_markup(True)
-        self.frame.set_property("shadow-type", gtk.SHADOW_NONE)
+        self.frame.set_property("shadow-type", Gtk.SHADOW_NONE)
 
-        self.__align = gtk.Alignment()
+        self.__align = Gtk.Alignment()
         self.__align.set_padding(10, 0, 10, 0)
         self.__align.show()
         self.frame.add(self.__align)
@@ -115,7 +115,7 @@ class GeneralSection (Section):
         
         self.notebook = None
         
-        self.xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.xml = Gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                  "general_frame", keepnote.GETTEXT_DOMAIN)
         self.xml.signal_autoconnect(self)
         self.xml.signal_autoconnect({
@@ -273,12 +273,12 @@ class LookAndFeelSection (Section):
         Section.__init__(self, key, dialog, app, label, icon)
 
         w = self.get_default_widget()
-        v = gtk.VBox(False, 5)
+        v = Gtk.VBox(False, 5)
         v.show()
         w.add(v)
 
         def add_check(label):
-            c = gtk.CheckButton(label)
+            c = Gtk.CheckButton(label)
             c.show()
             v.pack_start(c, False, False, 0)
             return c
@@ -295,11 +295,11 @@ class LookAndFeelSection (Section):
 
         # app font size
         font_size = 10
-        h = gtk.HBox(False, 5); h.show()
-        l = gtk.Label(_("Application Font Size:")); l.show()
+        h = Gtk.HBox(False, 5); h.show()
+        l = Gtk.Label(_("Application Font Size:")); l.show()
         h.pack_start(l, False, False, 0)
-        self.app_font_size = gtk.SpinButton(
-          gtk.Adjustment(value=font_size, lower=2, upper=500, step_incr=1))
+        self.app_font_size = Gtk.SpinButton(
+          Gtk.Adjustment(value=font_size, lower=2, upper=500, step_incr=1))
         self.app_font_size.set_value(font_size)
         #font_size_button.set_editable(False)
         self.app_font_size.show()
@@ -309,10 +309,10 @@ class LookAndFeelSection (Section):
 
         
         # view mode combo
-        h = gtk.HBox(False, 5); h.show()
-        l = gtk.Label(_("Listview Layout:")); l.show()
+        h = Gtk.HBox(False, 5); h.show()
+        l = Gtk.Label(_("Listview Layout:")); l.show()
         h.pack_start(l, False, False, 0)
-        c = gtk.combo_box_new_text(); c.show()
+        c = Gtk.combo_box_new_text(); c.show()
         c.append_text(_("Vertical"))
         c.append_text(_("Horizontal"))
         h.pack_start(c, False, False, 0)
@@ -357,15 +357,15 @@ class LanguageSection (Section):
         Section.__init__(self, key, dialog, app, label, icon)
 
         w = self.get_default_widget()
-        v = gtk.VBox(False, 5)
+        v = Gtk.VBox(False, 5)
         v.show()
         w.add(v)        
         
         # language combo
-        h = gtk.HBox(False, 5); h.show()
-        l = gtk.Label(_("Language:")); l.show()
+        h = Gtk.HBox(False, 5); h.show()
+        l = Gtk.Label(_("Language:")); l.show()
         h.pack_start(l, False, False, 0)
-        c = gtk.combo_box_new_text(); c.show()
+        c = Gtk.combo_box_new_text(); c.show()
 
         # populate language options
         c.append_text("default")
@@ -412,13 +412,13 @@ class HelperAppsSection (Section):
         self.entries = {}
         w = self.get_default_widget()
         
-        self.table = gtk.Table(max(len(list(app.iter_external_apps())), 1), 2)
+        self.table = Gtk.Table(max(len(list(app.iter_external_apps())), 1), 2)
         self.table.show()
         w.add(self.table)
 
         # set icon
         try:
-            self.icon = keepnote.gui.get_pixbuf(get_icon_filename(gtk.STOCK_EXECUTE), size=(15, 15))
+            self.icon = keepnote.gui.get_pixbuf(get_icon_filename(Gtk.STOCK_EXECUTE), size=(15, 15))
         except:
             pass
 
@@ -436,22 +436,22 @@ class HelperAppsSection (Section):
             prog = app.prog
             
             # program label
-            label = gtk.Label(app_title +":")
-            label.set_justify(gtk.JUSTIFY_RIGHT)
+            label = Gtk.Label(app_title +":")
+            label.set_justify(Gtk.JUSTIFY_RIGHT)
             label.set_alignment(1.0, 0.5)
             label.show()
             self.table.attach(label, 0, 1, i, i+1,
-                         xoptions=gtk.FILL, yoptions=0,
+                         xoptions=Gtk.FILL, yoptions=0,
                          xpadding=2, ypadding=2)
 
             # program entry
-            entry = gtk.Entry()
+            entry = Gtk.Entry()
             entry.set_text(prog)
             entry.set_width_chars(30)
             entry.show()
             self.entries[key] = entry
             self.table.attach(entry, 1, 2, i, i+1,
-                         xoptions=gtk.FILL | gtk.EXPAND, yoptions=0,
+                         xoptions=Gtk.FILL | Gtk.EXPAND, yoptions=0,
                          xpadding=2, ypadding=2)
 
             # browse button
@@ -460,10 +460,10 @@ class HelperAppsSection (Section):
                     on_browse(self.dialog,
                               _("Choose %s") % title,
                               "", self.entries[key])
-            button = gtk.Button(_("Browse..."))
+            button = Gtk.Button(_("Browse..."))
             button.set_image(
-                gtk.image_new_from_stock(gtk.STOCK_OPEN,
-                                         gtk.ICON_SIZE_SMALL_TOOLBAR))
+                Gtk.image_new_from_stock(Gtk.STOCK_OPEN,
+                                         Gtk.ICON_SIZE_SMALL_TOOLBAR))
             button.show()
             button.connect("clicked", button_clicked(key, app_title, prog))
             self.table.attach(button, 2, 3, i, i+1,
@@ -491,7 +491,7 @@ class DatesSection (Section):
     def __init__(self, key, dialog, app, label=u"", icon="time.png"):
         Section.__init__(self, key, dialog, app, label, icon)
 
-        self.date_xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.date_xml = Gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                    "date_time_frame", keepnote.GETTEXT_DOMAIN)
         self.date_xml.signal_autoconnect(self)
         self.frame = self.date_xml.get_widget("date_time_frame")
@@ -515,15 +515,15 @@ class EditorSection (Section):
         Section.__init__(self, key, dialog, app, label, icon)
 
         w = self.get_default_widget()
-        v = gtk.VBox(False, 5)
+        v = Gtk.VBox(False, 5)
         v.show()
         w.add(v)
         
         # language combo
-        h = gtk.HBox(False, 5); h.show()
-        l = gtk.Label(_("Quote format:")); l.show()
+        h = Gtk.HBox(False, 5); h.show()
+        l = Gtk.Label(_("Quote format:")); l.show()
         h.pack_start(l, False, False, 0)
-        e = gtk.Entry(); e.show()
+        e = Gtk.Entry(); e.show()
         e.set_width_chars(40)
         
         # pack entry
@@ -555,7 +555,7 @@ class AllNoteBooksSection (Section):
         Section.__init__(self, key, dialog, app, label, icon)
 
         w = self.get_default_widget()
-        l = gtk.Label(_("This section contains options that are saved on a per notebook basis (e.g. notebook-specific font).   A subsection will appear for each notebook that is currently opened."))
+        l = Gtk.Label(_("This section contains options that are saved on a per notebook basis (e.g. notebook-specific font).   A subsection will appear for each notebook that is currently opened."))
         l.set_line_wrap(True)
         w.add(l)
         w.show_all()
@@ -571,7 +571,7 @@ class NoteBookSection (Section):
         self.notebook = notebook
 
         # add notebook font widget
-        self.notebook_xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.notebook_xml = Gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                  "notebook_frame", keepnote.GETTEXT_DOMAIN)
         self.notebook_xml.signal_autoconnect(self)
         self.frame = self.notebook_xml.get_widget("notebook_frame")
@@ -590,7 +590,7 @@ class NoteBookSection (Section):
             lambda w: on_browse(self.dialog,
                 _("Choose alternative notebook index directory"),
                 "", self.notebook_index_dir,
-                action=gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER))
+                action=Gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER))
 
         self.frame.show_all()
 
@@ -632,48 +632,48 @@ class ExtensionsSection (Section):
         
         self.app = app
         self.entries = {}
-        self.frame = gtk.Frame("")
+        self.frame = Gtk.Frame("")
         self.frame.get_label_widget().set_text("<b>Extensions</b>")
         self.frame.get_label_widget().set_use_markup(True)
-        self.frame.set_property("shadow-type", gtk.SHADOW_NONE)
+        self.frame.set_property("shadow-type", Gtk.SHADOW_NONE)
         
-        align = gtk.Alignment()
+        align = Gtk.Alignment()
         align.set_padding(10, 0, 10, 0)
         align.show()
         self.frame.add(align)
         
-        v = gtk.VBox(False, 0)
+        v = Gtk.VBox(False, 0)
         v.show()
         align.add(v)
 
         # extension list scrollbar
-        self.sw = gtk.ScrolledWindow()
-        self.sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.sw.set_shadow_type(gtk.SHADOW_IN)
+        self.sw = Gtk.ScrolledWindow()
+        self.sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)
+        self.sw.set_shadow_type(Gtk.SHADOW_IN)
         self.sw.show()
         v.pack_start(self.sw, True, True, 0)
         
         # extension list
-        self.extlist = gtk.VBox(False, 0)
+        self.extlist = Gtk.VBox(False, 0)
         self.extlist.show()
         self.sw.add_with_viewport(self.extlist)
 
         # hbox
-        h = gtk.HBox(False, 0)
+        h = Gtk.HBox(False, 0)
         h.show()
         v.pack_start(h, True, True, 0)
         
         # install button
-        self.install_button = gtk.Button("Install new extension")
-        self.install_button.set_relief(gtk.RELIEF_NONE)
-        self.install_button.modify_fg(gtk.STATE_NORMAL, gtk.gdk.Color(0, 0, 65535))
+        self.install_button = Gtk.Button("Install new extension")
+        self.install_button.set_relief(Gtk.RELIEF_NONE)
+        self.install_button.modify_fg(Gtk.STATE_NORMAL, Gtk.gdk.Color(0, 0, 65535))
         self.install_button.connect("clicked", self._on_install)
         self.install_button.show()
         h.pack_start(self.install_button, False, True, 0)
 
         # set icon
         try:
-            self.icon = keepnote.gui.get_pixbuf(get_icon_filename(gtk.STOCK_ADD), size=(15, 15))
+            self.icon = keepnote.gui.get_pixbuf(get_icon_filename(Gtk.STOCK_ADD), size=(15, 15))
         except:
             pass
 
@@ -730,27 +730,27 @@ class ExtensionsSection (Section):
     def _on_install(self, widget):
 
         # open file dialog
-        dialog = gtk.FileChooserDialog(
+        dialog = Gtk.FileChooserDialog(
             _("Install New Extension"), self.dialog, 
-            action=gtk.FILE_CHOOSER_ACTION_OPEN,
-            buttons=(_("Cancel"), gtk.RESPONSE_CANCEL,
-                     _("Open"), gtk.RESPONSE_OK))
+            action=Gtk.FILE_CHOOSER_ACTION_OPEN,
+            buttons=(_("Cancel"), Gtk.RESPONSE_CANCEL,
+                     _("Open"), Gtk.RESPONSE_OK))
         dialog.set_transient_for(self.dialog)
         dialog.set_modal(True)
 
-        file_filter = gtk.FileFilter()
+        file_filter = Gtk.FileFilter()
         file_filter.add_pattern("*.kne")
         file_filter.set_name(_("KeepNote Extension (*.kne)"))
         dialog.add_filter(file_filter)
         
-        file_filter = gtk.FileFilter()
+        file_filter = Gtk.FileFilter()
         file_filter.add_pattern("*")
         file_filter.set_name(_("All files (*.*)"))
         dialog.add_filter(file_filter)
 
         response = dialog.run()
 
-        if gtk.RESPONSE_OK and dialog.get_filename():
+        if Gtk.RESPONSE_OK and dialog.get_filename():
             # install extension
             self.app.install_extension(dialog.get_filename())
             self.load_options(self.app)
@@ -759,24 +759,24 @@ class ExtensionsSection (Section):
 
 
 
-class ExtensionWidget (gtk.EventBox):
+class ExtensionWidget (Gtk.EventBox):
     def __init__(self, app, ext):
-        gtk.EventBox.__init__(self)
+        Gtk.EventBox.__init__(self)
 
         self.app = app
         self.enabled = ext.is_enabled()
         self.ext = ext
 
-        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(65535, 65535, 65535))
+        self.modify_bg(Gtk.STATE_NORMAL, Gtk.gdk.Color(65535, 65535, 65535))
 
-        frame = gtk.Frame(None)
-        frame.set_property("shadow-type", gtk.SHADOW_OUT)
+        frame = Gtk.Frame(None)
+        frame.set_property("shadow-type", Gtk.SHADOW_OUT)
         frame.show()
         self.add(frame)
 
         # name
-        frame2 = gtk.Frame("")
-        frame2.set_property("shadow-type", gtk.SHADOW_NONE)
+        frame2 = Gtk.Frame("")
+        frame2.set_property("shadow-type", Gtk.SHADOW_NONE)
         frame2.get_label_widget().set_text("<b>%s</b> (%s/%s)" % 
                                            (ext.name, ext.type,
                                             ext.key))
@@ -785,30 +785,30 @@ class ExtensionWidget (gtk.EventBox):
         frame.add(frame2)
 
         # margin
-        align = gtk.Alignment()
+        align = Gtk.Alignment()
         align.set_padding(10, 10, 10, 10)
         align.show()
         frame2.add(align)
 
         # vbox
-        v = gtk.VBox(False, 5)
+        v = Gtk.VBox(False, 5)
         v.show()
         align.add(v)
 
         # description
-        l = gtk.Label(ext.description)
-        l.set_justify(gtk.JUSTIFY_LEFT)
+        l = Gtk.Label(ext.description)
+        l.set_justify(Gtk.JUSTIFY_LEFT)
         l.set_alignment(0.0, 0.0)
         l.show()
         v.pack_start(l, True, True, 0)
 
         # hbox
-        h = gtk.HBox(False, 0)
+        h = Gtk.HBox(False, 0)
         h.show()
         v.pack_start(h, True, True, 0)
 
         # enable button
-        self.enable_check = gtk.CheckButton(_("Enabled"))
+        self.enable_check = Gtk.CheckButton(_("Enabled"))
         self.enable_check.set_active(self.enabled)
         self.enable_check.show()
         self.enable_check.connect(
@@ -816,12 +816,12 @@ class ExtensionWidget (gtk.EventBox):
         h.pack_start(self.enable_check, False, True, 0)
 
         # divider
-        l = gtk.Label("|"); l.show()
+        l = Gtk.Label("|"); l.show()
         h.pack_start(l, False, True, 0)
 
         # uninstall button        
-        self.uninstall_button = gtk.Button(_("Uninstall"))
-        self.uninstall_button.set_relief(gtk.RELIEF_NONE)
+        self.uninstall_button = Gtk.Button(_("Uninstall"))
+        self.uninstall_button.set_relief(Gtk.RELIEF_NONE)
         self.uninstall_button.set_sensitive(app.can_uninstall(ext))
         self.uninstall_button.show()
         h.pack_start(self.uninstall_button, False, True, 0)
@@ -849,7 +849,7 @@ class ApplicationOptionsDialog (object):
 
         self._sections = []
         
-        self.xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.xml = Gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                  "app_options_dialog", keepnote.GETTEXT_DOMAIN)
         self.dialog = self.xml.get_widget("app_options_dialog")
         self.dialog.connect("delete-event", self._on_delete_event)
@@ -864,15 +864,15 @@ class ApplicationOptionsDialog (object):
 
         # setup treeview
         self.overview = self.xml.get_widget("app_config_treeview")
-        self.overview_store = gtk.TreeStore(str, object, gdk.Pixbuf)
+        self.overview_store = Gtk.TreeStore(str, object, gdk.Pixbuf)
         self.overview.set_model(self.overview_store)
         self.overview.connect("cursor-changed", self.on_overview_select)
 
         # create the treeview column
-        column = gtk.TreeViewColumn()
+        column = Gtk.TreeViewColumn()
         self.overview.append_column(column)
-        cell_text = gtk.CellRendererText()
-        cell_icon = gtk.CellRendererPixbuf()
+        cell_text = Gtk.CellRendererText()
+        cell_icon = Gtk.CellRendererPixbuf()
         column.pack_start(cell_icon, True)
         column.add_attribute(cell_icon, 'pixbuf', 2)
         column.pack_start(cell_text, True)

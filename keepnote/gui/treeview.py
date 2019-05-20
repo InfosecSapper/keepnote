@@ -28,8 +28,8 @@
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
 
 # keepnote imports
 from keepnote.gui import treemodel
@@ -56,14 +56,14 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
 
         
         # selection config
-        self.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+        self.get_selection().set_mode(Gtk.SELECTION_MULTIPLE)
         
         self.set_headers_visible(False)
 
 
         # tree style
         try:
-            # available only on gtk > 2.8
+            # available only on Gtk > 2.8
             self.set_property("enable-tree-lines", True)
         except TypeError, e:
             pass
@@ -81,7 +81,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
             return
 
         # create the treeview column
-        self.column = gtk.TreeViewColumn()
+        self.column = Gtk.TreeViewColumn()
         self.column.set_clickable(False)
         self.append_column(self.column)
 
@@ -106,7 +106,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
         if self.editing_path:
             return
 
-        if event.keyval == gtk.keysyms.Delete:
+        if event.keyval == Gtk.keysyms.Delete:
             self.emit("delete-node", self.get_selected_nodes())
             self.stop_emission("key-release-event")
             
@@ -119,7 +119,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
             return self.popup_menu(event.x, event.y, event.button, event.time)
             
             
-        if event.button == 1 and event.type == gtk.gdk._2BUTTON_PRESS:
+        if event.button == 1 and event.type == Gtk.gdk._2BUTTON_PRESS:
             nodes = self.get_selected_nodes()
             if len(nodes) > 0:
                 # double click --> goto node

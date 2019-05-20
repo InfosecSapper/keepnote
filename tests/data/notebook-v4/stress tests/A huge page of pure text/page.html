@@ -24,8 +24,8 @@ import sys, os, tempfile, re<br/>
 # pygtk imports<br/>
 import pygtk<br/>
 pygtk.require('2.0')<br/>
-import gtk, gobject, pango<br/>
-from gtk import gdk<br/>
+from gi.repository import Gtk, gobject, pango<br/>
+from Gtk import gdk<br/>
 <br/>
 # takenote imports<br/>
 import takenotelib as takenote<br/>
@@ -36,8 +36,8 @@ from takenotelib.richtext import RichTextView, RichTextImage<br/>
 PROGRAM_NAME = "TakeNode"<br/>
 PROGRAM_VERSION = "0.1"<br/>
 <br/>
-DROP_YES = ("drop_yes", gtk.TARGET_SAME_WIDGET, 0)<br/>
-DROP_NO = ("drop_no", gtk.TARGET_SAME_WIDGET, 0)<br/>
+DROP_YES = ("drop_yes", Gtk.TARGET_SAME_WIDGET, 0)<br/>
+DROP_NO = ("drop_no", Gtk.TARGET_SAME_WIDGET, 0)<br/>
 <br/>
 <br/>
 BASEDIR = ""<br/>
@@ -48,12 +48,12 @@ def get_resource(*path_list):<br/>
 def compute_new_path(model, target, drop_position):<br/>
  &nbsp; &nbsp;path = model.get_path(target)<br/>
  &nbsp; &nbsp;<br/>
- &nbsp; &nbsp;if drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
- &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER: &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp;if drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
+ &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER: &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path + (0,) #model.get_n_children(target),)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_BEFORE:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_BEFORE:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_AFTER:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path[:-1] + (path[-1] + 1,)<br/>
  &nbsp; &nbsp;else:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;raise Exception("unknown drop position %s" %<br/>
@@ -64,12 +64,12 @@ def copy_row(treeview, model, source, target, drop_position):<br/>
 <br/>
  &nbsp; &nbsp;# move source row<br/>
  &nbsp; &nbsp;source_row = model[source]<br/>
- &nbsp; &nbsp;if drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
- &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:<br/>
+ &nbsp; &nbsp;if drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
+ &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.prepend(target, source_row)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_BEFORE:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_BEFORE:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.insert_before(None, target, source_row)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_AFTER:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.insert_after(None, target, source_row)<br/>
  &nbsp; &nbsp;else:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;raise Exception("unknown drop position %s" %<br/>
@@ -79,7 +79,7 @@ def copy_row(treeview, model, source, target, drop_position):<br/>
  &nbsp; &nbsp;for n in range(model.iter_n_children(source)):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;child = model.iter_nth_child(source, n)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;copy_row(treeview, model, child, new,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; gtk.TREE_VIEW_DROP_INTO_OR_BEFORE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE)<br/>
 <br/>
  &nbsp; &nbsp;# expand view to keep the same expansion pattern<br/>
  &nbsp; &nbsp;source_is_expanded = treeview.row_expanded(model.get_path(source))<br/>
@@ -181,17 +181,17 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.on_select_node = None<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a TreeStore with one string column to use as the model<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.model = gtk.TreeStore(gdk.Pixbuf, str, object)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.model = Gtk.TreeStore(gdk.Pixbuf, str, object)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.datamap = DataMap()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init treeview<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = gtk.TreeView(self.model)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = Gtk.TreeView(self.model)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("key-release-event", self.on_key_released)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.expanded_id = self.treeview.connect("row-expanded", self.on_row_expanded)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.collapsed_id = self.treeview.connect("row-collapsed", self.on_row_collapsed) <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-motion", self.on_drag_motion)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-data-received", self.on_drag_data_received)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.get_selection().set_mode(Gtk.SELECTION_MULTIPLE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.get_selection().connect("changed", self.on_select_changed)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_headers_visible(False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_property("enable-tree-lines", True)<br/>
@@ -199,19 +199,19 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_search_column(1) <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_reorderable(True) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_source(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;gtk.gdk.BUTTON1_MASK, [DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Gtk.gdk.BUTTON1_MASK, [DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_dest(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_fixed_height_mode(True) &nbsp; &nbsp; &nbsp; <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create the treeview column<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_clickable(False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(self.column)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a cell renderers<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_icon = gtk.CellRendererPixbuf()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_icon = Gtk.CellRendererPixbuf()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = Gtk.CellRendererText()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text.connect("edited", self.on_edit_title)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text.set_property("editable", True) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
@@ -225,9 +225,9 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.icon = pixbuf = gdk.pixbuf_new_from_file(get_resource("images", "open.xpm"))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(gtk.SHADOW_IN)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(Gtk.SHADOW_IN)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.add(self.treeview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.view = scrolled_window<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
@@ -252,9 +252,9 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# determine if drag is allowed<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;if self.drop_allowed(source_path, target_path, drop_position):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp;def on_drag_data_received(self, treeview, drag_context, x, y,<br/>
@@ -319,8 +319,8 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.datamap.assert_path((0,), lambda x: x.get_children())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;# make sure to show new children<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER):<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.expand_row(target_path, False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drag_context.finish(True, True, eventtime)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
@@ -333,8 +333,8 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""Determine if drop is allowed"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return dnd_sanity_check(source_path, target_path) and \<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; not (target_path == (0,) and \<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(drop_position == gtk.TREE_VIEW_DROP_BEFORE or <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_AFTER))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(drop_position == Gtk.TREE_VIEW_DROP_BEFORE or <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_AFTER))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_row_expanded(self, treeview, it, path):<br/>
@@ -463,25 +463,25 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.display_columns = []<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init model<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.model = gtk.ListStore(gdk.Pixbuf, str, str, int, str, int, object)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.model = Gtk.ListStore(gdk.Pixbuf, str, str, int, str, int, object)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.model.connect("rows-reordered", self.on_rows_reordered)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.datamap = DataMap() &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init view<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = gtk.TreeView(self.model)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = Gtk.TreeView(self.model)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("key-release-event", self.on_key_released) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.get_selection().connect("changed", self.on_select_changed)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-motion", self.on_drag_motion)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_rules_hint(True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_source(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;gtk.gdk.BUTTON1_MASK, [DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Gtk.gdk.BUTTON1_MASK, [DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_dest(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_fixed_height_mode(True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_icon = gtk.CellRendererPixbuf()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_icon = Gtk.CellRendererPixbuf()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_title("Title")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(self.column)<br/>
@@ -497,22 +497,22 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.add_attribute(self.cell_text, 'text', 1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_title("Created")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_sort_column_id(3)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#column.set_property("min-width", 5)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.pack_start(cell_text, True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.add_attribute(cell_text, 'text', 2)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(column)<br/>
 <br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_sort_column_id(5)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#column.set_property("min-width", 5)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_title("Modified")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.pack_start(cell_text, True)<br/>
@@ -523,9 +523,9 @@ class TakeNoteSelector (object):<br/>
 <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Create a new scrolled window, with scrollbars only if needed<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC) #gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(gtk.SHADOW_IN) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(Gtk.POLICY_NEVER, Gtk.POLICY_AUTOMATIC) #Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(Gtk.SHADOW_IN) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.add(self.treeview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.view = scrolled_window<br/>
 <br/>
@@ -551,9 +551,9 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# determine if drag is allowed<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;if self.drop_allowed(source_path, target_path, drop_position):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_rows_reordered(self, treemodel, path, it, new_order):<br/>
@@ -683,9 +683,9 @@ class TakeNoteSelector (object):<br/>
 class TakeNoteEditor (object):<br/>
 <br/>
  &nbsp; &nbsp;def __init__(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw.set_shadow_type(gtk.SHADOW_IN)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw.set_shadow_type(Gtk.SHADOW_IN)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.textview = RichTextView()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;sw.add(self.textview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;sw.show()<br/>
@@ -719,9 +719,9 @@ class TakeNoteEditor (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return self.textview.is_modified()<br/>
 <br/>
 <br/>
-class TakeNoteWindow (gtk.Window):<br/>
+class TakeNoteWindow (Gtk.Window):<br/>
  &nbsp; &nbsp;def __init__(self, basedir=""):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;Gtk.Window.__init__(self, Gtk.WINDOW_TOPLEVEL)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.basedir = basedir<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.set_title("TakeNote")<br/>
@@ -751,7 +751,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Layout<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# vertical box<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;main_vbox = gtk.VBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;main_vbox = Gtk.VBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.add(main_vbox)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# menu bar<br/>
@@ -762,32 +762,32 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# toolbar<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(self.make_toolbar(), False, True, 0) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2 = gtk.VBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2 = Gtk.VBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2.set_border_width(1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(main_vbox2, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#==========================================<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a horizontal paned widget<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned = gtk.HPaned()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned = Gtk.HPaned()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2.pack_start(self.hpaned, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned.set_position(takenote.DEFAULT_HSASH_POS)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a vertical paned widget<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned = gtk.VPaned()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned = Gtk.VPaned()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned.add2(self.vpaned)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned.set_position(takenote.DEFAULT_VSASH_POS)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# status bar<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;status_hbox = gtk.HBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;status_hbox = Gtk.HBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(status_hbox, False, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar = gtk.Statusbar() &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar = Gtk.Statusbar() &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;status_hbox.pack_start(self.status_bar, False, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar.set_property("has-resize-grip", False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar.set_size_request(300, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.stats_bar = gtk.Statusbar()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.stats_bar = Gtk.Statusbar()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;status_hbox.pack_start(self.stats_bar, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
@@ -830,39 +830,39 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp;def on_new_notebook(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.filew = gtk.FileChooserDialog("New Notebook", self, <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=gtk.FILE_CHOOSER_ACTION_CREATE_FOLDER,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", gtk.RESPONSE_CANCEL,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "New", gtk.RESPONSE_OK))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.filew = Gtk.FileChooserDialog("New Notebook", self, <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=Gtk.FILE_CHOOSER_ACTION_CREATE_FOLDER,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", Gtk.RESPONSE_CANCEL,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "New", Gtk.RESPONSE_OK))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.connect("response", self.on_new_notebook_response)<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.show()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_new_notebook_response(self, dialog, response):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;if response == gtk.RESPONSE_OK:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;if response == Gtk.RESPONSE_OK:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;filename = self.filew.get_filename()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;os.rmdir(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.new_notebook(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;elif response == gtk.RESPONSE_CANCEL:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;elif response == Gtk.RESPONSE_CANCEL:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_open_notebook(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.filew = gtk.FileChooserDialog("Open Notebook", self, <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=gtk.FILE_CHOOSER_ACTION_OPEN,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", gtk.RESPONSE_CANCEL,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "Open", gtk.RESPONSE_OK))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.filew = Gtk.FileChooserDialog("Open Notebook", self, <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=Gtk.FILE_CHOOSER_ACTION_OPEN,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", Gtk.RESPONSE_CANCEL,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "Open", Gtk.RESPONSE_OK))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.connect("response", self.on_open_notebook_response)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;file_filter = gtk.FileFilter()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;file_filter = Gtk.FileFilter()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.add_pattern("*.nbk")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.set_name("Notebook")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.add_filter(file_filter)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;file_filter = gtk.FileFilter()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;file_filter = Gtk.FileFilter()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.add_pattern("*")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.set_name("All files")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.add_filter(file_filter)<br/>
@@ -870,12 +870,12 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.show()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_open_notebook_response(self, dialog, response):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;if response == gtk.RESPONSE_OK:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;if response == Gtk.RESPONSE_OK:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;filename = self.filew.get_filename()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.open_notebook(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;elif response == gtk.RESPONSE_CANCEL:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;elif response == Gtk.RESPONSE_CANCEL:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
@@ -961,7 +961,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;def on_close(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""close the window and quit"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.close_notebook()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;gtk.main_quit()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;Gtk.main_quit()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return False<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
@@ -1098,12 +1098,12 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;def on_about(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""Display about dialog"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;about = gtk.AboutDialog()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;about = Gtk.AboutDialog()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_name(PROGRAM_NAME)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_version("v%s" % (PROGRAM_VERSION) )<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_copyright("Copyright Matt Rasmussen 2008")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_transient_for(self)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;about.set_position(Gtk.WIN_POS_CENTER_ON_PARENT)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.connect("response", lambda d,r: about.destroy())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.show()<br/>
  &nbsp; &nbsp;<br/>
@@ -1178,7 +1178,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;("/_Help/About", None, lambda w,e: self.on_about(), 0, None ),<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;) &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;accel_group = gtk.AccelGroup()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;accel_group = Gtk.AccelGroup()<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# This function initializes the item factory.<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 1: The type of menu - can be MenuBar, Menu,<br/>
@@ -1186,7 +1186,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 2: The path of the menu.<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 3: A reference to an AccelGroup. The item factory sets up<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;the accelerator table while generating menus.<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;item_factory = gtk.ItemFactory(gtk.MenuBar, "&lt;main&gt;", accel_group)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;item_factory = Gtk.ItemFactory(Gtk.MenuBar, "&lt;main&gt;", accel_group)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# This method generates the menu items. Pass to the item factory<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# &nbsp;the list of menu items<br/>
@@ -1204,17 +1204,17 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def make_toolbar(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar = gtk.Toolbar()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_orientation(gtk.ORIENTATION_HORIZONTAL)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_style(gtk.TOOLBAR_ICONS)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar = Gtk.Toolbar()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_orientation(Gtk.ORIENTATION_HORIZONTAL)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_style(Gtk.TOOLBAR_ICONS)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_border_width(0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;tips = gtk.Tooltips()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;tips = Gtk.Tooltips()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# bold tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "bold.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.bold_button, "Bold")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.bold_id = self.bold_button.connect("toggled", lambda w: self.editor.textview.on_bold())<br/>
@@ -1222,18 +1222,18 @@ class TakeNoteWindow (gtk.Window):<br/>
 <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# italic tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "italic.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.italic_button, "Italic")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.italic_id = self.italic_button.connect("toggled", lambda w: self.editor.textview.on_italic())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.italic_button, -1)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# underline tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "underline.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.underline_button, "Underline")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.underline_id = self.underline_button.connect("toggled", lambda w: self.editor.textview.on_underline())<br/>
@@ -1241,35 +1241,35 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# font button<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel = gtk.FontButton()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;item = gtk.ToolItem()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel = Gtk.FontButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;item = Gtk.ToolItem()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;item.add(self.font_sel)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(item, "Set Font")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(item, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel.connect("font-set", lambda w: self.on_font_set())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# left tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "alignleft.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.left_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.left_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.left_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.left_button, "Left Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.left_id = self.left_button.connect("toggled", lambda w: self.editor.textview.on_left_justify())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.left_button, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# center tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "aligncenter.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.center_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.center_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.center_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.center_button, "Center Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.center_id = self.center_button.connect("toggled", lambda w: self.editor.textview.on_center_justify())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.center_button, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# right tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "alignright.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.right_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.right_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.right_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.right_button, "Right Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.right_id = self.right_button.connect("toggled", lambda w: self.editor.textview.on_right_justify())<br/>
@@ -1316,8 +1316,8 @@ import sys, os, tempfile, re<br/>
 # pygtk imports<br/>
 import pygtk<br/>
 pygtk.require('2.0')<br/>
-import gtk, gobject, pango<br/>
-from gtk import gdk<br/>
+from gi.repository import Gtk, gobject, pango<br/>
+from Gtk import gdk<br/>
 <br/>
 # takenote imports<br/>
 import takenotelib as takenote<br/>
@@ -1328,8 +1328,8 @@ from takenotelib.richtext import RichTextView, RichTextImage<br/>
 PROGRAM_NAME = "TakeNode"<br/>
 PROGRAM_VERSION = "0.1"<br/>
 <br/>
-DROP_YES = ("drop_yes", gtk.TARGET_SAME_WIDGET, 0)<br/>
-DROP_NO = ("drop_no", gtk.TARGET_SAME_WIDGET, 0)<br/>
+DROP_YES = ("drop_yes", Gtk.TARGET_SAME_WIDGET, 0)<br/>
+DROP_NO = ("drop_no", Gtk.TARGET_SAME_WIDGET, 0)<br/>
 <br/>
 <br/>
 BASEDIR = ""<br/>
@@ -1340,12 +1340,12 @@ def get_resource(*path_list):<br/>
 def compute_new_path(model, target, drop_position):<br/>
  &nbsp; &nbsp;path = model.get_path(target)<br/>
  &nbsp; &nbsp;<br/>
- &nbsp; &nbsp;if drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
- &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER: &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp;if drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
+ &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER: &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path + (0,) #model.get_n_children(target),)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_BEFORE:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_BEFORE:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_AFTER:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path[:-1] + (path[-1] + 1,)<br/>
  &nbsp; &nbsp;else:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;raise Exception("unknown drop position %s" %<br/>
@@ -1356,12 +1356,12 @@ def copy_row(treeview, model, source, target, drop_position):<br/>
 <br/>
  &nbsp; &nbsp;# move source row<br/>
  &nbsp; &nbsp;source_row = model[source]<br/>
- &nbsp; &nbsp;if drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
- &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:<br/>
+ &nbsp; &nbsp;if drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
+ &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.prepend(target, source_row)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_BEFORE:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_BEFORE:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.insert_before(None, target, source_row)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_AFTER:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.insert_after(None, target, source_row)<br/>
  &nbsp; &nbsp;else:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;raise Exception("unknown drop position %s" %<br/>
@@ -1371,7 +1371,7 @@ def copy_row(treeview, model, source, target, drop_position):<br/>
  &nbsp; &nbsp;for n in range(model.iter_n_children(source)):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;child = model.iter_nth_child(source, n)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;copy_row(treeview, model, child, new,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; gtk.TREE_VIEW_DROP_INTO_OR_BEFORE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE)<br/>
 <br/>
  &nbsp; &nbsp;# expand view to keep the same expansion pattern<br/>
  &nbsp; &nbsp;source_is_expanded = treeview.row_expanded(model.get_path(source))<br/>
@@ -1473,17 +1473,17 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.on_select_node = None<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a TreeStore with one string column to use as the model<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.model = gtk.TreeStore(gdk.Pixbuf, str, object)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.model = Gtk.TreeStore(gdk.Pixbuf, str, object)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.datamap = DataMap()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init treeview<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = gtk.TreeView(self.model)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = Gtk.TreeView(self.model)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("key-release-event", self.on_key_released)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.expanded_id = self.treeview.connect("row-expanded", self.on_row_expanded)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.collapsed_id = self.treeview.connect("row-collapsed", self.on_row_collapsed) <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-motion", self.on_drag_motion)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-data-received", self.on_drag_data_received)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.get_selection().set_mode(Gtk.SELECTION_MULTIPLE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.get_selection().connect("changed", self.on_select_changed)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_headers_visible(False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_property("enable-tree-lines", True)<br/>
@@ -1491,19 +1491,19 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_search_column(1) <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_reorderable(True) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_source(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;gtk.gdk.BUTTON1_MASK, [DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Gtk.gdk.BUTTON1_MASK, [DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_dest(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_fixed_height_mode(True) &nbsp; &nbsp; &nbsp; <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create the treeview column<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_clickable(False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(self.column)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a cell renderers<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_icon = gtk.CellRendererPixbuf()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_icon = Gtk.CellRendererPixbuf()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = Gtk.CellRendererText()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text.connect("edited", self.on_edit_title)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text.set_property("editable", True) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
@@ -1517,9 +1517,9 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.icon = pixbuf = gdk.pixbuf_new_from_file(get_resource("images", "open.xpm"))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(gtk.SHADOW_IN)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(Gtk.SHADOW_IN)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.add(self.treeview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.view = scrolled_window<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
@@ -1544,9 +1544,9 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# determine if drag is allowed<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;if self.drop_allowed(source_path, target_path, drop_position):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp;def on_drag_data_received(self, treeview, drag_context, x, y,<br/>
@@ -1611,8 +1611,8 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.datamap.assert_path((0,), lambda x: x.get_children())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;# make sure to show new children<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER):<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.expand_row(target_path, False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drag_context.finish(True, True, eventtime)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
@@ -1625,8 +1625,8 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""Determine if drop is allowed"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return dnd_sanity_check(source_path, target_path) and \<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; not (target_path == (0,) and \<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(drop_position == gtk.TREE_VIEW_DROP_BEFORE or <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_AFTER))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(drop_position == Gtk.TREE_VIEW_DROP_BEFORE or <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_AFTER))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_row_expanded(self, treeview, it, path):<br/>
@@ -1755,25 +1755,25 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.display_columns = []<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init model<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.model = gtk.ListStore(gdk.Pixbuf, str, str, int, str, int, object)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.model = Gtk.ListStore(gdk.Pixbuf, str, str, int, str, int, object)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.model.connect("rows-reordered", self.on_rows_reordered)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.datamap = DataMap() &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init view<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = gtk.TreeView(self.model)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = Gtk.TreeView(self.model)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("key-release-event", self.on_key_released) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.get_selection().connect("changed", self.on_select_changed)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-motion", self.on_drag_motion)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_rules_hint(True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_source(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;gtk.gdk.BUTTON1_MASK, [DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Gtk.gdk.BUTTON1_MASK, [DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_dest(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_fixed_height_mode(True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_icon = gtk.CellRendererPixbuf()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_icon = Gtk.CellRendererPixbuf()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_title("Title")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(self.column)<br/>
@@ -1789,22 +1789,22 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.add_attribute(self.cell_text, 'text', 1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_title("Created")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_sort_column_id(3)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#column.set_property("min-width", 5)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.pack_start(cell_text, True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.add_attribute(cell_text, 'text', 2)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(column)<br/>
 <br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_sort_column_id(5)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#column.set_property("min-width", 5)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_title("Modified")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.pack_start(cell_text, True)<br/>
@@ -1815,9 +1815,9 @@ class TakeNoteSelector (object):<br/>
 <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Create a new scrolled window, with scrollbars only if needed<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC) #gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(gtk.SHADOW_IN) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(Gtk.POLICY_NEVER, Gtk.POLICY_AUTOMATIC) #Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(Gtk.SHADOW_IN) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.add(self.treeview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.view = scrolled_window<br/>
 <br/>
@@ -1843,9 +1843,9 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# determine if drag is allowed<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;if self.drop_allowed(source_path, target_path, drop_position):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_rows_reordered(self, treemodel, path, it, new_order):<br/>
@@ -1975,9 +1975,9 @@ class TakeNoteSelector (object):<br/>
 class TakeNoteEditor (object):<br/>
 <br/>
  &nbsp; &nbsp;def __init__(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw.set_shadow_type(gtk.SHADOW_IN)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw.set_shadow_type(Gtk.SHADOW_IN)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.textview = RichTextView()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;sw.add(self.textview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;sw.show()<br/>
@@ -2011,9 +2011,9 @@ class TakeNoteEditor (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return self.textview.is_modified()<br/>
 <br/>
 <br/>
-class TakeNoteWindow (gtk.Window):<br/>
+class TakeNoteWindow (Gtk.Window):<br/>
  &nbsp; &nbsp;def __init__(self, basedir=""):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;Gtk.Window.__init__(self, Gtk.WINDOW_TOPLEVEL)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.basedir = basedir<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.set_title("TakeNote")<br/>
@@ -2043,7 +2043,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Layout<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# vertical box<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;main_vbox = gtk.VBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;main_vbox = Gtk.VBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.add(main_vbox)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# menu bar<br/>
@@ -2054,32 +2054,32 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# toolbar<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(self.make_toolbar(), False, True, 0) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2 = gtk.VBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2 = Gtk.VBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2.set_border_width(1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(main_vbox2, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#==========================================<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a horizontal paned widget<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned = gtk.HPaned()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned = Gtk.HPaned()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2.pack_start(self.hpaned, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned.set_position(takenote.DEFAULT_HSASH_POS)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a vertical paned widget<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned = gtk.VPaned()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned = Gtk.VPaned()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned.add2(self.vpaned)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned.set_position(takenote.DEFAULT_VSASH_POS)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# status bar<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;status_hbox = gtk.HBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;status_hbox = Gtk.HBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(status_hbox, False, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar = gtk.Statusbar() &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar = Gtk.Statusbar() &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;status_hbox.pack_start(self.status_bar, False, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar.set_property("has-resize-grip", False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar.set_size_request(300, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.stats_bar = gtk.Statusbar()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.stats_bar = Gtk.Statusbar()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;status_hbox.pack_start(self.stats_bar, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
@@ -2122,39 +2122,39 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp;def on_new_notebook(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.filew = gtk.FileChooserDialog("New Notebook", self, <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=gtk.FILE_CHOOSER_ACTION_CREATE_FOLDER,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", gtk.RESPONSE_CANCEL,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "New", gtk.RESPONSE_OK))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.filew = Gtk.FileChooserDialog("New Notebook", self, <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=Gtk.FILE_CHOOSER_ACTION_CREATE_FOLDER,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", Gtk.RESPONSE_CANCEL,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "New", Gtk.RESPONSE_OK))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.connect("response", self.on_new_notebook_response)<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.show()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_new_notebook_response(self, dialog, response):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;if response == gtk.RESPONSE_OK:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;if response == Gtk.RESPONSE_OK:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;filename = self.filew.get_filename()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;os.rmdir(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.new_notebook(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;elif response == gtk.RESPONSE_CANCEL:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;elif response == Gtk.RESPONSE_CANCEL:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_open_notebook(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.filew = gtk.FileChooserDialog("Open Notebook", self, <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=gtk.FILE_CHOOSER_ACTION_OPEN,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", gtk.RESPONSE_CANCEL,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "Open", gtk.RESPONSE_OK))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.filew = Gtk.FileChooserDialog("Open Notebook", self, <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=Gtk.FILE_CHOOSER_ACTION_OPEN,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", Gtk.RESPONSE_CANCEL,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "Open", Gtk.RESPONSE_OK))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.connect("response", self.on_open_notebook_response)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;file_filter = gtk.FileFilter()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;file_filter = Gtk.FileFilter()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.add_pattern("*.nbk")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.set_name("Notebook")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.add_filter(file_filter)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;file_filter = gtk.FileFilter()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;file_filter = Gtk.FileFilter()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.add_pattern("*")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.set_name("All files")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.add_filter(file_filter)<br/>
@@ -2162,12 +2162,12 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.show()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_open_notebook_response(self, dialog, response):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;if response == gtk.RESPONSE_OK:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;if response == Gtk.RESPONSE_OK:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;filename = self.filew.get_filename()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.open_notebook(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;elif response == gtk.RESPONSE_CANCEL:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;elif response == Gtk.RESPONSE_CANCEL:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
@@ -2253,7 +2253,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;def on_close(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""close the window and quit"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.close_notebook()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;gtk.main_quit()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;Gtk.main_quit()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return False<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
@@ -2390,12 +2390,12 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;def on_about(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""Display about dialog"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;about = gtk.AboutDialog()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;about = Gtk.AboutDialog()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_name(PROGRAM_NAME)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_version("v%s" % (PROGRAM_VERSION) )<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_copyright("Copyright Matt Rasmussen 2008")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_transient_for(self)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;about.set_position(Gtk.WIN_POS_CENTER_ON_PARENT)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.connect("response", lambda d,r: about.destroy())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.show()<br/>
  &nbsp; &nbsp;<br/>
@@ -2470,7 +2470,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;("/_Help/About", None, lambda w,e: self.on_about(), 0, None ),<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;) &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;accel_group = gtk.AccelGroup()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;accel_group = Gtk.AccelGroup()<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# This function initializes the item factory.<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 1: The type of menu - can be MenuBar, Menu,<br/>
@@ -2478,7 +2478,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 2: The path of the menu.<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 3: A reference to an AccelGroup. The item factory sets up<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;the accelerator table while generating menus.<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;item_factory = gtk.ItemFactory(gtk.MenuBar, "&lt;main&gt;", accel_group)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;item_factory = Gtk.ItemFactory(Gtk.MenuBar, "&lt;main&gt;", accel_group)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# This method generates the menu items. Pass to the item factory<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# &nbsp;the list of menu items<br/>
@@ -2496,17 +2496,17 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def make_toolbar(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar = gtk.Toolbar()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_orientation(gtk.ORIENTATION_HORIZONTAL)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_style(gtk.TOOLBAR_ICONS)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar = Gtk.Toolbar()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_orientation(Gtk.ORIENTATION_HORIZONTAL)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_style(Gtk.TOOLBAR_ICONS)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_border_width(0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;tips = gtk.Tooltips()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;tips = Gtk.Tooltips()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# bold tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "bold.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.bold_button, "Bold")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.bold_id = self.bold_button.connect("toggled", lambda w: self.editor.textview.on_bold())<br/>
@@ -2514,18 +2514,18 @@ class TakeNoteWindow (gtk.Window):<br/>
 <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# italic tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "italic.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.italic_button, "Italic")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.italic_id = self.italic_button.connect("toggled", lambda w: self.editor.textview.on_italic())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.italic_button, -1)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# underline tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "underline.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.underline_button, "Underline")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.underline_id = self.underline_button.connect("toggled", lambda w: self.editor.textview.on_underline())<br/>
@@ -2533,35 +2533,35 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# font button<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel = gtk.FontButton()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;item = gtk.ToolItem()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel = Gtk.FontButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;item = Gtk.ToolItem()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;item.add(self.font_sel)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(item, "Set Font")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(item, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel.connect("font-set", lambda w: self.on_font_set())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# left tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "alignleft.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.left_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.left_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.left_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.left_button, "Left Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.left_id = self.left_button.connect("toggled", lambda w: self.editor.textview.on_left_justify())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.left_button, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# center tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "aligncenter.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.center_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.center_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.center_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.center_button, "Center Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.center_id = self.center_button.connect("toggled", lambda w: self.editor.textview.on_center_justify())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.center_button, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# right tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "alignright.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.right_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.right_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.right_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.right_button, "Right Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.right_id = self.right_button.connect("toggled", lambda w: self.editor.textview.on_right_justify())<br/>
@@ -2607,8 +2607,8 @@ import sys, os, tempfile, re<br/>
 # pygtk imports<br/>
 import pygtk<br/>
 pygtk.require('2.0')<br/>
-import gtk, gobject, pango<br/>
-from gtk import gdk<br/>
+from gi.repository import Gtk, gobject, pango<br/>
+from Gtk import gdk<br/>
 <br/>
 # takenote imports<br/>
 import takenotelib as takenote<br/>
@@ -2619,8 +2619,8 @@ from takenotelib.richtext import RichTextView, RichTextImage<br/>
 PROGRAM_NAME = "TakeNode"<br/>
 PROGRAM_VERSION = "0.1"<br/>
 <br/>
-DROP_YES = ("drop_yes", gtk.TARGET_SAME_WIDGET, 0)<br/>
-DROP_NO = ("drop_no", gtk.TARGET_SAME_WIDGET, 0)<br/>
+DROP_YES = ("drop_yes", Gtk.TARGET_SAME_WIDGET, 0)<br/>
+DROP_NO = ("drop_no", Gtk.TARGET_SAME_WIDGET, 0)<br/>
 <br/>
 <br/>
 BASEDIR = ""<br/>
@@ -2631,12 +2631,12 @@ def get_resource(*path_list):<br/>
 def compute_new_path(model, target, drop_position):<br/>
  &nbsp; &nbsp;path = model.get_path(target)<br/>
  &nbsp; &nbsp;<br/>
- &nbsp; &nbsp;if drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
- &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER: &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp;if drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
+ &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER: &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path + (0,) #model.get_n_children(target),)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_BEFORE:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_BEFORE:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_AFTER:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return path[:-1] + (path[-1] + 1,)<br/>
  &nbsp; &nbsp;else:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;raise Exception("unknown drop position %s" %<br/>
@@ -2647,12 +2647,12 @@ def copy_row(treeview, model, source, target, drop_position):<br/>
 <br/>
  &nbsp; &nbsp;# move source row<br/>
  &nbsp; &nbsp;source_row = model[source]<br/>
- &nbsp; &nbsp;if drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
- &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:<br/>
+ &nbsp; &nbsp;if drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \<br/>
+ &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.prepend(target, source_row)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_BEFORE:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_BEFORE:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.insert_before(None, target, source_row)<br/>
- &nbsp; &nbsp;elif drop_position == gtk.TREE_VIEW_DROP_AFTER:<br/>
+ &nbsp; &nbsp;elif drop_position == Gtk.TREE_VIEW_DROP_AFTER:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;new = model.insert_after(None, target, source_row)<br/>
  &nbsp; &nbsp;else:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;raise Exception("unknown drop position %s" %<br/>
@@ -2662,7 +2662,7 @@ def copy_row(treeview, model, source, target, drop_position):<br/>
  &nbsp; &nbsp;for n in range(model.iter_n_children(source)):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;child = model.iter_nth_child(source, n)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;copy_row(treeview, model, child, new,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; gtk.TREE_VIEW_DROP_INTO_OR_BEFORE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE)<br/>
 <br/>
  &nbsp; &nbsp;# expand view to keep the same expansion pattern<br/>
  &nbsp; &nbsp;source_is_expanded = treeview.row_expanded(model.get_path(source))<br/>
@@ -2764,17 +2764,17 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.on_select_node = None<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a TreeStore with one string column to use as the model<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.model = gtk.TreeStore(gdk.Pixbuf, str, object)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.model = Gtk.TreeStore(gdk.Pixbuf, str, object)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.datamap = DataMap()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init treeview<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = gtk.TreeView(self.model)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = Gtk.TreeView(self.model)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("key-release-event", self.on_key_released)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.expanded_id = self.treeview.connect("row-expanded", self.on_row_expanded)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.collapsed_id = self.treeview.connect("row-collapsed", self.on_row_collapsed) <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-motion", self.on_drag_motion)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-data-received", self.on_drag_data_received)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.get_selection().set_mode(gtk.SELECTION_MULTIPLE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.get_selection().set_mode(Gtk.SELECTION_MULTIPLE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.get_selection().connect("changed", self.on_select_changed)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_headers_visible(False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_property("enable-tree-lines", True)<br/>
@@ -2782,19 +2782,19 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_search_column(1) <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_reorderable(True) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_source(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;gtk.gdk.BUTTON1_MASK, [DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Gtk.gdk.BUTTON1_MASK, [DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_dest(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_fixed_height_mode(True) &nbsp; &nbsp; &nbsp; <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create the treeview column<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_clickable(False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(self.column)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a cell renderers<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_icon = gtk.CellRendererPixbuf()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_icon = Gtk.CellRendererPixbuf()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = Gtk.CellRendererText()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text.connect("edited", self.on_edit_title)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text.set_property("editable", True) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
@@ -2808,9 +2808,9 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.icon = pixbuf = gdk.pixbuf_new_from_file(get_resource("images", "open.xpm"))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(gtk.SHADOW_IN)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(Gtk.SHADOW_IN)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.add(self.treeview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.view = scrolled_window<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
@@ -2835,9 +2835,9 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# determine if drag is allowed<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;if self.drop_allowed(source_path, target_path, drop_position):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp;def on_drag_data_received(self, treeview, drag_context, x, y,<br/>
@@ -2902,8 +2902,8 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.datamap.assert_path((0,), lambda x: x.get_children())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;# make sure to show new children<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER):<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if (drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.expand_row(target_path, False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;drag_context.finish(True, True, eventtime)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
@@ -2916,8 +2916,8 @@ class TakeNoteTreeView (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""Determine if drop is allowed"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return dnd_sanity_check(source_path, target_path) and \<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; not (target_path == (0,) and \<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(drop_position == gtk.TREE_VIEW_DROP_BEFORE or <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; drop_position == gtk.TREE_VIEW_DROP_AFTER))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;(drop_position == Gtk.TREE_VIEW_DROP_BEFORE or <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; drop_position == Gtk.TREE_VIEW_DROP_AFTER))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_row_expanded(self, treeview, it, path):<br/>
@@ -3046,25 +3046,25 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.display_columns = []<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init model<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.model = gtk.ListStore(gdk.Pixbuf, str, str, int, str, int, object)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.model = Gtk.ListStore(gdk.Pixbuf, str, str, int, str, int, object)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.model.connect("rows-reordered", self.on_rows_reordered)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.datamap = DataMap() &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# init view<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = gtk.TreeView(self.model)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.treeview = Gtk.TreeView(self.model)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("key-release-event", self.on_key_released) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.get_selection().connect("changed", self.on_select_changed)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.connect("drag-motion", self.on_drag_motion)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.set_rules_hint(True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_source(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;gtk.gdk.BUTTON1_MASK, [DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Gtk.gdk.BUTTON1_MASK, [DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.enable_model_drag_dest(<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[DROP_YES], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#self.treeview.set_fixed_height_mode(True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_icon = gtk.CellRendererPixbuf()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_icon = Gtk.CellRendererPixbuf()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_title("Title")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(self.column)<br/>
@@ -3080,22 +3080,22 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.column.add_attribute(self.cell_text, 'text', 1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_title("Created")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_sort_column_id(3)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#column.set_property("min-width", 5)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.pack_start(cell_text, True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.add_attribute(cell_text, 'text', 2)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.treeview.append_column(column)<br/>
 <br/>
- &nbsp; &nbsp; &nbsp; &nbsp;cell_text = gtk.CellRendererText()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;column = gtk.TreeViewColumn()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;cell_text = Gtk.CellRendererText()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;column = Gtk.TreeViewColumn()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_property("resizable", True)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_sort_column_id(5)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(gtk.TREE_VIEW_COLUMN_FIXED)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;#column.set_sizing(Gtk.TREE_VIEW_COLUMN_FIXED)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#column.set_property("min-width", 5)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.set_title("Modified")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;column.pack_start(cell_text, True)<br/>
@@ -3106,9 +3106,9 @@ class TakeNoteSelector (object):<br/>
 <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Create a new scrolled window, with scrollbars only if needed<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC) #gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(gtk.SHADOW_IN) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_policy(Gtk.POLICY_NEVER, Gtk.POLICY_AUTOMATIC) #Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.set_shadow_type(Gtk.SHADOW_IN) &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;scrolled_window.add(self.treeview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.view = scrolled_window<br/>
 <br/>
@@ -3134,9 +3134,9 @@ class TakeNoteSelector (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# determine if drag is allowed<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;if self.drop_allowed(source_path, target_path, drop_position):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], gtk.gdk.ACTION_MOVE)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_YES], Gtk.gdk.ACTION_MOVE)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;else:<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], gtk.gdk.ACTION_MOVE) &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;treeview.enable_model_drag_dest([DROP_NO], Gtk.gdk.ACTION_MOVE) &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_rows_reordered(self, treemodel, path, it, new_order):<br/>
@@ -3266,9 +3266,9 @@ class TakeNoteSelector (object):<br/>
 class TakeNoteEditor (object):<br/>
 <br/>
  &nbsp; &nbsp;def __init__(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw = gtk.ScrolledWindow()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;sw.set_shadow_type(gtk.SHADOW_IN)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw = Gtk.ScrolledWindow()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;sw.set_shadow_type(Gtk.SHADOW_IN)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.textview = RichTextView()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;sw.add(self.textview)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;sw.show()<br/>
@@ -3302,9 +3302,9 @@ class TakeNoteEditor (object):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return self.textview.is_modified()<br/>
 <br/>
 <br/>
-class TakeNoteWindow (gtk.Window):<br/>
+class TakeNoteWindow (Gtk.Window):<br/>
  &nbsp; &nbsp;def __init__(self, basedir=""):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;Gtk.Window.__init__(self, Gtk.WINDOW_TOPLEVEL)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.basedir = basedir<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.set_title("TakeNote")<br/>
@@ -3334,7 +3334,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Layout<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# vertical box<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;main_vbox = gtk.VBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;main_vbox = Gtk.VBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.add(main_vbox)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# menu bar<br/>
@@ -3345,32 +3345,32 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# toolbar<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(self.make_toolbar(), False, True, 0) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2 = gtk.VBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2 = Gtk.VBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2.set_border_width(1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(main_vbox2, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;#==========================================<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a horizontal paned widget<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned = gtk.HPaned()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned = Gtk.HPaned()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox2.pack_start(self.hpaned, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned.set_position(takenote.DEFAULT_HSASH_POS)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# create a vertical paned widget<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned = gtk.VPaned()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned = Gtk.VPaned()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.hpaned.add2(self.vpaned)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.vpaned.set_position(takenote.DEFAULT_VSASH_POS)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# status bar<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;status_hbox = gtk.HBox(False, 0)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;status_hbox = Gtk.HBox(False, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;main_vbox.pack_start(status_hbox, False, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar = gtk.Statusbar() &nbsp; &nbsp; &nbsp;<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar = Gtk.Statusbar() &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;status_hbox.pack_start(self.status_bar, False, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar.set_property("has-resize-grip", False)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.status_bar.set_size_request(300, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.stats_bar = gtk.Statusbar()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.stats_bar = Gtk.Statusbar()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;status_hbox.pack_start(self.stats_bar, True, True, 0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
@@ -3413,39 +3413,39 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp;def on_new_notebook(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.filew = gtk.FileChooserDialog("New Notebook", self, <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=gtk.FILE_CHOOSER_ACTION_CREATE_FOLDER,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", gtk.RESPONSE_CANCEL,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "New", gtk.RESPONSE_OK))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.filew = Gtk.FileChooserDialog("New Notebook", self, <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=Gtk.FILE_CHOOSER_ACTION_CREATE_FOLDER,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", Gtk.RESPONSE_CANCEL,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "New", Gtk.RESPONSE_OK))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.connect("response", self.on_new_notebook_response)<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.show()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_new_notebook_response(self, dialog, response):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;if response == gtk.RESPONSE_OK:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;if response == Gtk.RESPONSE_OK:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;filename = self.filew.get_filename()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;os.rmdir(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.new_notebook(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;elif response == gtk.RESPONSE_CANCEL:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;elif response == Gtk.RESPONSE_CANCEL:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_open_notebook(self):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.filew = gtk.FileChooserDialog("Open Notebook", self, <br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=gtk.FILE_CHOOSER_ACTION_OPEN,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", gtk.RESPONSE_CANCEL,<br/>
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "Open", gtk.RESPONSE_OK))<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.filew = Gtk.FileChooserDialog("Open Notebook", self, <br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;action=Gtk.FILE_CHOOSER_ACTION_OPEN,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;buttons=("Cancel", Gtk.RESPONSE_CANCEL,<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "Open", Gtk.RESPONSE_OK))<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.connect("response", self.on_open_notebook_response)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;file_filter = gtk.FileFilter()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;file_filter = Gtk.FileFilter()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.add_pattern("*.nbk")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.set_name("Notebook")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.add_filter(file_filter)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;file_filter = gtk.FileFilter()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;file_filter = Gtk.FileFilter()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.add_pattern("*")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;file_filter.set_name("All files")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.add_filter(file_filter)<br/>
@@ -3453,12 +3453,12 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.filew.show()<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def on_open_notebook_response(self, dialog, response):<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;if response == gtk.RESPONSE_OK:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;if response == Gtk.RESPONSE_OK:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;filename = self.filew.get_filename()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.open_notebook(filename)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;elif response == gtk.RESPONSE_CANCEL:<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;elif response == Gtk.RESPONSE_CANCEL:<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dialog.destroy()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
@@ -3544,7 +3544,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;def on_close(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""close the window and quit"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.close_notebook()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;gtk.main_quit()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;Gtk.main_quit()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;return False<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
@@ -3681,12 +3681,12 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;def on_about(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;"""Display about dialog"""<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;about = gtk.AboutDialog()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;about = Gtk.AboutDialog()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_name(PROGRAM_NAME)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_version("v%s" % (PROGRAM_VERSION) )<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_copyright("Copyright Matt Rasmussen 2008")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.set_transient_for(self)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;about.set_position(gtk.WIN_POS_CENTER_ON_PARENT)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;about.set_position(Gtk.WIN_POS_CENTER_ON_PARENT)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.connect("response", lambda d,r: about.destroy())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;about.show()<br/>
  &nbsp; &nbsp;<br/>
@@ -3761,7 +3761,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;("/_Help/About", None, lambda w,e: self.on_about(), 0, None ),<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;) &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;accel_group = gtk.AccelGroup()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;accel_group = Gtk.AccelGroup()<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# This function initializes the item factory.<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 1: The type of menu - can be MenuBar, Menu,<br/>
@@ -3769,7 +3769,7 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 2: The path of the menu.<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# Param 3: A reference to an AccelGroup. The item factory sets up<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;the accelerator table while generating menus.<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;item_factory = gtk.ItemFactory(gtk.MenuBar, "&lt;main&gt;", accel_group)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;item_factory = Gtk.ItemFactory(Gtk.MenuBar, "&lt;main&gt;", accel_group)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# This method generates the menu items. Pass to the item factory<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# &nbsp;the list of menu items<br/>
@@ -3787,17 +3787,17 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp;<br/>
  &nbsp; &nbsp;def make_toolbar(self):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar = gtk.Toolbar()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_orientation(gtk.ORIENTATION_HORIZONTAL)<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_style(gtk.TOOLBAR_ICONS)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar = Gtk.Toolbar()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_orientation(Gtk.ORIENTATION_HORIZONTAL)<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_style(Gtk.TOOLBAR_ICONS)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.set_border_width(0)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;tips = gtk.Tooltips()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;tips = Gtk.Tooltips()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# bold tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "bold.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.bold_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.bold_button, "Bold")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.bold_id = self.bold_button.connect("toggled", lambda w: self.editor.textview.on_bold())<br/>
@@ -3805,18 +3805,18 @@ class TakeNoteWindow (gtk.Window):<br/>
 <br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# italic tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "italic.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.italic_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.italic_button, "Italic")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.italic_id = self.italic_button.connect("toggled", lambda w: self.editor.textview.on_italic())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.italic_button, -1)<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# underline tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "underline.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.underline_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.underline_button, "Underline")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.underline_id = self.underline_button.connect("toggled", lambda w: self.editor.textview.on_underline())<br/>
@@ -3824,35 +3824,35 @@ class TakeNoteWindow (gtk.Window):<br/>
  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<br/>
 <br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# font button<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel = gtk.FontButton()<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;item = gtk.ToolItem()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel = Gtk.FontButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;item = Gtk.ToolItem()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;item.add(self.font_sel)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(item, "Set Font")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(item, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.font_sel.connect("font-set", lambda w: self.on_font_set())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# left tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "alignleft.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.left_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.left_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.left_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.left_button, "Left Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.left_id = self.left_button.connect("toggled", lambda w: self.editor.textview.on_left_justify())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.left_button, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# center tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "aligncenter.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.center_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.center_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.center_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.center_button, "Center Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.center_id = self.center_button.connect("toggled", lambda w: self.editor.textview.on_center_justify())<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;toolbar.insert(self.center_button, -1)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;# right tool<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;icon = gtk.Image() # icon widget<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;icon = Gtk.Image() # icon widget<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;icon.set_from_file(get_resource("images", "alignright.xpm"))<br/>
- &nbsp; &nbsp; &nbsp; &nbsp;self.right_button = gtk.ToggleToolButton()<br/>
+ &nbsp; &nbsp; &nbsp; &nbsp;self.right_button = Gtk.ToggleToolButton()<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.right_button.set_icon_widget(icon)<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;tips.set_tip(self.right_button, "Right Justify")<br/>
  &nbsp; &nbsp; &nbsp; &nbsp;self.right_id = self.right_button.connect("toggled", lambda w: self.editor.textview.on_right_justify())<br/>

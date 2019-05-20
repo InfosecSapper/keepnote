@@ -32,7 +32,7 @@ import os, sys, threading, time, traceback, shutil, gettext, thread
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk.glade
+from gi.repository import Gtk.glade
 import gobject
 
 # keepnote imports
@@ -60,13 +60,13 @@ class UpdateNoteBookDialog (object):
     
     def show(self, notebook_filename, version=None, task=None):
 
-        self.xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.xml = Gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                  "update_notebook_dialog", 
                                  keepnote.GETTEXT_DOMAIN)
         self.dialog = self.xml.get_widget("update_notebook_dialog")
         self.xml.signal_autoconnect(self)
         self.dialog.connect("close", lambda w:
-                            self.dialog.response(gtk.RESPONSE_CANCEL))
+                            self.dialog.response(Gtk.RESPONSE_CANCEL))
         self.dialog.set_transient_for(self.main_window)
         
         self.text = self.xml.get_widget("update_message_label")
@@ -85,7 +85,7 @@ class UpdateNoteBookDialog (object):
         ret = False
         response = self.dialog.run()
         
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.RESPONSE_OK:
 
             # do backup
             if self.saved.get_active():
@@ -130,9 +130,9 @@ class UpdateNoteBookDialog (object):
         dialog = FileChooserDialog(
             _("Choose Backup Notebook Name"),
             self.main_window, 
-            action=gtk.FILE_CHOOSER_ACTION_SAVE, #CREATE_FOLDER,
-            buttons=(_("Cancel"), gtk.RESPONSE_CANCEL,
-                     _("Backup"), gtk.RESPONSE_OK),
+            action=Gtk.FILE_CHOOSER_ACTION_SAVE, #CREATE_FOLDER,
+            buttons=(_("Cancel"), Gtk.RESPONSE_CANCEL,
+                     _("Backup"), Gtk.RESPONSE_OK),
             app=self.app,
             persistent_path="new_notebook_path")
         
@@ -142,7 +142,7 @@ class UpdateNoteBookDialog (object):
         dialog.destroy()
 
         
-        if response == gtk.RESPONSE_OK and new_filename:
+        if response == Gtk.RESPONSE_OK and new_filename:
             new_filename = unicode_gtk(new_filename)
             
             def func(task):

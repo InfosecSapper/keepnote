@@ -29,8 +29,8 @@
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
 
 # keepnote imports
 from keepnote.timestamp import get_str_timestamp
@@ -40,7 +40,7 @@ from keepnote.notebook import NoteBookError
 
 
 def get_path_from_node(model, node, node_col):
-    """Determine the path of a NoteBookNode 'node' in a gtk.TreeModel 'model'"""
+    """Determine the path of a NoteBookNode 'node' in a Gtk.TreeModel 'model'"""
 
     # NOTE: I must make no assumptions about the type of the model
     # I could change that if I make a wrapper around TreeSortModel
@@ -106,7 +106,7 @@ def iter_children(model, it):
 
 
 
-class BaseTreeModel (gtk.GenericTreeModel):
+class BaseTreeModel (Gtk.GenericTreeModel):
     """
     TreeModel that wraps a subset of a NoteBook
 
@@ -114,7 +114,7 @@ class BaseTreeModel (gtk.GenericTreeModel):
     """
 
     def __init__(self, roots=[]):
-        gtk.GenericTreeModel.__init__(self)
+        Gtk.GenericTreeModel.__init__(self)
         self.set_property("leak-references", False)        
         
         self._notebook = None
@@ -201,7 +201,7 @@ class BaseTreeModel (gtk.GenericTreeModel):
         self._node_column = col
 
 
-    if gtk.gtk_version < (2, 10):
+    if Gtk.gtk_version < (2, 10):
         # NOTE: not available in pygtk 2.8?
         
         def create_tree_iter(self, node):
@@ -343,12 +343,12 @@ class BaseTreeModel (gtk.GenericTreeModel):
 
 
     #=====================================
-    # gtk.GenericTreeModel implementation
+    # Gtk.GenericTreeModel implementation
 
     
     def on_get_flags(self):
         """Returns the flags of this treemodel"""
-        return gtk.TREE_MODEL_ITERS_PERSIST
+        return Gtk.TREE_MODEL_ITERS_PERSIST
     
     def on_get_n_columns(self):
         """Returns the number of columns in a treemodel"""

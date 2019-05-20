@@ -30,8 +30,8 @@ import os
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-#from gtk import gdk
-import gtk.glade
+#from Gtk import gdk
+from gi.repository import Gtk.glade
 
 
 # keepnote imports
@@ -59,26 +59,26 @@ class DragDropTestDialog (object):
         self.main_window = main_window
     
     def on_drag_and_drop_test(self):
-        self.drag_win = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.drag_win = Gtk.Window(Gtk.WINDOW_TOPLEVEL)
         self.drag_win.connect("delete-event", lambda d,r: self.drag_win.destroy())
-        self.drag_win.drag_dest_set(0, [], gtk.gdk.ACTION_DEFAULT)
+        self.drag_win.drag_dest_set(0, [], Gtk.gdk.ACTION_DEFAULT)
         
         self.drag_win.set_default_size(400, 400)
-        vbox = gtk.VBox(False, 0)
+        vbox = Gtk.VBox(False, 0)
         self.drag_win.add(vbox)
         
-        self.drag_win.mime = gtk.TextView()
+        self.drag_win.mime = Gtk.TextView()
         vbox.pack_start(self.drag_win.mime, False, True, 0)
         
-        self.drag_win.editor = gtk.TextView()
+        self.drag_win.editor = Gtk.TextView()
         self.drag_win.editor.connect("drag-motion", self.on_drag_and_drop_test_motion)        
         self.drag_win.editor.connect("drag-data-received", self.on_drag_and_drop_test_data)
         self.drag_win.editor.connect("paste-clipboard", self.on_drag_and_drop_test_paste)
-        self.drag_win.editor.set_wrap_mode(gtk.WRAP_WORD)
+        self.drag_win.editor.set_wrap_mode(Gtk.WRAP_WORD)
         
-        sw = gtk.ScrolledWindow()
-        sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        sw.set_shadow_type(gtk.SHADOW_IN)
+        sw = Gtk.ScrolledWindow()
+        sw.set_policy(Gtk.POLICY_AUTOMATIC, Gtk.POLICY_AUTOMATIC)
+        sw.set_shadow_type(Gtk.SHADOW_IN)
         sw.add(self.drag_win.editor)
         vbox.pack_start(sw)
         

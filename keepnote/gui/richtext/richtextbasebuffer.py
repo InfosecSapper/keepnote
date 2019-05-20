@@ -29,8 +29,8 @@ import sys
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
 
 
 # import textbuffer tools
@@ -62,11 +62,11 @@ def add_child_to_buffer(textbuffer, it, anchor):
 
 #=============================================================================
 
-class RichTextAnchor (gtk.TextChildAnchor):
+class RichTextAnchor (Gtk.TextChildAnchor):
     """Base class of all anchor objects in a RichTextView"""
     
     def __init__(self):
-        gtk.TextChildAnchor.__init__(self)
+        Gtk.TextChildAnchor.__init__(self)
         self._widgets = {} #None: None}
         self._buffer = None
 
@@ -118,14 +118,14 @@ gobject.signal_new("init", RichTextAnchor, gobject.SIGNAL_RUN_LAST,
 
 
 
-class RichTextBaseBuffer (gtk.TextBuffer):
+class RichTextBaseBuffer (Gtk.TextBuffer):
     """Basic RichTextBuffer with the following features
     
         - maintains undo/redo stacks
     """
 
     def __init__(self, tag_table=RichTextBaseTagTable()):
-        gtk.TextBuffer.__init__(self, tag_table)
+        Gtk.TextBuffer.__init__(self, tag_table)
         tag_table.add_textbuffer(self)
 
         # undo handler
@@ -284,13 +284,13 @@ class RichTextBaseBuffer (gtk.TextBuffer):
     def apply_tag(self, tag, start, end):
         if isinstance(tag, RichTextTag):
             tag.on_apply()
-        gtk.TextBuffer.apply_tag(self, tag, start, end)
+        Gtk.TextBuffer.apply_tag(self, tag, start, end)
         
         '''
 
     def remove_tag(self, tag, start, end):
         #assert self.get_tag_table().lookup(tag.get_property("name")) is not None, tag.get_property("name")
-        gtk.TextBuffer.remove_tag(self, tag, start, end)
+        Gtk.TextBuffer.remove_tag(self, tag, start, end)
 
 
 

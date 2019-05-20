@@ -34,8 +34,8 @@ import traceback
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-from gtk import gdk
-import gtk
+from Gtk import gdk
+from gi.repository import Gtk
 import gobject
 
 
@@ -92,7 +92,7 @@ class TabbedViewer (Viewer):
                                 ThreePaneViewer)
         
         # layout
-        self._tabs = gtk.Notebook()
+        self._tabs = Gtk.Notebook()
         self._tabs.show()
         self._tabs.set_property("show-border", False)
         self._tabs.set_property("homogeneous", True)
@@ -290,7 +290,7 @@ class TabbedViewer (Viewer):
     def _on_button_press(self, widget, event):
 
         if (self.get_toplevel().get_focus() == self._tabs and 
-            event.button == 1 and event.type == gtk.gdk._2BUTTON_PRESS):
+            event.button == 1 and event.type == Gtk.gdk._2BUTTON_PRESS):
 
             # double click, start tab name editing
             label = self._tabs.get_tab_label(self._tabs.get_nth_page(
@@ -516,7 +516,7 @@ class TabbedViewer (Viewer):
         """Add the view's UI to a window"""
         assert window == self._main_window
         self._ui_ready = True
-        self._action_group = gtk.ActionGroup("Tabbed Viewer")
+        self._action_group = Gtk.ActionGroup("Tabbed Viewer")
         self._uis = []
         add_actions(self._action_group, self._get_actions())
         self._main_window.get_uimanager().insert_action_group(
@@ -593,10 +593,10 @@ class TabbedViewer (Viewer):
 
 
 
-class TabLabel (gtk.HBox):
+class TabLabel (Gtk.HBox):
 
     def __init__(self, tabs, viewer, icon, text):
-        gtk.HBox.__init__(self, False, 2)
+        Gtk.HBox.__init__(self, False, 2)
 
         #self.name = None
 
@@ -604,30 +604,30 @@ class TabLabel (gtk.HBox):
         self.viewer = viewer
 
         # icon
-        self.icon = gtk.Image()
+        self.icon = Gtk.Image()
         if icon:
             self.icon.set_from_pixbuf(icon)
         self.icon.show()
 
         # label
-        self.label = gtk.Label(text)
+        self.label = Gtk.Label(text)
         self.label.set_alignment(0, .5)
         self.label.show()
 
         # entry
-        self.entry = gtk.Entry()
+        self.entry = Gtk.Entry()
         self.entry.set_alignment(0)
         self.entry.connect("focus-out-event", lambda w, e: self.stop_editing())
         self.entry.connect("editing-done", self._done)
         self._editing = False
 
         # close button
-        self.close_button_state = [gtk.STATE_NORMAL]
+        self.close_button_state = [Gtk.STATE_NORMAL]
         def highlight(w, state):
             self.close_button_state[0] = w.get_state()
             w.set_state(state)
 
-        self.eclose_button = gtk.EventBox()
+        self.eclose_button = Gtk.EventBox()
         self.close_button = keepnote.gui.get_resource_image("close_tab.png")
         self.eclose_button.add(self.close_button)
         self.eclose_button.show()
@@ -635,7 +635,7 @@ class TabLabel (gtk.HBox):
         self.close_button.set_alignment(0, .5)
         self.eclose_button.connect(
             "enter-notify-event", 
-            lambda w, e: highlight(w, gtk.STATE_PRELIGHT))
+            lambda w, e: highlight(w, Gtk.STATE_PRELIGHT))
         self.eclose_button.connect(
             "leave-notify-event", 
             lambda w, e: highlight(w, self.close_button_state[0]))
@@ -672,7 +672,7 @@ class TabLabel (gtk.HBox):
             self.entry.set_size_request(w, h)
             self.entry.show()
             self.entry.grab_focus()
-            self.entry.start_editing(gtk.gdk.Event(gtk.gdk.NOTHING))
+            self.entry.start_editing(Gtk.gdk.Event(Gtk.gdk.NOTHING))
             
 
     def stop_editing(self):

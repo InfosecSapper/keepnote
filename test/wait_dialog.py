@@ -5,7 +5,7 @@ import keepnote.gui
 from keepnote import notebook as notebooklib
 from keepnote.notebook import update
 
-import gtk, gobject
+from gi.repository import Gtk, gobject
 
 
 def mk_clean_dir(dirname):
@@ -53,7 +53,7 @@ class TestCaseWaitDialog (unittest.TestCase):
         task1 = keepnote.tasklib.Task(func1)
         d.show("dialog 1", "this is the first dialog", task1)
 
-        gtk.main()
+        Gtk.main()
 
         
 

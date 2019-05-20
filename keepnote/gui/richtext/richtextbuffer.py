@@ -34,8 +34,8 @@ from itertools import chain
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
 
 # TODO: remove
 # keepnote imports
@@ -132,20 +132,20 @@ def download_file(url, filename):
 # TODO: remove init signals
 
 
-class BaseWidget (gtk.EventBox):
+class BaseWidget (Gtk.EventBox):
     """Widgets in RichTextBuffer must support this interface"""
     
     def __init__(self):
-        gtk.EventBox.__init__(self)
+        Gtk.EventBox.__init__(self)
 
         # TODO: will this be configurable?
         # set to white background
-        self.modify_bg(gtk.STATE_NORMAL, gdk.Color(*DEFAULT_BGCOLOR))
+        self.modify_bg(Gtk.STATE_NORMAL, gdk.Color(*DEFAULT_BGCOLOR))
 
-        # gtk.STATE_ACTIVE
-        # gtk.STATE_PRELIGHT
-        # gtk.STATE_SELECTED
-        # gtk.STATE_INSENSITIVE        
+        # Gtk.STATE_ACTIVE
+        # Gtk.STATE_PRELIGHT
+        # Gtk.STATE_SELECTED
+        # Gtk.STATE_INSENSITIVE        
         
     def highlight(self):
         pass
@@ -154,7 +154,7 @@ class BaseWidget (gtk.EventBox):
         pass
 
     def show(self):
-        gtk.EventBox.show_all(self)
+        Gtk.EventBox.show_all(self)
 
 
 #gobject.type_register(BaseWidget)
@@ -167,12 +167,12 @@ class RichTextSep (BaseWidget):
 
     def __init__(self):
         BaseWidget.__init__(self)
-        self._sep = gtk.HSeparator()
+        self._sep = Gtk.HSeparator()
         self.add(self._sep)
         self._size = None
         
-        self._sep.modify_bg(gtk.STATE_NORMAL, gdk.Color(* DEFAULT_HR_COLOR))
-        self._sep.modify_fg(gtk.STATE_NORMAL, gdk.Color(* DEFAULT_HR_COLOR))
+        self._sep.modify_bg(Gtk.STATE_NORMAL, gdk.Color(* DEFAULT_HR_COLOR))
+        self._sep.modify_fg(Gtk.STATE_NORMAL, gdk.Color(* DEFAULT_HR_COLOR))
 
         self.connect("size-request", self._on_resize)
         self.connect("parent-set", self._on_parent_set)
@@ -236,12 +236,12 @@ class RichTextHorizontalRule (RichTextAnchor):
        
 
 class BaseImage (BaseWidget):
-    """Subclasses gtk.Image to make an Image Widget that can be used within
+    """Subclasses Gtk.Image to make an Image Widget that can be used within
        RichTextViewS"""
 
     def __init__(self, *args, **kargs):
         BaseWidget.__init__(self)
-        self._img = gtk.Image(*args, **kargs)
+        self._img = Gtk.Image(*args, **kargs)
         self._img.show()
         self.add(self._img)
     
@@ -394,7 +394,7 @@ class RichTextImage (RichTextAnchor):
 
     def set_from_stream(self, stream):
 
-        loader = gtk.gdk.PixbufLoader()
+        loader = Gtk.gdk.PixbufLoader()
         try:
             loader.write(stream.read())
             loader.close()
@@ -415,7 +415,7 @@ class RichTextImage (RichTextAnchor):
     def set_no_image(self):
         """Set the 'no image' icon"""
         for widget in self.get_all_widgets().itervalues():
-            widget.set_from_stock(gtk.STOCK_MISSING_IMAGE, gtk.ICON_SIZE_MENU)
+            widget.set_from_stock(Gtk.STOCK_MISSING_IMAGE, Gtk.ICON_SIZE_MENU)
         self._pixbuf_original = None
         self._pixbuf = None
 
@@ -524,7 +524,7 @@ class RichTextImage (RichTextAnchor):
                 height = int(factor * height2)
             
             self._pixbuf = self._pixbuf_original.scale_simple(
-                width, height, gtk.gdk.INTERP_BILINEAR)
+                width, height, Gtk.gdk.INTERP_BILINEAR)
 
             if set_widget:
                 for widget in self.get_all_widgets().itervalues():
@@ -553,7 +553,7 @@ class RichTextImage (RichTextAnchor):
             #self._widgets[None].grab_focus()
             self.emit("selected")
 
-            if event.type == gtk.gdk._2BUTTON_PRESS:
+            if event.type == Gtk.gdk._2BUTTON_PRESS:
                 # double left click activates image
                 self.emit("activated")
             

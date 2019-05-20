@@ -31,8 +31,8 @@ import gettext, urllib
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
 
 
 
@@ -56,8 +56,8 @@ MIME_NODE_CUT = "application/x-keepnote-node-cut"
 
 # treeview drag and drop config
 DROP_URI = ("text/uri-list", 0, 1)
-DROP_TREE_MOVE = ("drop_node", gtk.TARGET_SAME_APP, 0)
-#DROP_NO = ("drop_no", gtk.TARGET_SAME_WIDGET, 0)
+DROP_TREE_MOVE = ("drop_node", Gtk.TARGET_SAME_APP, 0)
+#DROP_NO = ("drop_no", Gtk.TARGET_SAME_WIDGET, 0)
 
 
 # treeview reorder rules
@@ -83,12 +83,12 @@ def compute_new_path(model, target, drop_position):
     
     path = model.get_path(target)
     
-    if drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \
-       drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER:
+    if drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or \
+       drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER:
         return path + (0,)
-    elif drop_position == gtk.TREE_VIEW_DROP_BEFORE:
+    elif drop_position == Gtk.TREE_VIEW_DROP_BEFORE:
         return path
-    elif drop_position == gtk.TREE_VIEW_DROP_AFTER:
+    elif drop_position == Gtk.TREE_VIEW_DROP_AFTER:
         return path[:-1] + (path[-1] + 1,)
     else:
         raise Exception("unknown drop position %s" %
@@ -108,11 +108,11 @@ class TextRendererValidator (object):
         self.parse = parse2
 
 
-class KeepNoteBaseTreeView (gtk.TreeView):
+class KeepNoteBaseTreeView (Gtk.TreeView):
     """Base class for treeviews of a NoteBook notes"""
 
     def __init__(self):
-        gtk.TreeView.__init__(self)
+        Gtk.TreeView.__init__(self)
         
         self.model = None
         self.rich_model = None
@@ -174,26 +174,26 @@ class KeepNoteBaseTreeView (gtk.TreeView):
 
         # configure drag and drop events
         self.enable_model_drag_source(
-           gtk.gdk.BUTTON1_MASK, [DROP_TREE_MOVE], gtk.gdk.ACTION_MOVE)
+           Gtk.gdk.BUTTON1_MASK, [DROP_TREE_MOVE], Gtk.gdk.ACTION_MOVE)
         self.drag_source_set(
-            gtk.gdk.BUTTON1_MASK,
+            Gtk.gdk.BUTTON1_MASK,
             [DROP_TREE_MOVE],
-            gtk.gdk.ACTION_MOVE)
+            Gtk.gdk.ACTION_MOVE)
         self.enable_model_drag_dest([DROP_TREE_MOVE, DROP_URI],
-                                    gtk.gdk.ACTION_MOVE|
-                                    gtk.gdk.ACTION_COPY|
-                                    gtk.gdk.ACTION_LINK)
+                                    Gtk.gdk.ACTION_MOVE|
+                                    Gtk.gdk.ACTION_COPY|
+                                    Gtk.gdk.ACTION_LINK)
 
         
         self.drag_dest_set(
-            gtk.DEST_DEFAULT_HIGHLIGHT | gtk.DEST_DEFAULT_MOTION,
+            Gtk.DEST_DEFAULT_HIGHLIGHT | Gtk.DEST_DEFAULT_MOTION,
             [DROP_TREE_MOVE, DROP_URI],
-            gtk.gdk.ACTION_DEFAULT|
-            gtk.gdk.ACTION_MOVE|
-            gtk.gdk.ACTION_COPY|
-            gtk.gdk.ACTION_LINK|
-            gtk.gdk.ACTION_PRIVATE|
-            gtk.gdk.ACTION_ASK)
+            Gtk.gdk.ACTION_DEFAULT|
+            Gtk.gdk.ACTION_MOVE|
+            Gtk.gdk.ACTION_COPY|
+            Gtk.gdk.ACTION_LINK|
+            Gtk.gdk.ACTION_PRIVATE|
+            Gtk.gdk.ACTION_ASK)
 
     
     def set_master_node(self, node):
@@ -251,7 +251,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         # set new model
         self.model = model
         self.rich_model = None
-        gtk.TreeView.set_model(self, self.model)
+        Gtk.TreeView.set_model(self, self.model)
 
 
         # set new model
@@ -350,7 +350,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
                          validator=TextRendererValidator()):
 
         # cell renderer text
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         cell.set_fixed_height_from_font(1)
         column.pack_start(cell, True)
         column.add_attribute(cell, 'text', 
@@ -383,7 +383,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
 
     def _add_pixbuf_render(self, column, attr, attr_open=None):
 
-        cell = gtk.CellRendererPixbuf()
+        cell = Gtk.CellRendererPixbuf()
         column.pack_start(cell, False)
         column.add_attribute(cell, 'pixbuf',
             self.rich_model.get_column_by_name(attr).pos)
@@ -735,7 +735,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         # remember editing state
         self.editing_path = path
 
-        # get node being edited and init gtk.Entry widget
+        # get node being edited and init Gtk.Entry widget
         node = self.model.get_value(self.model.get_iter(path), self._node_col)
         if node is not None:
             val = node.get_attr(attr)
@@ -800,7 +800,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         if len(nodes) > 0:
             clipboard = self.get_clipboard(selection=CLIPBOARD_NAME)
             
-            targets = [(MIME_NODE_COPY, gtk.TARGET_SAME_APP, -1),
+            targets = [(MIME_NODE_COPY, Gtk.TARGET_SAME_APP, -1),
                        ("text/html", 0, -1),
                        ("text/plain", 0, -1)]
             
@@ -814,8 +814,8 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         if len(nodes) > 0:
             clipboard = self.get_clipboard(selection=CLIPBOARD_NAME)
             
-            targets = [(MIME_TREE_COPY, gtk.TARGET_SAME_APP, -1),
-                       (MIME_NODE_COPY, gtk.TARGET_SAME_APP, -1),
+            targets = [(MIME_TREE_COPY, Gtk.TARGET_SAME_APP, -1),
+                       (MIME_NODE_COPY, Gtk.TARGET_SAME_APP, -1),
                        ("text/html", 0, -1),
                        ("text/plain", 0, -1)]
             
@@ -831,7 +831,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         if len(nodes) > 0:
             clipboard = self.get_clipboard(selection=CLIPBOARD_NAME)
             
-            targets = [(MIME_NODE_CUT, gtk.TARGET_SAME_APP, -1),
+            targets = [(MIME_NODE_CUT, Gtk.TARGET_SAME_APP, -1),
                        ("text/html", 0, -1),
                        ("text/plain", 0, -1)]
             
@@ -1067,7 +1067,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         # setup the drag icon
         if self._get_icon:
             pixbuf = self._get_icon(source)
-            pixbuf = pixbuf.scale_simple(40, 40, gtk.gdk.INTERP_BILINEAR)
+            pixbuf = pixbuf.scale_simple(40, 40, Gtk.gdk.INTERP_BILINEAR)
             self.drag_source_set_icon_pixbuf(pixbuf)
 
         # clear the destination row
@@ -1088,7 +1088,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         Also record the destination for later use.
         """
         
-        # override gtk's default drag motion code
+        # override Gtk's default drag motion code
         if stop_emit:
             self.stop_emission("drag-motion")
 
@@ -1137,7 +1137,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         Callback for drop event
         """        
 
-        # override gtk's default drag drop code
+        # override Gtk's default drag drop code
         self.stop_emission("drag-drop")
 
         # if reordering is disabled, reject drop
@@ -1166,7 +1166,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         Callback for deleting data due to a 'move' event
         """
 
-        # override gtk's delete event
+        # override Gtk's delete event
         self.stop_emission("drag-data-delete")
 
         # do nothing else, deleting old copy is handled else where
@@ -1178,7 +1178,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         Callback for when data is requested by drag_get_data
         """
 
-        # override gtk's data get code
+        # override Gtk's data get code
         self.stop_emission("drag-data-get")
 
         # TODO: think more about what data to actually set for 
@@ -1197,7 +1197,7 @@ class KeepNoteBaseTreeView (gtk.TreeView):
         Callback for when data is received from source widget
         """
         
-        # override gtk's data received code
+        # override Gtk's data received code
         self.stop_emission("drag-data-received")
 
         # NOTE: force one more call to motion, since Windows ignores
@@ -1316,8 +1316,8 @@ class KeepNoteBaseTreeView (gtk.TreeView):
                 return False
             ptr = ptr.get_parent()
 
-        drop_into = (drop_position == gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or 
-                     drop_position == gtk.TREE_VIEW_DROP_INTO_OR_AFTER)
+        drop_into = (drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_BEFORE or 
+                     drop_position == Gtk.TREE_VIEW_DROP_INTO_OR_AFTER)
         
         return (
             # (1) do not let nodes move out of notebook root

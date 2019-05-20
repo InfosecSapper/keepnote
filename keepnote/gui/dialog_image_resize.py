@@ -30,8 +30,8 @@ import os
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-from gtk import gdk
-import gtk.glade
+from Gtk import gdk
+from gi.repository import Gtk.glade
 
 # keepnote imports
 import keepnote
@@ -75,7 +75,7 @@ class ImageResizeDialog (object):
             self.main_window.error("Cannot resize image that is not properly loaded")
             return
         
-        self.xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.xml = Gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                  domain=keepnote.GETTEXT_DOMAIN)
         self.dialog = self.xml.get_widget("image_resize_dialog")
         self.dialog.set_transient_for(self.main_window)
@@ -138,7 +138,7 @@ class ImageResizeDialog (object):
 
     def on_response(self, response):
         """Callback for a response button in dialog"""
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.RESPONSE_OK:
             width, height = self.get_size()
 
             p = self.app_pref.get("editors", "general")
@@ -151,16 +151,16 @@ class ImageResizeDialog (object):
             else:
                 self.main_window.error("Must specify positive integers for image size")
             
-        elif response == gtk.RESPONSE_CANCEL:
+        elif response == Gtk.RESPONSE_CANCEL:
             self.dialog.destroy()
 
-        elif response == gtk.RESPONSE_APPLY:
+        elif response == Gtk.RESPONSE_APPLY:
             width, height = self.get_size()
 
             if width is not None:
                 self.image.scale(width, height)
 
-        elif response == gtk.RESPONSE_REJECT:
+        elif response == Gtk.RESPONSE_REJECT:
             # restore default image size
                         
             width, height = self.image.get_original_size()

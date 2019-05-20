@@ -27,19 +27,19 @@
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-from gtk import gdk
-import gtk.glade
+from Gtk import gdk
+from gi.repository import Gtk.glade
 import gobject
 
 
 
-class FontSelector (gtk.ComboBox):
+class FontSelector (Gtk.ComboBox):
     """ComboBox for selection Font family"""
     
     def __init__(self):
-        gtk.ComboBox.__init__(self)
+        Gtk.ComboBox.__init__(self)
 
-        self._list = gtk.ListStore(str)
+        self._list = Gtk.ListStore(str)
         self.set_model(self._list)
         
         self._families = sorted(f.get_name()
@@ -49,7 +49,7 @@ class FontSelector (gtk.ComboBox):
         for f in self._families:
             self._list.append([f])
 
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.pack_start(cell, True)
         self.add_attribute(cell, 'text', 0)
         

@@ -30,8 +30,8 @@ import os
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-from gtk import gdk
-import gtk.glade
+from Gtk import gdk
+from gi.repository import Gtk.glade
 
 # keepnote imports
 import keepnote
@@ -50,47 +50,47 @@ class NewImageDialog (object):
 
     def show(self):
         
-        dialog = gtk.Dialog(_("New Image"),
+        dialog = Gtk.Dialog(_("New Image"),
                             self.main_window,
-                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                            (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                             gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
+                            Gtk.DIALOG_MODAL | Gtk.DIALOG_DESTROY_WITH_PARENT,
+                            (Gtk.STOCK_CANCEL, Gtk.RESPONSE_REJECT,
+                             Gtk.STOCK_OK, Gtk.RESPONSE_ACCEPT))
 
-        table = gtk.Table(3, 2)
+        table = Gtk.Table(3, 2)
         dialog.vbox.pack_start(table, False, True, 0)
 
-        label = gtk.Label(_("format:"))
+        label = Gtk.Label(_("format:"))
         table.attach(label, 0, 1, 0, 1,
                      xoptions=0, yoptions=0,
                      xpadding=2, ypadding=2)
 
         # make this a drop down
-        self.width = gtk.Entry()
+        self.width = Gtk.Entry()
         table.attach(self.width, 1, 2, 0, 1,
-                     xoptions=gtk.FILL, yoptions=0,
+                     xoptions=Gtk.FILL, yoptions=0,
                      xpadding=2, ypadding=2)
 
 
-        label = gtk.Label(_("width:"))
+        label = Gtk.Label(_("width:"))
         table.attach(label, 0, 1, 0, 1,
                      xoptions=0, yoptions=0,
                      xpadding=2, ypadding=2)
 
-        self.width = gtk.Entry()
+        self.width = Gtk.Entry()
         table.attach(self.width, 1, 2, 0, 1,
-                     xoptions=gtk.FILL, yoptions=0,
+                     xoptions=Gtk.FILL, yoptions=0,
                      xpadding=2, ypadding=2)
 
 
 
-        label = gtk.Label(_("height:"))
+        label = Gtk.Label(_("height:"))
         table.attach(label, 0, 1, 0, 1,
                      xoptions=0, yoptions=0,
                      xpadding=2, ypadding=2)
 
-        self.width = gtk.Entry()
+        self.width = Gtk.Entry()
         table.attach(self.width, 1, 2, 0, 1,
-                     xoptions=gtk.FILL, yoptions=0,
+                     xoptions=Gtk.FILL, yoptions=0,
                      xpadding=2, ypadding=2)
 
 

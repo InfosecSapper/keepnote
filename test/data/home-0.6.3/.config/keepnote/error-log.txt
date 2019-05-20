@@ -39,13 +39,13 @@ KeepNote 0.6.3: Mon Jul 19 11:23:54 2010
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:119: Warning: g_object_unref: assertion `G_IS_OBJECT (object)' failed
   "general_frame", keepnote.GETTEXT_DOMAIN)
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:236: GtkWarning: gtk_settings_get_for_screen: assertion `GDK_IS_SCREEN (screen)' failed
-  c = gtk.CheckButton(label)
+  c = Gtk.CheckButton(label)
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:236: Warning: g_object_get: assertion `G_IS_OBJECT (object)' failed
-  c = gtk.CheckButton(label)
+  c = Gtk.CheckButton(label)
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:254: Warning: invalid (NULL) pointer instance
-  c = gtk.combo_box_new_text(); c.show()
+  c = Gtk.combo_box_new_text(); c.show()
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:254: Warning: g_signal_connect_data: assertion `G_TYPE_CHECK_INSTANCE (instance)' failed
-  c = gtk.combo_box_new_text(); c.show()
+  c = Gtk.combo_box_new_text(); c.show()
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:255: GtkWarning: gdk_pango_context_get_for_screen: assertion `GDK_IS_SCREEN (screen)' failed
   c.append_text(_("Vertical"))
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:255: PangoWarning: pango_context_set_font_description: assertion `context != NULL' failed
@@ -103,9 +103,9 @@ KeepNote 0.6.3: Mon Jul 19 11:23:54 2010
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:256: PangoWarning: pango_layout_set_text: assertion `layout != NULL' failed
   c.append_text(_("Horizontal"))
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:302: Warning: invalid (NULL) pointer instance
-  c = gtk.combo_box_new_text(); c.show()
+  c = Gtk.combo_box_new_text(); c.show()
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:302: Warning: g_signal_connect_data: assertion `G_TYPE_CHECK_INSTANCE (instance)' failed
-  c = gtk.combo_box_new_text(); c.show()
+  c = Gtk.combo_box_new_text(); c.show()
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:305: GtkWarning: gdk_pango_context_get_for_screen: assertion `GDK_IS_SCREEN (screen)' failed
   c.append_text("default")
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:305: PangoWarning: pango_context_set_font_description: assertion `context != NULL' failed
@@ -187,11 +187,11 @@ KeepNote 0.6.3: Mon Jul 19 11:23:54 2010
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:429: GtkWarning: gtk_settings_get_for_screen: assertion `GDK_IS_SCREEN (screen)' failed
   "date_time_frame", keepnote.GETTEXT_DOMAIN)
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:541: GtkWarning: gtk_settings_get_for_screen: assertion `GDK_IS_SCREEN (screen)' failed
-  self.sw = gtk.ScrolledWindow()
+  self.sw = Gtk.ScrolledWindow()
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:558: GtkWarning: gtk_settings_get_for_screen: assertion `GDK_IS_SCREEN (screen)' failed
-  self.install_button = gtk.Button("Install new extension")
+  self.install_button = Gtk.Button("Install new extension")
 /mnt/big/archive/projects/keepnote/keepnote/gui/dialog_app_options.py:558: Warning: g_object_get: assertion `G_IS_OBJECT (object)' failed
-  self.install_button = gtk.Button("Install new extension")
+  self.install_button = Gtk.Button("Install new extension")
 enabling extension 'backup_tar'
 enabling extension 'new_file'
 enabling extension 'editor_insert_date'
@@ -200,9 +200,9 @@ enabling extension 'export_html'
 enabling extension 'python_prompt'
 enabling extension 'keepnote'
 /mnt/big/archive/projects/keepnote/keepnote/gui/main_window.py:96: Warning: invalid (NULL) pointer instance
-  gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+  Gtk.Window.__init__(self, Gtk.WINDOW_TOPLEVEL)
 /mnt/big/archive/projects/keepnote/keepnote/gui/main_window.py:96: Warning: g_signal_connect_data: assertion `G_TYPE_CHECK_INSTANCE (instance)' failed
-  gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
+  Gtk.Window.__init__(self, Gtk.WINDOW_TOPLEVEL)
 /mnt/big/archive/projects/keepnote/keepnote/gui/treeview.py:80: GtkWarning: gtk_settings_get_for_screen: assertion `GDK_IS_SCREEN (screen)' failed
   self.append_column(self.column)
 /mnt/big/archive/projects/keepnote/keepnote/gui/treeview.py:80: Warning: g_object_get: assertion `G_IS_OBJECT (object)' failed

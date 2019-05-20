@@ -39,8 +39,8 @@ import threading
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-from gtk import gdk
-import gtk.glade
+from Gtk import gdk
+from gi.repository import Gtk.glade
 import gobject
 
 
@@ -158,13 +158,13 @@ class PixbufCache (object):
             return self._pixbufs[key]
         else:
             # may raise GError
-            pixbuf = gtk.gdk.pixbuf_new_from_file(filename)
+            pixbuf = Gtk.gdk.pixbuf_new_from_file(filename)
 
             # resize
             if size:
                 if size != (pixbuf.get_width(), pixbuf.get_height()):
                     pixbuf = pixbuf.scale_simple(size[0], size[1],
-                                                 gtk.gdk.INTERP_BILINEAR)
+                                                 Gtk.gdk.INTERP_BILINEAR)
 
             self._pixbufs[key] = pixbuf
             return pixbuf
@@ -186,10 +186,10 @@ is_pixbuf_cached = pixbufs.is_pixbuf_cached
 
 
 def get_resource_image(*path_list):
-    """Returns gtk.Image from resource path"""
+    """Returns Gtk.Image from resource path"""
     
     filename = get_resource(IMAGE_DIR, *path_list)
-    img = gtk.Image()
+    img = Gtk.Image()
     img.set_from_file(filename)
     return img
 
@@ -202,12 +202,12 @@ def get_resource_pixbuf(*path_list, **options):
 def fade_pixbuf(pixbuf, alpha=128):
     """Returns a new faded a pixbuf"""
     width, height = pixbuf.get_width(), pixbuf.get_height()
-    pixbuf2 = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, True, 8, width, height)
+    pixbuf2 = Gtk.gdk.Pixbuf(Gtk.gdk.COLORSPACE_RGB, True, 8, width, height)
     pixbuf2.fill(0xffffff00) # fill with transparent
     pixbuf.composite(pixbuf2, 0, 0, width, height, 
-                     0, 0, 1.0, 1.0, gtk.gdk.INTERP_NEAREST, alpha)
+                     0, 0, 1.0, 1.0, Gtk.gdk.INTERP_NEAREST, alpha)
     #pixbuf.composite_color(pixbuf2, 0, 0, width, height, 
-    #                       0, 0, 1.0, 1.0, gtk.gdk.INTERP_NEAREST, alpha,
+    #                       0, 0, 1.0, 1.0, Gtk.gdk.INTERP_NEAREST, alpha,
     #                       0, 0, 1, 0xcccccc, 0x00000000)
     return pixbuf2
 
@@ -217,7 +217,7 @@ def fade_pixbuf(pixbuf, alpha=128):
 # misc. gui functions
   
 def get_accel_file():
-    """Returns gtk accel file"""
+    """Returns Gtk accel file"""
 
     return os.path.join(keepnote.get_user_pref_dir(), ACCEL_FILE)
 
@@ -227,9 +227,9 @@ def init_key_shortcuts():
 
     accel_file = get_accel_file()
     if os.path.exists(accel_file):
-        gtk.accel_map_load(accel_file)
+        Gtk.accel_map_load(accel_file)
     else:
-        gtk.accel_map_save(accel_file)
+        Gtk.accel_map_save(accel_file)
 
 
 def set_gtk_style(font_size=10, vsep=0):
@@ -237,7 +237,7 @@ def set_gtk_style(font_size=10, vsep=0):
     Set basic GTK style settings
     """
 
-    gtk.rc_parse_string("""
+    Gtk.rc_parse_string("""
       style "keepnote-treeview" {
         font_name = "%(font_size)d"
         GtkTreeView::vertical-separator = %(vsep)d
@@ -256,7 +256,7 @@ def update_file_preview(file_chooser, preview):
         
     filename = file_chooser.get_preview_filename()
     try:
-        pixbuf = gtk.gdk.pixbuf_new_from_file_at_size(filename, 128, 128)
+        pixbuf = Gtk.gdk.pixbuf_new_from_file_at_size(filename, 128, 128)
         preview.set_from_pixbuf(pixbuf)
         have_preview = True
     except:
@@ -264,15 +264,15 @@ def update_file_preview(file_chooser, preview):
     file_chooser.set_preview_widget_active(have_preview)
 
 
-class FileChooserDialog (gtk.FileChooserDialog):
+class FileChooserDialog (Gtk.FileChooserDialog):
     """File Chooser Dialog with a persistent path"""
 
     def __init__(self, title=None, parent=None,
-                 action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                 action=Gtk.FILE_CHOOSER_ACTION_OPEN,
                  buttons=None, backend=None,
                  app=None,
                  persistent_path=None):
-        gtk.FileChooserDialog.__init__(self, title, parent,
+        Gtk.FileChooserDialog.__init__(self, title, parent,
                                        action, buttons, backend)
 
         self._app = app
@@ -285,9 +285,9 @@ class FileChooserDialog (gtk.FileChooserDialog):
 
 
     def run(self):
-        response = gtk.FileChooserDialog.run(self)
+        response = Gtk.FileChooserDialog.run(self)
 
-        if (response == gtk.RESPONSE_OK and 
+        if (response == Gtk.RESPONSE_OK and 
             self._app and self._persistent_path):
             self._app.set_default_path(
                 self._persistent_path, unicode_gtk(self.get_current_folder()))
@@ -301,17 +301,17 @@ class FileChooserDialog (gtk.FileChooserDialog):
 # menu actions
 
 
-class UIManager (gtk.UIManager):
+class UIManager (Gtk.UIManager):
     """Specialization of UIManager for use in KeepNote"""
 
     def __init__(self, force_stock=False):
-        gtk.UIManager.__init__(self)
+        Gtk.UIManager.__init__(self)
         self.connect("connect-proxy", self._on_connect_proxy)
         self.connect("disconnect-proxy", self._on_disconnect_proxy)
 
         self.force_stock = force_stock
 
-        self.c = gtk.VBox()
+        self.c = Gtk.VBox()
 
     def _on_connect_proxy(self, uimanager, action, widget):
         """Callback for a widget entering management"""
@@ -340,33 +340,33 @@ class UIManager (gtk.UIManager):
         if not isinstance(action, (Action, ToggleAction)):
             return
 
-        if isinstance(widget, gtk.ImageMenuItem):
+        if isinstance(widget, Gtk.ImageMenuItem):
             if self.force_stock and action.get_property("stock-id"):
-                img = gtk.Image()
+                img = Gtk.Image()
                 img.set_from_stock(action.get_property("stock-id"),
-                                   gtk.ICON_SIZE_MENU)
+                                   Gtk.ICON_SIZE_MENU)
                 img.show()
                 widget.set_image(img)
                 
             elif action.icon:
-                img = gtk.Image()
+                img = Gtk.Image()
                 img.set_from_pixbuf(get_resource_pixbuf(action.icon))
                 img.show()
                 widget.set_image(img)
 
-        elif isinstance(widget, gtk.ToolButton):            
+        elif isinstance(widget, Gtk.ToolButton):            
             if self.force_stock and action.get_property("stock-id"):
                 w = widget.get_icon_widget()
                 if w:
                     w.set_from_stock(action.get_property("stock-id"),
-                                     gtk.ICON_SIZE_MENU)
+                                     Gtk.ICON_SIZE_MENU)
                 
             elif action.icon:
                 w = widget.get_icon_widget()
                 if w:
                     w.set_from_pixbuf(get_resource_pixbuf(action.icon))
                 else:
-                    img = gtk.Image()
+                    img = Gtk.Image()
                     img.set_from_pixbuf(get_resource_pixbuf(action.icon))
                     img.show()
                     widget.set_icon_widget(img)
@@ -374,11 +374,11 @@ class UIManager (gtk.UIManager):
         
 
 
-class Action (gtk.Action):
+class Action (Gtk.Action):
     def __init__(self, name, stockid=None, label=None,
                  accel="", tooltip="", func=None,
                  icon=None):
-        gtk.Action.__init__(self, name, label, tooltip, stockid)
+        Gtk.Action.__init__(self, name, label, tooltip, stockid)
         self.func = func
         self.accel = accel
         self.icon = icon
@@ -387,10 +387,10 @@ class Action (gtk.Action):
         if func:
             self.signal = self.connect("activate", func)
 
-class ToggleAction (gtk.ToggleAction):
+class ToggleAction (Gtk.ToggleAction):
     def __init__(self, name, stockid, label=None,
                  accel="", tooltip="", func=None, icon=None):
-        gtk.ToggleAction.__init__(self, name, label, tooltip, stockid)
+        Gtk.ToggleAction.__init__(self, name, label, tooltip, stockid)
         self.func = func
         self.accel = accel
         self.icon = icon
@@ -400,7 +400,7 @@ class ToggleAction (gtk.ToggleAction):
             self.signal = self.connect("toggled", func)
 
 def add_actions(actiongroup, actions):
-    """Add a list of Action's to an gtk.ActionGroup"""
+    """Add a list of Action's to an Gtk.ActionGroup"""
 
     for action in actions:
         actiongroup.add_action_with_accel(action, action.accel)
@@ -446,10 +446,10 @@ class KeepNote (keepnote.KeepNote):
         keepnote.KeepNote.set_lang(self)
 
         # setup glade with gettext
-        import gtk.glade
-        gtk.glade.bindtextdomain(keepnote.GETTEXT_DOMAIN, 
+        from gi.repository import Gtk.glade
+        Gtk.glade.bindtextdomain(keepnote.GETTEXT_DOMAIN, 
                                  keepnote.get_locale_dir())
-        gtk.glade.textdomain(keepnote.GETTEXT_DOMAIN)
+        Gtk.glade.textdomain(keepnote.GETTEXT_DOMAIN)
 
 
     def load_preferences(self):
@@ -548,7 +548,7 @@ class KeepNote (keepnote.KeepNote):
                     self, window)
                 if not dialog.show(filename, version=version, task=task):
                     self.error(_("Cannot open notebook (version too old)"))
-                    gtk.gdk.threads_leave()
+                    Gtk.gdk.threads_leave()
                     return None
         
         
@@ -840,22 +840,22 @@ class KeepNote (keepnote.KeepNote):
 
         dialog = FileChooserDialog(
             _("Attach File..."), parent_window, 
-            action=gtk.FILE_CHOOSER_ACTION_OPEN,
-            buttons=(_("Cancel"), gtk.RESPONSE_CANCEL,
-                     _("Attach"), gtk.RESPONSE_OK),
+            action=Gtk.FILE_CHOOSER_ACTION_OPEN,
+            buttons=(_("Cancel"), Gtk.RESPONSE_CANCEL,
+                     _("Attach"), Gtk.RESPONSE_OK),
             app=self,
             persistent_path="attach_file_path")
-        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_default_response(Gtk.RESPONSE_OK)
         dialog.set_select_multiple(True)
 
         # setup preview
-        preview = gtk.Image()
+        preview = Gtk.Image()
         dialog.set_preview_widget(preview)
         dialog.connect("update-preview", update_file_preview, preview)
 
         response = dialog.run()
 
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.RESPONSE_OK:
             if len(dialog.get_filenames()) > 0:
                 filenames = map(unicode_gtk, dialog.get_filenames())
                 self.attach_files(filenames, node,
@@ -921,10 +921,10 @@ class KeepNote (keepnote.KeepNote):
         if parent is None:
             parent = self.get_current_window()
 
-        dialog = gtk.MessageDialog(parent,
-            flags= gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            type=gtk.MESSAGE_ERROR, 
-            buttons=gtk.BUTTONS_OK, 
+        dialog = Gtk.MessageDialog(parent,
+            flags= Gtk.DIALOG_MODAL | Gtk.DIALOG_DESTROY_WITH_PARENT,
+            type=Gtk.MESSAGE_ERROR, 
+            buttons=Gtk.BUTTONS_OK, 
             message_format=text)
         dialog.connect("response", lambda d,r: d.destroy())
         dialog.set_title(_("Error"))
@@ -941,11 +941,11 @@ class KeepNote (keepnote.KeepNote):
         if parent is None:
             parent = self.get_current_window()
 
-        dialog = gtk.MessageDialog(
+        dialog = Gtk.MessageDialog(
             parent, 
-            flags= gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            type=gtk.MESSAGE_INFO, 
-            buttons=gtk.BUTTONS_OK, 
+            flags= Gtk.DIALOG_MODAL | Gtk.DIALOG_DESTROY_WITH_PARENT,
+            type=Gtk.MESSAGE_INFO, 
+            buttons=Gtk.BUTTONS_OK, 
             message_format=text)
         dialog.set_title(title)
         dialog.run()
@@ -958,25 +958,25 @@ class KeepNote (keepnote.KeepNote):
         if parent is None:
             parent = self.get_current_window()
 
-        dialog = gtk.MessageDialog(parent, 
-            flags= gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-            type=gtk.MESSAGE_QUESTION, 
-            buttons=gtk.BUTTONS_YES_NO, 
+        dialog = Gtk.MessageDialog(parent, 
+            flags= Gtk.DIALOG_MODAL | Gtk.DIALOG_DESTROY_WITH_PARENT,
+            type=Gtk.MESSAGE_QUESTION, 
+            buttons=Gtk.BUTTONS_YES_NO, 
             message_format=text)
 
         dialog.set_title(title)
         response = dialog.run()
         dialog.destroy()
         
-        return response == gtk.RESPONSE_YES
+        return response == Gtk.RESPONSE_YES
 
 
     def quit(self):
-        """Quit the gtk event loop"""
+        """Quit the Gtk event loop"""
         keepnote.KeepNote.quit(self)
 
-        gtk.accel_map_save(get_accel_file())
-        gtk.main_quit()
+        Gtk.accel_map_save(get_accel_file())
+        Gtk.main_quit()
 
 
     #===================================

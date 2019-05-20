@@ -29,7 +29,7 @@
 import os
 import sys
 
-# gtk imports
+# Gtk imports
 import gobject
 
 # keepnote imports

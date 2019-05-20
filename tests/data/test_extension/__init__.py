@@ -40,12 +40,12 @@ import keepnote.gui.extension
 try:
     import pygtk
     pygtk.require('2.0')
-    import gtk
+    from gi.repository import Gtk
 
     from keepnote.gui import dialog_app_options
 
 except ImportError:
-    # do not fail on gtk import error,
+    # do not fail on Gtk import error,
     # extension should be usable for non-graphical uses
     pass
 
@@ -71,7 +71,7 @@ class Extension (keepnote.gui.extension.Extension):
     def on_add_ui(self, window):
 
         # add menu options
-        self.action_group = gtk.ActionGroup("MainWindow")
+        self.action_group = Gtk.ActionGroup("MainWindow")
         self.action_group.add_actions([
                 ("Test Extension", None, "Test Extension",
                  "", None,

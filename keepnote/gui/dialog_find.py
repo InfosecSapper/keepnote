@@ -31,8 +31,8 @@ import os
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-from gtk import gdk
-import gtk.glade
+from Gtk import gdk
+from gi.repository import Gtk.glade
 
 # keepnote imports
 import keepnote
@@ -74,7 +74,7 @@ class KeepNoteFindDialog (object):
         
 
         
-        self.find_xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.find_xml = Gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                       domain=keepnote.GETTEXT_DOMAIN)    
         self.find_dialog = self.find_xml.get_widget("find_dialog")
         self.find_dialog.connect("delete-event", lambda w,e: self.on_find_response("close"))
@@ -114,14 +114,14 @@ class KeepNoteFindDialog (object):
     
     def on_find_key_released(self, widget, event):
         
-        if event.keyval == gtk.keysyms.G and \
-           event.state & gtk.gdk.SHIFT_MASK and \
-           event.state & gtk.gdk.CONTROL_MASK:
+        if event.keyval == Gtk.keysyms.G and \
+           event.state & Gtk.gdk.SHIFT_MASK and \
+           event.state & Gtk.gdk.CONTROL_MASK:
             self.on_find_response("find_prev")
             widget.stop_emission("key-release-event")
         
-        elif event.keyval == gtk.keysyms.g and \
-           event.state & gtk.gdk.CONTROL_MASK:
+        elif event.keyval == Gtk.keysyms.g and \
+           event.state & Gtk.gdk.CONTROL_MASK:
             self.on_find_response("find_next")
             widget.stop_emission("key-release-event")
     

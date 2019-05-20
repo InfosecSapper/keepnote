@@ -42,9 +42,9 @@ from xml.sax.saxutils import escape
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk, gobject, pango
-from gtk import gdk
-import gtk.keysyms   # this is necessary for py2exe discovery
+from gi.repository import Gtk, gobject, pango
+from Gtk import gdk
+from gi.repository import Gtk.keysyms   # this is necessary for py2exe discovery
 
 # try to import spell check
 try:
@@ -248,7 +248,7 @@ class RichTextError (StandardError):
             return self.msg
 
 
-class RichTextMenu (gtk.Menu):
+class RichTextMenu (Gtk.Menu):
     """A popup menu for child widgets in a RichTextView"""
     def __inti__(self):
         gkt.Menu.__init__(self)
@@ -419,11 +419,11 @@ class RichTextDragDrop (object):
 
 
 
-class RichTextView (gtk.TextView):
+class RichTextView (Gtk.TextView):
     """A RichText editor widget"""
 
     def __init__(self, textbuffer=None):
-        gtk.TextView.__init__(self, textbuffer)
+        Gtk.TextView.__init__(self, textbuffer)
 
         self._textbuffer = None
         self._buffer_callbacks = []
@@ -450,7 +450,7 @@ class RichTextView (gtk.TextView):
         self.enable_spell_check(True)
         
         # signals        
-        self.set_wrap_mode(gtk.WRAP_WORD)
+        self.set_wrap_mode(Gtk.WRAP_WORD)
         self.set_property("right-margin", TEXTVIEW_MARGIN)
         self.set_property("left-margin", TEXTVIEW_MARGIN)
 
@@ -491,17 +491,17 @@ class RichTextView (gtk.TextView):
         self._image_menu = RichTextMenu()
         self._image_menu.attach_to_widget(self, lambda w,m:None)
 
-        item = gtk.ImageMenuItem(gtk.STOCK_CUT)
+        item = Gtk.ImageMenuItem(Gtk.STOCK_CUT)
         item.connect("activate", lambda w: self.emit("cut-clipboard"))
         self._image_menu.append(item)
         item.show()
         
-        item = gtk.ImageMenuItem(gtk.STOCK_COPY)
+        item = Gtk.ImageMenuItem(Gtk.STOCK_COPY)
         item.connect("activate", lambda w: self.emit("copy-clipboard"))
         self._image_menu.append(item)
         item.show()
 
-        item = gtk.ImageMenuItem(gtk.STOCK_DELETE)
+        item = Gtk.ImageMenuItem(Gtk.STOCK_DELETE)
         def func(widget):
             if self._textbuffer:
                 self._textbuffer.delete_selection(True, True)
@@ -522,9 +522,9 @@ class RichTextView (gtk.TextView):
         
         # change buffer
         if textbuffer:
-            gtk.TextView.set_buffer(self, textbuffer)            
+            Gtk.TextView.set_buffer(self, textbuffer)            
         else:
-            gtk.TextView.set_buffer(self, self._blank_buffer)
+            Gtk.TextView.set_buffer(self, self._blank_buffer)
         self._textbuffer = textbuffer
 
 
@@ -577,7 +577,7 @@ class RichTextView (gtk.TextView):
         if self._textbuffer is None:
             return
 
-        if event.keyval == gtk.keysyms.ISO_Left_Tab:
+        if event.keyval == Gtk.keysyms.ISO_Left_Tab:
             # shift+tab is pressed
 
             it = self._textbuffer.get_iter_at_mark(self._textbuffer.get_insert())
@@ -588,7 +588,7 @@ class RichTextView (gtk.TextView):
                 self.unindent()
                 return True
 
-        if event.keyval == gtk.keysyms.Tab:
+        if event.keyval == Gtk.keysyms.Tab:
             # tab is pressed
             
             it = self._textbuffer.get_iter_at_mark(self._textbuffer.get_insert())
@@ -601,7 +601,7 @@ class RichTextView (gtk.TextView):
                 return True
 
 
-        if event.keyval == gtk.keysyms.Delete:
+        if event.keyval == Gtk.keysyms.Delete:
             # delete key pressed
 
             # TODO: make sure selection with delete does not fracture
@@ -643,10 +643,10 @@ class RichTextView (gtk.TextView):
         """Process context popup menu"""
 
         
-        if event.button == 1 and event.type == gtk.gdk._2BUTTON_PRESS:
+        if event.button == 1 and event.type == Gtk.gdk._2BUTTON_PRESS:
             # double left click
             
-            x, y = self.window_to_buffer_coords(gtk.TEXT_WINDOW_TEXT,
+            x, y = self.window_to_buffer_coords(Gtk.TEXT_WINDOW_TEXT,
                                                 int(event.x), int(event.y))
             it = self.get_iter_at_location(x, y)
 
@@ -753,7 +753,7 @@ class RichTextView (gtk.TextView):
         return
 
         '''
-        # override gtk's data get code
+        # override Gtk's data get code
         self.stop_emission("drag-data-get")
 
         sel = self._textbuffer.get_selection_bounds()
@@ -821,7 +821,7 @@ class RichTextView (gtk.TextView):
            contents[0][0] == "anchor" and \
            isinstance(contents[0][2][0], RichTextImage):
             # copy image
-            targets = [(MIME_RICHTEXT, gtk.TARGET_SAME_APP, RICHTEXT_ID)] + \
+            targets = [(MIME_RICHTEXT, Gtk.TARGET_SAME_APP, RICHTEXT_ID)] + \
                 [("text/x-moz-url-priv", 0, RICHTEXT_ID)] + \
                 [("text/html", 0, RICHTEXT_ID)] + \
                 [(x, 0, RICHTEXT_ID) for x in MIME_IMAGES]
@@ -832,7 +832,7 @@ class RichTextView (gtk.TextView):
 
         else:
             # copy text
-            targets = [(MIME_RICHTEXT, gtk.TARGET_SAME_APP, RICHTEXT_ID)] + \
+            targets = [(MIME_RICHTEXT, Gtk.TARGET_SAME_APP, RICHTEXT_ID)] + \
                 [("text/x-moz-url-priv", 0, RICHTEXT_ID)] + \
                 [("text/html", 0, RICHTEXT_ID)] + \
                 [(x, 0, RICHTEXT_ID) for x in MIME_TEXT]
@@ -1200,19 +1200,19 @@ class RichTextView (gtk.TextView):
         pos = 3
 
         # insert additional menu options after paste
-        item = gtk.ImageMenuItem(stock_id=gtk.STOCK_PASTE, accel_group=None)
+        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
         item.child.set_text(_("Paste As Plain Text"))
         item.connect("activate", lambda item: self.paste_clipboard_as_text())
         item.show()
         menu.insert(item, pos)
 
-        item = gtk.ImageMenuItem(stock_id=gtk.STOCK_PASTE, accel_group=None)
+        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
         item.child.set_text(_("Paste As Quote"))
         item.connect("activate", lambda item: self.paste_clipboard_as_quote())
         item.show()
         menu.insert(item, pos+1)
 
-        item = gtk.ImageMenuItem(stock_id=gtk.STOCK_PASTE, accel_group=None)
+        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
         item.child.set_text(_("Paste As Plain Text Quote"))
         item.connect("activate", 
             lambda item: self.paste_clipboard_as_quote(plain_text=True))

@@ -614,7 +614,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
-                <property name="label" translatable="yes">gtk-revert-to-saved</property>
+                <property name="label" translatable="yes">Gtk-revert-to-saved</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-2</property>
               </widget>
@@ -628,7 +628,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
-                <property name="label">gtk-apply</property>
+                <property name="label">Gtk-apply</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-10</property>
               </widget>
@@ -643,7 +643,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
-                <property name="label">gtk-cancel</property>
+                <property name="label">Gtk-cancel</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-6</property>
               </widget>
@@ -659,7 +659,7 @@
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
-                <property name="label">gtk-ok</property>
+                <property name="label">Gtk-ok</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-5</property>
               </widget>
@@ -836,7 +836,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">gtk-cancel</property>
+                <property name="label" translatable="yes">Gtk-cancel</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-6</property>
               </widget>
@@ -852,7 +852,7 @@
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">gtk-ok</property>
+                <property name="label" translatable="yes">Gtk-ok</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-5</property>
               </widget>
@@ -926,7 +926,7 @@
                                     <child>
                                       <widget class="GtkImage" id="image2">
                                         <property name="visible">True</property>
-                                        <property name="stock">gtk-open</property>
+                                        <property name="stock">Gtk-open</property>
                                         <property name="icon_size">2</property>
                                       </widget>
                                       <packing>
@@ -979,7 +979,7 @@
                                     <child>
                                       <widget class="GtkImage" id="image1">
                                         <property name="visible">True</property>
-                                        <property name="stock">gtk-open</property>
+                                        <property name="stock">Gtk-open</property>
                                         <property name="icon_size">2</property>
                                       </widget>
                                       <packing>
@@ -1015,7 +1015,7 @@
                         <child>
                           <widget class="GtkImage" id="icon_image">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-missing-image</property>
+                            <property name="stock">Gtk-missing-image</property>
                           </widget>
                           <packing>
                             <property name="left_attach">3</property>
@@ -1027,7 +1027,7 @@
                         <child>
                           <widget class="GtkImage" id="icon_open_image">
                             <property name="visible">True</property>
-                            <property name="stock">gtk-missing-image</property>
+                            <property name="stock">Gtk-missing-image</property>
                           </widget>
                           <packing>
                             <property name="left_attach">3</property>
@@ -1395,7 +1395,7 @@
                                     <child>
                                       <widget class="GtkImage" id="image5">
                                         <property name="visible">True</property>
-                                        <property name="stock">gtk-go-forward</property>
+                                        <property name="stock">Gtk-go-forward</property>
                                       </widget>
                                     </child>
                                   </widget>
@@ -1501,7 +1501,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">gtk-cancel</property>
+                <property name="label" translatable="yes">Gtk-cancel</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-6</property>
               </widget>
@@ -1515,7 +1515,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">gtk-ok</property>
+                <property name="label" translatable="yes">Gtk-ok</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-5</property>
               </widget>
@@ -1640,7 +1640,7 @@
                                             <child>
                                               <widget class="GtkImage" id="image7">
                                                 <property name="visible">True</property>
-                                                <property name="stock">gtk-open</property>
+                                                <property name="stock">Gtk-open</property>
                                                 <property name="icon_size">2</property>
                                               </widget>
                                               <packing>
@@ -2779,7 +2779,7 @@ the first Sunday are considered to be in week 0</property>
                                     <child>
                                       <widget class="GtkImage" id="image6">
                                         <property name="visible">True</property>
-                                        <property name="stock">gtk-open</property>
+                                        <property name="stock">Gtk-open</property>
                                         <property name="icon_size">2</property>
                                       </widget>
                                       <packing>

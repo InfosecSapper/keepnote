@@ -35,7 +35,7 @@ import keepnote
 import keepnote.gui.extension
 from keepnote import notebook as notebooklib
 from keepnote import tasklib
-import os,gtk
+import os,Gtk
 import pygtk
 pygtk.require('2.0')
 
@@ -140,7 +140,7 @@ class Extension (keepnote.gui.extension.Extension):
     def on_add_ui(self, window):
         """Initialize extension for a particular window"""
             
-        self.action_group = gtk.ActionGroup("MainWindow")
+        self.action_group = Gtk.ActionGroup("MainWindow")
         self.action_group.add_actions([
             ("Import BasketNotepad", None, "Import from Basket Directory",
              "", None,
@@ -195,7 +195,7 @@ def import_basket_directory(window, basket_directory):
     except IOError, e:
         errno, strerror = e
         print "I/O error(%s): %s" % (errno, strerror)
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "Sorry, this is not a data directory of Basket Notepad, baskets.xml not found!")
+        dialog = Gtk.MessageDialog(None, Gtk.DIALOG_MODAL, Gtk.MESSAGE_INFO, Gtk.BUTTONS_OK, "Sorry, this is not a data directory of Basket Notepad, baskets.xml not found!")
         dialog.run()
         dialog.destroy()
         return
@@ -208,7 +208,7 @@ def import_basket_directory(window, basket_directory):
         counter -= 1
     fd.close()
     if basket_identified == False:
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "Sorry, this is not a data directory of Basket Notepad!")
+        dialog = Gtk.MessageDialog(None, Gtk.DIALOG_MODAL, Gtk.MESSAGE_INFO, Gtk.BUTTONS_OK, "Sorry, this is not a data directory of Basket Notepad!")
         dialog.run()
         dialog.destroy()
         return

@@ -29,8 +29,8 @@
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-from gtk import gdk
-import gtk.glade
+from Gtk import gdk
+from gi.repository import Gtk.glade
 import gobject
 
 # keepnote imports
@@ -39,13 +39,13 @@ import keepnote
 _ = keepnote.translate
 
 
-class KeepNoteEditor (gtk.VBox):
+class KeepNoteEditor (Gtk.VBox):
     """
     Base class for all KeepNoteEditors
     """
 
     def __init__(self, app):
-        gtk.VBox.__init__(self, False, 0)
+        Gtk.VBox.__init__(self, False, 0)
         self._app = app
         self._notebook = None
         self._textview = None

@@ -1675,16 +1675,16 @@ msgid "delete icon"
 msgstr "skasuj ikonę"
 
 #: keepnote/rc/keepnote.glade.h:102
-msgid "gtk-cancel"
-msgstr "gtk-skasuj"
+msgid "Gtk-cancel"
+msgstr "Gtk-skasuj"
 
 #: keepnote/rc/keepnote.glade.h:103
-msgid "gtk-ok"
-msgstr "gtk-ok"
+msgid "Gtk-ok"
+msgstr "Gtk-ok"
 
 #: keepnote/rc/keepnote.glade.h:104
-msgid "gtk-revert-to-saved"
-msgstr "gtk-powróć-do-zapisanego"
+msgid "Gtk-revert-to-saved"
+msgstr "Gtk-powróć-do-zapisanego"
 
 #: keepnote/rc/keepnote.glade.h:106
 msgid "icon:"

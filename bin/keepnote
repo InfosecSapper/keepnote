@@ -217,7 +217,7 @@ def parse_argv(argv):
 def setup_threading():
     """Initialize threading environment"""
 
-    import gtk.gdk
+    from gi.repository import Gtk.gdk
     import gobject
 
     if keepnote.get_platform() == "windows":
@@ -228,26 +228,26 @@ def setup_threading():
         gobject.timeout_add(400, sleeper)
 
     else:
-        gtk.gdk.threads_init()
+        Gtk.gdk.threads_init()
 
 
 def gui_exec(function, *args, **kw):
     """Execute a function in the GUI thread"""
     
-    import gtk.gdk
+    from gi.repository import Gtk.gdk
     import gobject
 
     sem = threading.Semaphore()
     sem.acquire()
 
     def idle_func():
-        gtk.gdk.threads_enter()
+        Gtk.gdk.threads_enter()
         try:
             function(*args, **kw)
             return False
         finally:
             sem.release() # notify that command is done
-            gtk.gdk.threads_leave()
+            Gtk.gdk.threads_leave()
     gobject.idle_add(idle_func)
 
     # wait for command to execute
@@ -261,7 +261,7 @@ def start_gui(argv, options, args, cmd_exec):
     # pygtk imports
     import pygtk
     pygtk.require('2.0')
-    import gtk
+    from gi.repository import Gtk
 
     # setup threading environment
     setup_threading()
@@ -272,9 +272,9 @@ def start_gui(argv, options, args, cmd_exec):
     cmd_exec.set_app(app)
     need_gui = execute_command(app, argv)
     
-    # begin gtk event loop
+    # begin Gtk event loop
     if need_gui:
-        gtk.main()
+        Gtk.main()
 
 
 def start_non_gui(argv, options, args, cmd_exec):

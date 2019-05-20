@@ -31,7 +31,7 @@ import os, sys, threading, time, traceback
 # pygtk imports
 import pygtk
 pygtk.require('2.0')
-import gtk.glade
+from gi.repository import Gtk.glade
 import gobject
 
 # keepnote imports
@@ -49,7 +49,7 @@ class WaitDialog (object):
 
     
     def show(self, title, message, task, cancel=True):
-        self.xml = gtk.glade.XML(get_resource("rc", "keepnote.glade"),
+        self.xml = Gtk.glade.XML(get_resource("rc", "keepnote.glade"),
                                  "wait_dialog", keepnote.GETTEXT_DOMAIN)
         self.dialog = self.xml.get_widget("wait_dialog")
         self.xml.signal_autoconnect(self)

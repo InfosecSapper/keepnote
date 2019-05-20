@@ -42,8 +42,8 @@ except:
     include(find_path("GTK/bin/jpeg62.dll"), dest+"jpeg62.dll")
 
         
-include(find_path("GTK/lib/gtk-2.0/2.10.0/engines"), dest+"lib/gtk-2.0/2.10.0/engines")
-include(find_path("GTK/lib/gtk-2.0/2.10.0/loaders"), dest+"lib/gtk-2.0/2.10.0/loaders")
+include(find_path("GTK/lib/Gtk-2.0/2.10.0/engines"), dest+"lib/Gtk-2.0/2.10.0/engines")
+include(find_path("GTK/lib/Gtk-2.0/2.10.0/loaders"), dest+"lib/Gtk-2.0/2.10.0/loaders")
 include(find_path("GTK/lib/pango"), dest+"lib/pango")
 
 include(find_path("GTK/etc"), dest+"etc")
@@ -60,13 +60,13 @@ include(find_path("GTK/share/themes"), dest+"share/themes")
 include(find_path("GTK/share/xml"), dest+"share/xml")
 
 # make sure accels can be changed
-out = open(dest+"etc/gtk-2.0/gtkrc", "a")
+out = open(dest+"etc/Gtk-2.0/gtkrc", "a")
 
 # allow customization of shortcuts
-out.write("gtk-can-change-accels = 1\n")
+out.write("Gtk-can-change-accels = 1\n")
 
 # suppress bell sound
-out.write("gtk-error-bell = 0\n")
+out.write("Gtk-error-bell = 0\n")
 
 out.close()
 

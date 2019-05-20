@@ -1640,15 +1640,15 @@ msgid "delete icon"
 msgstr "simgeyi sil"
 
 #: keepnote/rc/keepnote.glade.h:102
-msgid "gtk-cancel"
+msgid "Gtk-cancel"
 msgstr ""
 
 #: keepnote/rc/keepnote.glade.h:103
-msgid "gtk-ok"
+msgid "Gtk-ok"
 msgstr ""
 
 #: keepnote/rc/keepnote.glade.h:104
-msgid "gtk-revert-to-saved"
+msgid "Gtk-revert-to-saved"
 msgstr ""
 
 #: keepnote/rc/keepnote.glade.h:106

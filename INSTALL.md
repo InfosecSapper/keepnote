@@ -85,7 +85,7 @@ All third-party libraries for the Linux version of KeepNote are
 cross-platform and should also work for Mac OS X.  
 
  - python (http://www.python.org)
- - gtk (http://www.gtk.org)
+ - Gtk (http://www.Gtk.org)
  - pygtk (http://www.pygtk.org)
 
 All of these libraries are also available through
@@ -97,7 +97,7 @@ directory.
 For example, yo install dependencies with MacPorts use the following command:
 
 ```sh
-sudo port install py27-gtk aspell aspell-dict-en sqlite3
+sudo port install py27-Gtk aspell aspell-dict-en sqlite3
 ```
 
 You may need to add your own language's dictionary (aspell-dict-XX) for 

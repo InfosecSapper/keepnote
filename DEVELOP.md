@@ -39,7 +39,7 @@ to work are given below, but higher version are likely to also work.
 
 ```
 python-2.5.1.msi
-gtk-dev-2.12.9-win32-2.exe
+Gtk-dev-2.12.9-win32-2.exe
 pygtk-2.12.1-1.win32-py2.5.exe
 pyobject-2.14.1-1.win32-py2.5.exe
 pycario-1.4.12-1.win32-py2.5.exe
