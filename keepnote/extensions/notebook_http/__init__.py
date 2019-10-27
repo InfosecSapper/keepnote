@@ -27,7 +27,7 @@
 
 # python imports
 import sys
-import thread
+import _thread
 
 # keepnote imports
 import keepnote
@@ -77,7 +77,7 @@ class Extension (keepnote.gui.extension.Extension):
                     continue
                 try:
                     self.app.add_command(command)
-                except Exception, e:
+                except Exception as e:
                     self.app.error("Could not add command '%s'" % command.name,
                                    e, sys.exc_info()[2])
 
@@ -92,7 +92,7 @@ class Extension (keepnote.gui.extension.Extension):
     def start_http(self, app, args):
         
         port = int(args[1])
-        notebook_path = unicode(args[2])
+        notebook_path = str(args[2])
 
         # connect to notebook on disk
         conn = NoteBookConnectionFS()
@@ -109,7 +109,7 @@ class Extension (keepnote.gui.extension.Extension):
         self._ports[port] = server
 
         keepnote.log_message("starting server:\n%s\n" % url)
-        thread.start_new_thread(server.serve_forever, ())
+        _thread.start_new_thread(server.serve_forever, ())
 
         if host == "localhost":
             keepnote.log_message("NOTE: server is local only.  Use ssh port forwarding for security.\n")

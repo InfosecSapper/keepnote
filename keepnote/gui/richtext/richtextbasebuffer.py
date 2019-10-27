@@ -80,7 +80,7 @@ class RichTextAnchor (Gtk.TextChildAnchor):
         return self._widgets
 
     def show(self):
-        for widget in self._widgets.itervalues():
+        for widget in self._widgets.values():
             if widget:
                 widget.show()
 
@@ -96,12 +96,12 @@ class RichTextAnchor (Gtk.TextChildAnchor):
         return anchor
     
     def highlight(self):
-        for widget in self._widgets.itervalues():
+        for widget in self._widgets.values():
             if widget:
                 widget.highlight()
     
     def unhighlight(self):
-        for widget in self._widgets.itervalues():
+        for widget in self._widgets.values():
             if widget:
                 widget.unhighlight()
 
@@ -321,7 +321,7 @@ class RichTextBaseBuffer (Gtk.TextBuffer):
         """Callback for text insert"""
 
         # NOTE: GTK does not give us a proper UTF string, so fix it
-        text = unicode(text, "utf_8")
+        text = str(text, "utf_8")
         length = len(text)
         
         # check to see if insert is allowed

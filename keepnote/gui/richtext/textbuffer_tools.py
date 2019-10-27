@@ -496,7 +496,7 @@ class Dom (LinkedTreeNode):
         LinkedTreeNode.__init__(self)
     
     def display_indent(self, indent, *text):
-        print "  " * indent + " ".join(text)
+        print("  " * indent + " ".join(text))
 
     def display(self, indent=0):
         self.display_indent(indent, "Dom")

@@ -27,8 +27,11 @@
 
 
 # python imports
-import sys, os, tempfile, re
-import urllib2
+import sys
+import os
+import tempfile
+import re
+import urllib
 from itertools import chain
 
 # pygtk imports
@@ -109,8 +112,8 @@ def download_file(url, filename):
     
     try:
         # open url and download image
-        opener = urllib2.build_opener()
-        request = urllib2.Request(url)
+        opener = urllib.request.build_opener()
+        request = urllib.request.Request(url)
         request.add_header('User-Agent', USER_AGENT)
         infile = opener.open(request)
 
@@ -120,7 +123,7 @@ def download_file(url, filename):
         
         return True
 
-    except Exception, e:
+    except Exception as e:
         return False
         
 
@@ -539,7 +542,7 @@ class RichTextImage (RichTextAnchor):
     # GUI callbacks
     
     def _on_image_destroy(self, widget):
-        for key, value in self._widgets.iteritems():
+        for key, value in self._widgets.items():
             if value == widget:
                 del self._widgets[key]
                 break

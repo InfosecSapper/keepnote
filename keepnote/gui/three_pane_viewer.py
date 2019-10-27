@@ -454,7 +454,7 @@ class ThreePaneViewer (Viewer):
             try:
                 for node in nodes:
                     node.trash()
-            except NoteBookError, e:
+            except NoteBookError as e:
                 self.emit("error", e.msg, e)
     
     
@@ -508,7 +508,7 @@ class ThreePaneViewer (Viewer):
 
         try:
             self.editor.view_nodes(nodes)
-        except RichTextError, e:
+        except RichTextError as e:
             self.emit("error", 
                       "Could not load page '%s'." % nodes[0].get_title(), e)
 

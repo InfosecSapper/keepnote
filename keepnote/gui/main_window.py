@@ -32,7 +32,7 @@ import shutil
 import subprocess
 import sys
 import time
-import thread
+import _thread
 import threading
 import uuid
 
@@ -102,7 +102,7 @@ class KeepNoteWindow (Gtk.Window):
         Gtk.Window.__init__(self, Gtk.WINDOW_TOPLEVEL)
         
         self._app = app # application object
-        self._winid = winid if winid else unicode(uuid.uuid4())
+        self._winid = winid if winid else str(uuid.uuid4())
         self._viewers = []
 
         # window state
@@ -628,7 +628,7 @@ class KeepNoteWindow (Gtk.Window):
                 # turn off try icon
                 self._tray_icon.set_property("visible", False)
         
-        except Exception, e:
+        except Exception as e:
             self.error("Error while closing", e, sys.exc_info()[2])
 
         return False
@@ -667,7 +667,7 @@ class KeepNoteWindow (Gtk.Window):
             self.viewer.save()            
             self.set_status(_("Notebook saved"))
             
-        except Exception, e:
+        except Exception as e:
             if not silent:
                 self.error(_("Could not save notebook."), e, sys.exc_info()[2])
                 self.set_status(_("Error saving notebook"))
@@ -704,7 +704,7 @@ class KeepNoteWindow (Gtk.Window):
             notebook.set_attr("title", os.path.basename(filename))
             notebook.close()
             self.set_status(_("Created '%s'") % notebook.get_title())
-        except NoteBookError, e:
+        except NoteBookError as e:
             self.error(_("Could not create new notebook."), e, sys.exc_info()[2])
             self.set_status("")
             return None
@@ -852,7 +852,7 @@ class KeepNoteWindow (Gtk.Window):
         #try:
         #    filename = notebooklib.normalize_notebook_dirname(
         #        filename, longpath=False)
-        #except Exception, e:
+        #except Exception as e:
         #    self.error(_("Could note find notebook '%s'.") % filename, e,
         #               sys.exc_info()[2])
         #    notebook = None
@@ -917,7 +917,7 @@ class KeepNoteWindow (Gtk.Window):
                     # terminate if search is canceled
                     if task.aborted():
                         break
-            except Exception, e:
+            except Exception as e:
                 self.error(_("Error during index"), e, sys.exc_info()[2])
             task.finish()
 
@@ -1021,7 +1021,7 @@ class KeepNoteWindow (Gtk.Window):
 
         try:
             self.get_notebook().empty_trash()
-        except NoteBookError, e:
+        except NoteBookError as e:
             self.error(_("Could not empty trash."), e, sys.exc_info()[2])
 
     
@@ -1043,7 +1043,7 @@ class KeepNoteWindow (Gtk.Window):
 
         try:
             self._app.run_external_app_node(app, node, kind)
-        except KeepNoteError, e:
+        except KeepNoteError as e:
             self.emit("error", e.msg, e, sys.exc_info()[2])
 
     
@@ -1100,7 +1100,7 @@ class KeepNoteWindow (Gtk.Window):
 
             # use text editor to view error log
             self._app.run_external_app("text_editor", filename2)
-        except Exception, e:
+        except Exception as e:
             self.error(_("Could not open error log") + ":\n" + str(e), 
                        e, sys.exc_info()[2])
 
@@ -1111,7 +1111,7 @@ class KeepNoteWindow (Gtk.Window):
             # use text editor to view error log
             filename = keepnote.get_user_pref_dir()
             self._app.run_external_app("file_explorer", filename)
-        except Exception, e:
+        except Exception as e:
             self.error(_("Could not open error log") + ":\n" + str(e), 
                        e, sys.exc_info()[2])
 
@@ -1127,7 +1127,7 @@ class KeepNoteWindow (Gtk.Window):
         def func(dialog, link, data):
             try:
                 self._app.open_webpage(link)
-            except KeepNoteError, e:
+            except KeepNoteError as e:
                 self.error(e.msg, e, sys.exc_info()[2])
         Gtk.about_dialog_set_url_hook(func, None)
         
@@ -1636,7 +1636,7 @@ class SearchBox (Gtk.Entry):
 
                 try:
                     maxstep = 20
-                    for i in xrange(maxstep):
+                    for i in range(maxstep):
                         # check if search is aborted
                         if task.aborted():
                             more = False
@@ -1655,7 +1655,7 @@ class SearchBox (Gtk.Entry):
                         # add result to gui
                         self._window.get_viewer().add_search_result(node)
                         
-                except Exception, e:
+                except Exception as e:
                     self._window.error(_("Unexpected error"), e)
                     more = False
                 finally:
@@ -1690,7 +1690,7 @@ class SearchBox (Gtk.Entry):
                     lock.acquire()
                 lock.release()
                 queue.put(None)
-            except Exception, e:
+            except Exception as e:
                 self.error(_("Unexpected error"), e)
 
             # wait for gui thread to finish

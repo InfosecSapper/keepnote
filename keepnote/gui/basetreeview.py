@@ -75,7 +75,7 @@ def parse_utf(text):
         return text.decode("utf16")
     else:
         text = text.replace("\x00", "")
-        return unicode(text, "utf8")
+        return str(text, "utf8")
 
 
 def compute_new_path(model, target, drop_position):
@@ -776,7 +776,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         # set new attr and catch errors
         try:
             node.set_attr(attr, new_val)
-        except NoteBookError, e:
+        except NoteBookError as e:
             self.emit("error", e.msg, e)
 
         # reselect node 
@@ -937,7 +937,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 try:
                     if node is not None:
                         node.duplicate(parent, recurse=True)
-                except Exception, e:
+                except Exception as e:
                     keepnote.log_error()
 
         elif selection_data.target == MIME_NODE_COPY:
@@ -945,7 +945,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 try:
                     if node is not None:
                         node.duplicate(parent)
-                except Exception, e:
+                except Exception as e:
                     keepnote.log_error()
             
 
@@ -1227,7 +1227,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 parent = self._get_node_from_path(new_path[:-1])
 
                 uris = parse_utf(selection_data.data)
-                uris = [x for x in (urllib.unquote(uri.strip())
+                uris = [x for x in (urllib.parse.unquote(uri.strip())
                                     for uri in uris.split("\n"))
                         if len(x) > 0 and x[0] != "#"]
 
@@ -1293,7 +1293,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 index = new_parent.get_children().index(source_node)
                 # NOTE: we update index in case moving source_node changes
                 # the drop path
-            except NoteBookError, e:
+            except NoteBookError as e:
                 # TODO: think about whether finish should always be false
                 drag_context.finish(False, False, eventtime)
                 self.emit("error", e.msg, e)
