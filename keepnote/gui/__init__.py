@@ -33,14 +33,14 @@ import os
 import subprocess
 import sys
 import tempfile
-import thread
+import _thread
 import threading
 
 # pygtk imports
-import pygtk
-pygtk.require('2.0')
+import gi
+gi.require_version("Gtk","3.0")
+from gi.repository import Gtk
 from Gtk import gdk
-from gi.repository import Gtk.glade
 import gobject
 
 
@@ -446,7 +446,7 @@ class KeepNote (keepnote.KeepNote):
         keepnote.KeepNote.set_lang(self)
 
         # setup glade with gettext
-        from gi.repository import Gtk.glade
+        #from gi.repository import Gtk.glade
         Gtk.glade.bindtextdomain(keepnote.GETTEXT_DOMAIN, 
                                  keepnote.get_locale_dir())
         Gtk.glade.textdomain(keepnote.GETTEXT_DOMAIN)
@@ -471,7 +471,7 @@ class KeepNote (keepnote.KeepNote):
         for window in self._windows:
             window.load_preferences()
 
-        for notebook in self._notebooks.itervalues():
+        for notebook in self._notebooks.values():
             notebook.enable_fulltext_search(p.get("use_fulltext_search",
                                                   default=True))
         
@@ -537,7 +537,7 @@ class KeepNote (keepnote.KeepNote):
 
             try:
                 version = notebooklib.get_notebook_version(filename)
-            except Exception, e:
+            except Exception as e:
                 self.error(_("Could not load notebook '%s'.") % filename,
                            e, sys.exc_info()[2])
                 return None
@@ -567,7 +567,7 @@ class KeepNote (keepnote.KeepNote):
                     notebook = notebooklib.NoteBook()
                     notebook.load(filename, conn)
                     task.set_result(notebook)
-                except Exception, e:
+                except Exception as e:
                     task.set_exc_info()
                     task.stop()
                 sem.release() # notify that notebook is loaded
@@ -599,7 +599,7 @@ class KeepNote (keepnote.KeepNote):
                     return None
             
 
-        except notebooklib.NoteBookVersionError, e:
+        except notebooklib.NoteBookVersionError as e:
             self.error(_("This version of %s cannot read this notebook.\n" 
                          "The notebook has version %d.  %s can only read %d.")
                        % (keepnote.PROGRAM_NAME,
@@ -609,12 +609,12 @@ class KeepNote (keepnote.KeepNote):
                        e, task.exc_info()[2])
             return None
 
-        except NoteBookError, e:
+        except NoteBookError as e:
             self.error(_("Could not load notebook '%s'.") % filename,
                        e, task.exc_info()[2])
             return None
 
-        except Exception, e:
+        except Exception as e:
             # give up opening notebook
             self.error(_("Could not load notebook '%s'.") % filename,
                        e, task.exc_info()[2])
@@ -655,7 +655,7 @@ class KeepNote (keepnote.KeepNote):
         """Save all opened notebooks"""
 
         # clear all window and viewer info in notebooks
-        for notebook in self._notebooks.itervalues():
+        for notebook in self._notebooks.values():
             notebook.pref.clear("windows", "ids")
             notebook.pref.clear("viewers", "ids")
 
@@ -664,7 +664,7 @@ class KeepNote (keepnote.KeepNote):
             window.save_notebook(silent=silent)
 
         # save all the notebooks
-        for notebook in self._notebooks.itervalues():
+        for notebook in self._notebooks.values():
             notebook.save()
 
         # let windows know about completed save
@@ -896,7 +896,7 @@ class KeepNote (keepnote.KeepNote):
             #if task.aborted():
             #    raise task.exc_info()[1]
             
-        except Exception, e:
+        except Exception as e:
             if len(filenames) > 1:
                 self.error(_("Error while attaching files %s." % 
                              ", ".join(["'%s'" % f for f in filenames])),
@@ -990,7 +990,7 @@ class KeepNote (keepnote.KeepNote):
                 try:
                     if isinstance(ext, keepnote.gui.extension.Extension):
                         ext.on_close_window(window)
-                except Exception, e:
+                except Exception as e:
                     log_error(e, sys.exc_info()[2])
 
             # remove window from window list
@@ -1026,7 +1026,7 @@ class KeepNote (keepnote.KeepNote):
                 try:
                     if isinstance(ext, keepnote.gui.extension.Extension):
                         ext.on_new_window(window)
-                except Exception, e:
+                except Exception as e:
                     log_error(e, sys.exc_info()[2])
 
     
