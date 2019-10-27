@@ -101,9 +101,9 @@ UNIVERSAL_ROOT = u"b810760f-f246-4e42-aebb-50ce51c3d1ed"
 #=============================================================================
 # filename creation functions
 
-REGEX_SLASHES = re.compile(ur"[/\\]")
-REGEX_BAD_CHARS = re.compile(ur"[\?'&<>|`:;]")
-REGEX_LEADING_UNDERSCORE = re.compile(ur"^__+")
+REGEX_SLASHES = re.compile(r"[/\\]")
+REGEX_BAD_CHARS = re.compile(r"[\?'&<>|`:;]")
+REGEX_LEADING_UNDERSCORE = re.compile(r"^__+")
 
 def get_valid_filename(filename, default=u"folder"):
     """Converts a filename into a valid one
@@ -257,9 +257,9 @@ def get_notebook_version(filename):
 
     try:
         tree = ElementTree.ElementTree(file=filename)            
-    except IOError, e:
+    except IOError as e:
         raise NoteBookError(_("Cannot read notebook preferences"), e)
-    except Exception, e:
+    except Exception as e:
         raise NoteBookError(_("Notebook preference data is corrupt"), e)
 
     return get_notebook_version_etree(tree)
@@ -335,7 +335,7 @@ def attach_file(filename, node, index=None):
 
         return child
 
-    except Exception, e:
+    except Exception as e:
         # remove child
         keepnote.log_error(e)
         if child:
@@ -670,7 +670,7 @@ class NoteBookNode (object):
         
         try:
             os.mkdir(path)
-        except OSError, e:
+        except OSError as e:
             raise NoteBookError(_("Cannot create node"), e)
             
         self._attr["created_time"] = get_timestamp()
@@ -689,7 +689,7 @@ class NoteBookNode (object):
         path = self.get_path()
         try:      
             shutil.rmtree(path)
-        except OSError, e:
+        except OSError as e:
             raise NoteBookError(_("Do not have permission to delete"), e)
         
         self._parent._remove_child(self)
@@ -765,7 +765,7 @@ class NoteBookNode (object):
             try:
                 os.rename(path, path2)
                 self._notebook._index.add_node(self)
-            except OSError, e:
+            except OSError as e:
                 raise NoteBookError(_("Do not have permission for move"), e)
         
             self._set_basename(path2)
@@ -813,7 +813,7 @@ class NoteBookNode (object):
                 self._attr["title"] = title
                 self._set_basename(path2)
                 self.save(True)
-            except (OSError, NoteBookError), e:
+            except (OSError, NoteBookError) as e:
                 raise NoteBookError(_("Cannot rename '%s' to '%s'" % (path, path2)), e)
         
         self._notebook._index.add_node(self)
@@ -956,7 +956,7 @@ class NoteBookNode (object):
         
         try:
             files = os.listdir(path)
-        except OSError, e:
+        except OSError as e:
             raise NoteBookError(_("Do not have permission to read folder contents"), e)
         
         for filename in files:
@@ -969,7 +969,7 @@ class NoteBookNode (object):
                 if node:
                     yield node
                 
-            except NoteBookError, e:
+            except NoteBookError as e:
                 print >>sys.stderr, "error reading", path2
                 traceback.print_exception(*sys.exc_info())
                 continue                
@@ -1073,7 +1073,7 @@ class NoteBookNode (object):
             out = safefile.open(datafile, "w", codec="utf-8")
             out.write(BLANK_NOTE)
             out.close()
-        except IOError, e:
+        except IOError as e:
             raise NoteBookError(_("Cannot initialize richtext file '%s'" % datafile), e)
         
         
@@ -1179,7 +1179,7 @@ class NoteBookPlainText (NoteBookNode):
         try:
             out = safefile.open(datafile, "w", codec="utf-8")
             out.close()
-        except IOError, e:
+        except IOError as e:
             raise NoteBookError(_("Cannot initialize richtext file '%s'" % datafile), e)
 
 
@@ -1245,7 +1245,7 @@ class NoteBookGenericFile (NoteBookNode):
                     out.write(data)
                 infile.close()
                 out.close()
-        except IOError, e:
+        except IOError as e:
             raise NoteBookError(_("Cannot copy file '%s'" % filename), e)
 
         # set attr
@@ -1353,7 +1353,7 @@ def write_new_preferences(pref, filename):
                   u'</notebook>\n')
         out.close()
 
-    except (IOError, OSError), e:
+    except (IOError, OSError) as e:
         raise NoteBookError(_("Cannot save notebook preferences"), e)
 
 
@@ -1637,7 +1637,7 @@ class NoteBook (NoteBookDir):
                 self._trash = NoteBookTrash(TRASH_NAME, self)
                 self._trash.create()
                 self._add_child(self._trash)
-            except NoteBookError, e:
+            except NoteBookError as e:
                 raise NoteBookError(_("Cannot create Trash folder"), e)
 
 
@@ -1822,9 +1822,9 @@ class NoteBook (NoteBookDir):
                 os.mkdir(self.get_icon_dir())
 
             g_notebook_pref_parser.write(self.pref, self.get_pref_file())
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             raise NoteBookError(_("Cannot save notebook preferences"), e)
-        except xmlo.XmlError, e:
+        except xmlo.XmlError as e:
             raise NoteBookError(_("File format error"), e)
 
     
@@ -1832,9 +1832,9 @@ class NoteBook (NoteBookDir):
         """Reads the NoteBook's preferneces from the file-system"""
         try:
             tree = ElementTree.ElementTree(file=self.get_pref_file())
-        except IOError, e:
+        except IOError as e:
             raise NoteBookError(_("Cannot read notebook preferences"), e)
-        except Exception, e:
+        except Exception as e:
             raise NoteBookError(_("Notebook preference data is corrupt"), e)
 
 
@@ -1903,7 +1903,7 @@ class NoteBookNodeFactory (object):
 
         try:
             attr = self.read_meta_data(metafile, notebook.attr_defs)
-        except IOError, e:
+        except IOError as e:
             # ignore directory, not a NoteBook directory            
             return None
 
@@ -1970,7 +1970,7 @@ class NoteBookNodeFactory (object):
                 
             out.write("</node>\n")
             out.close()
-        except Exception, e:
+        except Exception as e:
             raise NoteBookError(_("Cannot write meta data"), e)
 
 
@@ -1982,7 +1982,7 @@ class NoteBookNodeFactory (object):
 
         try:
             tree = ElementTree.ElementTree(file=filename)
-        except Exception, e:
+        except Exception as e:
             raise NoteBookError(_("Error reading meta data file"), e)
 
         # check root

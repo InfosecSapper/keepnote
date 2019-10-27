@@ -120,14 +120,14 @@ class MimeIcons:
  
         # try gnome mime
         items = mime_type.split('/')
-        for i in xrange(len(items), 0, -1):
+        for i in range(len(items), 0, -1):
             icon_name = u"gnome-mime-" + '-'.join(items[:i])
             if icon_name in self._icons:
                 self._cache[mime_type] = icon_name                
-                return unicode(icon_name)
+                return str(icon_name)
  
         # try simple mime
-        for i in xrange(len(items), 0, -1):
+        for i in range(len(items), 0, -1):
             icon_name = u'-'.join(items[:i])
             if icon_name in self._icons:
                 self._cache[mime_type] = icon_name

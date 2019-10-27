@@ -121,7 +121,7 @@ class TabbedViewer (Viewer):
 
     def iter_viewers(self):
         """Iterate through all viewers"""
-        for i in xrange(self._tabs.get_n_pages()):            
+        for i in range(self._tabs.get_n_pages()):            
             yield self._tabs.get_nth_page(i)
 
 

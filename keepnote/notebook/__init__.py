@@ -32,9 +32,10 @@ import sys
 import shutil
 import re
 import traceback
-import urlparse
-import urllib2
+import urllib.parse
+import urllib.request
 import uuid
+from builtins import str
 
 # xml imports
 import xml.etree.cElementTree as ET
@@ -115,7 +116,7 @@ def get_unique_filename(path, filename, ext=u"", sep=u" ", number=2,
     # try numbered suffixes
     i = number
     while True:
-        newname = os.path.join(path, filename + sep + unicode(i) + ext)
+        newname = os.path.join(path, filename + sep + str(i) + ext)
         if not os.path.exists(newname):
             return (newname, i) if return_number else newname
         i += 1
@@ -135,7 +136,7 @@ def get_unique_filename_list(filenames, filename, ext=u"", sep=u" ", number=2,
     # try numbered suffixes
     i = number
     while True:
-        newname = filename + sep + unicode(i) + ext
+        newname = filename + sep + str(i) + ext
         if newname not in filenames:
             return (newname, i) if return_number else newname
         i += 1
@@ -157,7 +158,7 @@ def relpath(filename, start):
             filename = filename[1:]
         return filename
     else:
-        raise Excpetion("unhandled case")
+        raise Exception("unhandled case")
         
     
 
@@ -242,9 +243,9 @@ def get_notebook_version(filename):
 
     try:
         tree = ET.ElementTree(file=filename)
-    except IOError, e:
+    except IOError as e:
         raise NoteBookError(_("Cannot read notebook preferences"), e)
-    except Exception, e:
+    except Exception as e:
         raise NoteBookError(_("Notebook preference data is corrupt"), e)
 
     return get_notebook_version_etree(tree)
@@ -271,7 +272,7 @@ def get_notebook_version_etree(tree):
 
 def new_nodeid():
     """Generate a new node id"""
-    return unicode(uuid.uuid4())
+    return str(uuid.uuid4())
 
 
 def get_node_url(nodeid, host=u""):
@@ -345,7 +346,7 @@ def attach_file(filename, node, index=None):
         child.save(True)
         return child
 
-    except Exception, e:
+    except Exception as e:
         # remove child
         keepnote.log_error(e)
         if child:
@@ -358,11 +359,11 @@ def attach_file(filename, node, index=None):
 #=============================================================================
 # errors
 
-class NoteBookError (StandardError):
+class NoteBookError (Exception):
     """Exception that occurs when manipulating NoteBook's"""
     
     def __init__(self, msg, error=None):
-        StandardError.__init__(self)
+        Exception.__init__(self)
         self.msg = msg
         self.error = error
     
@@ -452,7 +453,7 @@ class AttrDefs (object):
 
     def format(self):
         return [attr_def.format()
-                for attr_def in self._attr_defs.itervalues()]
+                for attr_def in self._attr_defs.values()]
 
 
 
@@ -477,7 +478,7 @@ g_default_attr_defs = [
     AttrDef("nodeid", "string", "Node ID"),
     AttrDef("content_type", "string", "Content type", default=CONTENT_TYPE_DIR),
     AttrDef("title", "string", "Title"),
-    AttrDef("order", "integer", "Order", default=sys.maxint),
+    AttrDef("order", "integer", "Order", default=sys.maxsize),
     AttrDef("created_time", "timestamp", "Created time"),
     AttrDef("modified_time", "timestamp", "Modified time"),
     AttrDef("expanded", "bool", "Expaned", default=True),
@@ -532,7 +533,7 @@ class AttrTables (object):
 
     def format(self):
         return [attr_table.format()
-                for attr_table in self._attr_tables.itervalues()]
+                for attr_table in self._attr_tables.values()]
 
 
 
@@ -652,7 +653,7 @@ class NoteBookNode (object):
 
     def iter_attr(self):
         """Iterate through attributes of the node"""
-        return self._attr.iteritems()
+        return self._attr.items()
     
 
     def _init_attr(self):
@@ -696,7 +697,7 @@ class NoteBookNode (object):
         
         try:
             # attempt url parse
-            parts = urlparse.urlparse(filename)
+            parts = urllib.parse.urlparse(filename)
             
             if os.path.exists(filename) or parts[0] == "":
                 # perform local copy
@@ -705,7 +706,7 @@ class NoteBookNode (object):
             else:
                 # perform download
                 out = self.open_file(new_filename, "w")
-                infile = urllib2.urlopen(filename)
+                infile = urllib.request.urlopen(filename)
                 while True:
                     data = infile.read(1024*4)
                     if data == "":
@@ -713,7 +714,7 @@ class NoteBookNode (object):
                     out.write(data)
                 infile.close()
                 out.close()
-        except Exception, e:
+        except Exception as e:
             raise NoteBookError(_("Cannot copy file '%s'" % filename), e)
         
         # set attr
@@ -731,7 +732,7 @@ class NoteBookNode (object):
             self._attr["nodeid"] = new_nodeid()
         self._attr["parentids"] = [self._parent._attr["nodeid"]]
         self._attr["childrenids"] = []
-        self._attr.setdefault("order", sys.maxint)
+        self._attr.setdefault("order", sys.maxsize)
         
         self._init_attr()
         
@@ -1041,7 +1042,7 @@ class NoteBookNode (object):
         self._children = list(self._iter_children())
 
         # assign orders
-        self._children.sort(key=lambda x: x._attr.get("order", sys.maxint))
+        self._children.sort(key=lambda x: x._attr.get("order", sys.maxsize))
         self._set_child_order()
 
 
@@ -1564,7 +1565,7 @@ class NoteBook (NoteBookNode):
                                             {"title": TRASH_NAME})
                 self._add_child(self._trash)
 
-            except NoteBookError, e:
+            except NoteBookError as e:
                 raise NoteBookError(_("Cannot create Trash folder"), e)
 
     
@@ -1653,7 +1654,7 @@ class NoteBook (NoteBookNode):
             # determine open icon filename
             newfilename_open = startname
             if number:
-                newfilename_open += u"-" + unicode(number)
+                newfilename_open += u"-" + str(number)
             else:
                 number = 2
             newfilename_open += u"-open" + ext
@@ -1802,9 +1803,9 @@ class NoteBook (NoteBookNode):
                       u'</notebook>\n')
             out.close()
 
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             raise NoteBookError(_("Cannot save notebook preferences"), e)
-        except Exception, e:
+        except Exception as e:
             raise NoteBookError(_("File format error"), e)
 
     
@@ -1816,10 +1817,10 @@ class NoteBook (NoteBookNode):
                 infile = self.open_file(PREF_FILE, "r", codec="utf-8")
             root = ET.fromstring(infile.read())
             tree = ET.ElementTree(root)
-        except IOError, e:
+        except IOError as e:
             raise NoteBookError(_("Cannot read notebook preferences %s")
                                 % self.get_file(PREF_FILE) , e)
-        except Exception, e:
+        except Exception as e:
             keepnote.log_error(e)
             #if recover:
             #    if infile:

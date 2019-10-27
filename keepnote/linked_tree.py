@@ -55,7 +55,7 @@ class LinkedTreeNode (object):
     def num_children(self):
         """Returns the number of children"""
         n = 0
-        for child in self:
+        for _child in self:
             n += 1
         return n
 
@@ -124,7 +124,7 @@ class LinkedTreeNode (object):
     def remove_child(self, child):
         """Remove child from Node"""
         assert child._parent is self
-        self.child.remove()
+        self._child.remove()
 
 
     def replace_child(self, old_child, new_child):

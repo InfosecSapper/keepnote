@@ -30,7 +30,7 @@ import os
 import random
 import socket
 import sys
-import thread
+import _thread
 
 # keepnote libs
 import keepnote
@@ -63,13 +63,13 @@ def get_lock_file(lockfile):
     while True:
         try:
             # try to create file with exclusive access
-            fd = os.open(lockfile, os.O_CREAT|os.O_EXCL|os.O_RDWR, 0600)
+            fd = os.open(lockfile, os.O_CREAT|os.O_EXCL|os.O_RDWR, 0o600)
             
             # creation succeeded, we have the lock
             acquire = True
             break
 
-        except OSError, e:
+        except OSError as e:
             if e.errno != errno.EEXIST:
                 # unknown error, re-raise
                 raise
@@ -81,7 +81,7 @@ def get_lock_file(lockfile):
                 acquire = False
                 break
 
-            except OSError, e:
+            except OSError as e:
                 if e.errno != errno.ENOENT:
                     # unknown error, re-raise
                     raise
@@ -135,7 +135,7 @@ def open_socket(port=None, start_port=4000, end_port=10000, tries=10):
             s.bind(("localhost", port2))
             s.listen(1)
             break
-        except socket.error, e:
+        except socket.error as e:
             print >>sys.stderr, "could not open socket:", str(e)
             port2 = None
 
@@ -162,7 +162,7 @@ def listen_commands(sock, connfunc, args):
         except socket.error:
             continue
 
-        thread.start_new_thread(connfunc, (conn, addr) + args)
+        _thread.start_new_thread(connfunc, (conn, addr) + args)
 
 
 def process_connection(conn, addr, passwd, execfunc):
@@ -208,7 +208,7 @@ def process_connection(conn, addr, passwd, execfunc):
         conn.close()
         
 
-    except socket.error, e:
+    except socket.error as e:
         # socket error, close connection
         print >>sys.stderr, e, ": error with connection"
         conn.close()
@@ -256,7 +256,7 @@ def escape(text):
 def split_args(text):
     args = []
     last = 0
-    for i in xrange(len(text)):
+    for i in range(len(text)):
         if text[i] == " " and (i == 0 or text[i-1] != "\\"):
             args.append(text[last:i])
             last = i + 1
@@ -304,7 +304,7 @@ class CommandExecutor (object):
         self._execfunc = execfunc
 
         # start listening to socket for remote commands
-        thread.start_new_thread(listen_commands, 
+        _thread.start_new_thread(listen_commands, 
                                 (sock, process_connection, (passwd, 
                                                             self.execute)))
 
@@ -377,7 +377,7 @@ class CommandExecutor (object):
                     self._connect(fd)
                     return False
 
-                except Exception, e:
+                except Exception as e:
                     # lockfile does not contain proper port number
                     # remove lock file and attempt to acquire again
                     try:

@@ -24,8 +24,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-import os,sys
+import os
+import sys
 import keepnote
+import uuid
 from keepnote import safefile, plist
 from keepnote.timestamp import get_timestamp
 import xml.etree.cElementTree as ET
@@ -33,7 +35,7 @@ import xml.etree.cElementTree as ET
 
 def new_nodeid():
     """Generate a new node id"""
-    return unicode(uuid.uuid4())
+    return str(uuid.uuid4())
 
 
 def iter_child_node_paths(path):
@@ -67,9 +69,9 @@ class AttrDef (object):
         
         # writer function
         if datatype == bool:
-            self.write = lambda x: unicode(int(x))
+            self.write = lambda x: str(int(x))
         else:
-            self.write = unicode
+            self.write = str
 
         # reader function
         if datatype == bool:
@@ -86,21 +88,21 @@ class UnknownAttr (object):
 
 
 g_default_attr_defs = [
-    AttrDef("nodeid", unicode, "Node ID", default=new_nodeid),
-    AttrDef("content_type", unicode, "Content type", 
+    AttrDef("nodeid", str, "Node ID", default=new_nodeid),
+    AttrDef("content_type", str, "Content type", 
             default=lambda: CONTENT_TYPE_DIR),
-    AttrDef("title", unicode, "Title"),
-    AttrDef("order", int, "Order", default=lambda: sys.maxint),
+    AttrDef("title", str, "Title"),
+    AttrDef("order", int, "Order", default=lambda: sys.maxsize),
     AttrDef("created_time", int, "Created time", default=get_timestamp),
     AttrDef("modified_time", int, "Modified time", default=get_timestamp),
     AttrDef("expanded", bool, "Expaned", default=lambda: True),
     AttrDef("expanded2", bool, "Expanded2", default=lambda: True),
-    AttrDef("info_sort", unicode, "Folder sort", default=lambda: "order"),
+    AttrDef("info_sort", str, "Folder sort", default=lambda: "order"),
     AttrDef("info_sort_dir", int, "Folder sort direction", default=lambda: 1),
-    AttrDef("icon", unicode, "Icon"),
-    AttrDef("icon_open", unicode, "Icon open"),
-    AttrDef("payload_filename", unicode, "Filename"),
-    AttrDef("duplicate_of", unicode, "Duplicate of")
+    AttrDef("icon", str, "Icon"),
+    AttrDef("icon_open", str, "Icon open"),
+    AttrDef("payload_filename", str, "Filename"),
+    AttrDef("duplicate_of", str, "Duplicate of")
 ]
 
 g_attr_defs_lookup = dict((attr.key, attr) for attr in g_default_attr_defs)
@@ -115,7 +117,7 @@ def read_attr_v5(filename, attr_defs=g_attr_defs_lookup):
     # check root
     root = tree.getroot()
     if root.tag != "node":
-        raise Except("Root tag is not 'node'")
+        raise Exception("Root tag is not 'node'")
 
     version = int(root.find("version").text)
     if version >= 6:
@@ -160,7 +162,7 @@ def convert_node_attr(filename, filename2, attr_defs=g_attr_defs_lookup):
         attr = read_attr_v5(filename, attr_defs)
         attr["version"] = 6
         write_attr_v6(filename2, attr)
-    except Exception, e:
+    except Exception as e:
         keepnote.log_error("cannot convert %s: %s\n" % (filename, str(e)), 
                            sys.exc_info()[2])
                            

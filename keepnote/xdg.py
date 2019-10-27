@@ -46,7 +46,7 @@ g_config_dirs = None
 g_data_dirs = None
 
 
-class XdgError (StandardError):
+class XdgError (Exception):
     pass
     
 
@@ -57,11 +57,11 @@ def ensure_unicode(text, encoding="utf8"):
     if text is None:
         return None
 
-    if not isinstance(text, unicode):
+    if not isinstance(text, str):
         if encoding == FS_ENCODING:
-            return unicode(text, sys.getfilesystemencoding())
+            return str(text, sys.getfilesystemencoding())
         else:
-            return unicode(text, encoding)
+            return str(text, encoding)
     return text
 
 
@@ -203,7 +203,7 @@ def make_config_dir(dirname, config_dirs=None,
     config_dir = os.path.join(config_dirs[0], dirname)
 
     if not os.path.exists(config_dir):
-        os.makedirs(config_dir, mode=0700)
+        os.makedirs(config_dir, mode=0o700)
 
 
 def make_data_dir(dirname, data_dirs=None,
@@ -218,7 +218,7 @@ def make_data_dir(dirname, data_dirs=None,
     data_dir = os.path.join(data_dirs[0], dirname)
 
     if not os.path.exists(data_dir):
-        os.makedirs(data_dir, mode=0700)
+        os.makedirs(data_dir, mode=0o700)
 
 
 

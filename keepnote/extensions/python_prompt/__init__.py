@@ -53,7 +53,7 @@ except ImportError:
 
 
 sys.path.append(os.path.dirname(__file__))
-import dialog_python
+from . import dialog_python
 
 
 class Extension (extension.Extension):

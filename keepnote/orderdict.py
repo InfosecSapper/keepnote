@@ -23,10 +23,6 @@
 #
 
 
-
-
-
-
 class OrderDict (dict):
     """
     An ordered dict

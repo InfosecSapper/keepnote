@@ -25,7 +25,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-import urlparse
+import urllib.parse
 
 
 #=============================================================================
@@ -382,7 +382,7 @@ class NoteBookConnections (object):
         if "://" not in url:
             proto = "file"
         else:
-            parts = urlparse.urlsplit(url)
+            parts = urllib.parse.urlsplit(url)
             proto = parts.scheme if parts.scheme else "file"
         return proto
 

@@ -65,7 +65,7 @@ class KeepNoteTreeView (basetreeview.KeepNoteBaseTreeView):
         try:
             # available only on Gtk > 2.8
             self.set_property("enable-tree-lines", True)
-        except TypeError, e:
+        except TypeError as e:
             pass
 
 

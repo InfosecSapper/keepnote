@@ -70,7 +70,7 @@ def update_notebook(filename,
                 try:
                     node._version = 3
                     node.write_meta_data()
-                except Exception, e:
+                except Exception as e:
                     if not warn(e):
                         raise notebooklib.NoteBookError("Could not update notebook", e)
 

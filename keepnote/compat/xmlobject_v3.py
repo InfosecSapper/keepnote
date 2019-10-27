@@ -143,7 +143,7 @@ class Tag (object):
             
             try:
                 self._read_data(self._object, data)
-            except Exception, e:
+            except Exception as e:
                 raise XmlError("Error parsing tag '%s': %s" % (self.name,
                                                                str(e)))
     
@@ -243,7 +243,7 @@ class TagMany (Tag):
             if 1:
                 if self._read_item is not None:
                     self._read_item((self._object, self._index), data)
-            #except Exception, e:
+            #except Exception as e:
             #    raise XmlError("Error parsing tag '%s': %s" % (self.name,
             #                                                   str(e)))
         
@@ -356,11 +356,11 @@ class XmlObject (object):
 
         try:
             parser.ParseFile(infile)
-        except xml.parsers.expat.ExpatError, e:
+        except xml.parsers.expat.ExpatError as e:
             raise XmlError("Error reading file '%s': %s" % (filename, str(e)))
 
         if len(self._current_tags) > 1:
-            print [x.name for x in self._current_tags]
+            print([x.name for x in self._current_tags])
             raise XmlError("Incomplete file '%s'" % filename)
         
         infile.close()
