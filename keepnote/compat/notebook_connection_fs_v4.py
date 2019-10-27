@@ -174,9 +174,9 @@ def get_node_filename(node_path, filename):
 #=============================================================================
 # functions for ensuring valid filenames in notebooks
 
-REGEX_SLASHES = re.compile(ur"[/\\]")
-REGEX_BAD_CHARS = re.compile(ur"[\?'&<>|`:;]")
-REGEX_LEADING_UNDERSCORE = re.compile(ur"^__+")
+REGEX_SLASHES = re.compile(r"[/\\]")
+REGEX_BAD_CHARS = re.compile(r"[\?'&<>|`:;]")
+REGEX_LEADING_UNDERSCORE = re.compile(r"^__+")
 
 def get_valid_filename(filename, default=u"folder", 
                        maxlen=MAX_LEN_NODE_FILENAME):
@@ -571,7 +571,7 @@ class NoteBookConnectionFS (NoteBookConnection):
                              (filename, new_filename))
         try:
             os.rename(filename, new_filename)
-        except OSError, e:
+        except OSError as e:
             raise ConnectionError(u"unable to store lost file '%s'" 
                                   % filename, e)
         
@@ -654,7 +654,7 @@ class NoteBookConnectionFS (NoteBookConnection):
             self._write_attr(self._get_node_attr_file(nodeid, path), 
                              attr, self._attr_defs)
             self._path_cache.add(nodeid, basename, parentid)
-        except OSError, e:
+        except OSError as e:
             raise keepnote.compat.notebook_v4.NoteBookError(_("Cannot create node"), e)
         
         # update index
@@ -736,7 +736,7 @@ class NoteBookConnectionFS (NoteBookConnection):
 
         try:
             os.rename(path, new_path)
-        except OSError, e:
+        except OSError as e:
             raise keepnote.compat.notebook_v4.NoteBookError(
                 _(u"Cannot rename '%s' to '%s'" % (path, new_path)), e)
         
@@ -762,7 +762,7 @@ class NoteBookConnectionFS (NoteBookConnection):
 
         try:
             shutil.rmtree(self._get_node_path(nodeid))
-        except OSError, e:
+        except OSError as e:
             raise keepnote.compat.notebook_v4.NoteBookError(
                 _(u"Do not have permission to delete"), e)
 
@@ -807,7 +807,7 @@ class NoteBookConnectionFS (NoteBookConnection):
             if os.path.exists(get_node_meta_file(path2)):
                 try:
                     yield self._read_node(nodeid, path2, _full=_full)
-                except keepnote.compat.notebook_v4.NoteBookError, e:
+                except keepnote.compat.notebook_v4.NoteBookError as e:
                     keepnote.log_error(u"error reading %s" % path2)
                     continue
                     # TODO: raise warning, not all children read
@@ -948,7 +948,7 @@ class NoteBookConnectionFS (NoteBookConnection):
                 
             out.write(u"</node>\n")
             out.close()
-        except Exception, e:
+        except Exception as e:
             raise keepnote.compat.notebook_v4.NoteBookError(
                 _("Cannot write meta data"), e)
 
@@ -960,7 +960,7 @@ class NoteBookConnectionFS (NoteBookConnection):
 
         try:
             tree = ET.ElementTree(file=filename)
-        except Exception, e:
+        except Exception as e:
             if recover:
                 self._recover_attr(filename)
                 return self._read_attr(filename, attr_defs, recover=False)
@@ -1249,7 +1249,7 @@ class NoteBookConnectionFS (NoteBookConnection):
         
         datatype = self._attr_defs[key].datatype
         
-        if issubclass(datatype, basestring):
+        if issubclass(datatype, str):
             index_type = "TEXT"
         elif issubclass(datatype, int):
             index_type = "INTEGER"

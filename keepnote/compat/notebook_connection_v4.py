@@ -30,16 +30,16 @@
 # errors
 
 
-class ConnectionError (StandardError):
+class ConnectionError (Exception):
     def __init__(self, msg, error=None):
-        StandardError.__init__(self, msg)
+        Exception.__init__(self, msg)
         self.error = error
 
     def repr(self):
         if self.error is not None:
-            return StandardError.repr(self) + ": " + repr(self.error)
+            return Exception.__repr__(self) + ": " + repr(self.error)
         else:
-            return StandardError.repr(self)
+            return Exception.__repr__(self)
 
 class UnknownNode (ConnectionError):
     def __init__(self, msg="unknown node"):

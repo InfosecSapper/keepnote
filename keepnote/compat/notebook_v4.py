@@ -32,8 +32,7 @@ import sys
 import shutil
 import re
 import traceback
-import urlparse
-import urllib2
+import urllib
 import uuid
 
 # xml imports
@@ -116,7 +115,7 @@ def get_unique_filename(path, filename, ext=u"", sep=u" ", number=2,
     # try numbered suffixes
     i = number
     while True:
-        newname = os.path.join(path, filename + sep + unicode(i) + ext)
+        newname = os.path.join(path, filename + sep + str(i) + ext)
         if not os.path.exists(newname):
             if return_number:
                 return (newname, i)
@@ -137,7 +136,7 @@ def get_unique_filename_list(filenames, filename, ext=u"", sep=u" ", number=2):
     # try numbered suffixes
     i = number
     while True:
-        newname = filename + sep + unicode(i) + ext
+        newname = filename + sep + str(i) + ext
         if newname not in filenames:
             return newname
         i += 1
@@ -159,7 +158,7 @@ def relpath(filename, start):
             filename = filename[1:]
         return filename
     else:
-        raise Excpetion("unhandled case")
+        raise Exception("unhandled case")
         
     
 
@@ -244,9 +243,9 @@ def get_notebook_version(filename):
 
     try:
         tree = ET.ElementTree(file=filename)
-    except IOError, e:
+    except IOError as e:
         raise NoteBookError(_("Cannot read notebook preferences"), e)
-    except Exception, e:
+    except Exception as e:
         raise NoteBookError(_("Notebook preference data is corrupt"), e)
 
     return get_notebook_version_etree(tree)
@@ -273,7 +272,7 @@ def get_notebook_version_etree(tree):
 
 def new_nodeid():
     """Generate a new node id"""
-    return unicode(uuid.uuid4())
+    return str(uuid.uuid4())
 
 
 def get_node_url(nodeid, host=u""):
@@ -335,7 +334,7 @@ def attach_file(filename, node, index=None):
         child.save(True)
         return child
 
-    except Exception, e:
+    except Exception as e:
         # remove child
         keepnote.log_error(e)
         if child:
@@ -358,11 +357,11 @@ def new_page(parent, title=None, index=None):
 #=============================================================================
 # errors
 
-class NoteBookError (StandardError):
+class NoteBookError (Exception):
     """Exception that occurs when manipulating NoteBook's"""
     
     def __init__(self, msg, error=None):
-        StandardError.__init__(self)
+        Exception.__init__(self)
         self.msg = msg
         self.error = error
     
@@ -411,9 +410,9 @@ class AttrDef (object):
         
         # writer function
         if datatype == bool:
-            self.write = lambda x: unicode(int(x))
+            self.write = lambda x: str(int(x))
         else:
-            self.write = unicode
+            self.write = str
 
         # reader function
         if datatype == bool:
@@ -431,21 +430,21 @@ class UnknownAttr (object):
 
 
 g_default_attr_defs = [
-    AttrDef("nodeid", unicode, "Node ID", default=new_nodeid),
-    AttrDef("content_type", unicode, "Content type", 
+    AttrDef("nodeid", str, "Node ID", default=new_nodeid),
+    AttrDef("content_type", str, "Content type", 
             default=lambda: CONTENT_TYPE_DIR),
-    AttrDef("title", unicode, "Title"),
-    AttrDef("order", int, "Order", default=lambda: sys.maxint),
+    AttrDef("title", str, "Title"),
+    AttrDef("order", int, "Order", default=lambda: sys.maxsize),
     AttrDef("created_time", int, "Created time", default=get_timestamp),
     AttrDef("modified_time", int, "Modified time", default=get_timestamp),
     AttrDef("expanded", bool, "Expaned", default=lambda: True),
     AttrDef("expanded2", bool, "Expanded2", default=lambda: True),
-    AttrDef("info_sort", unicode, "Folder sort", default=lambda: "order"),
+    AttrDef("info_sort", str, "Folder sort", default=lambda: "order"),
     AttrDef("info_sort_dir", int, "Folder sort direction", default=lambda: 1),
-    AttrDef("icon", unicode, "Icon"),
-    AttrDef("icon_open", unicode, "Icon open"),
-    AttrDef("payload_filename", unicode, "Filename"),
-    AttrDef("duplicate_of", unicode, "Duplicate of")
+    AttrDef("icon", str, "Icon"),
+    AttrDef("icon_open", str, "Icon open"),
+    AttrDef("payload_filename", str, "Filename"),
+    AttrDef("duplicate_of", str, "Duplicate of")
 ]
 
 
@@ -579,7 +578,7 @@ class NoteBookNode (object):
 
     def iter_attr(self):
         """Iterate through attributes of the node"""
-        return self._attr.iteritems()
+        return self._attr.items()
     
 
     def _init_attr(self, attr):
@@ -621,7 +620,7 @@ class NoteBookNode (object):
         
         try:
             # attempt url parse
-            parts = urlparse.urlparse(filename)
+            parts = urllib.parse.urlparse(filename)
             
             if os.path.exists(filename) or parts[0] == "":
                 # perform local copy
@@ -630,7 +629,7 @@ class NoteBookNode (object):
             else:
                 # perform download
                 out = self.open_file(new_filename, "wb")
-                infile = urllib2.urlopen(filename)
+                infile = urllib.request.urlopen(filename)
                 while True:
                     data = infile.read(1024*4)
                     if data == "":
@@ -638,7 +637,7 @@ class NoteBookNode (object):
                     out.write(data)
                 infile.close()
                 out.close()
-        except IOError, e:
+        except IOError as e:
             raise NoteBookError(_("Cannot copy file '%s'" % filename), e)
         
         # set attr
@@ -834,7 +833,7 @@ class NoteBookNode (object):
             try:
                 self._attr["title"] = title
                 self.save(True)
-            except NoteBookError, e:
+            except NoteBookError as e:
                 self._attr["title"] = oldtitle
                 raise
         
@@ -956,7 +955,7 @@ class NoteBookNode (object):
         self._children = list(self._iter_children())
 
         # assign orders
-        self._children.sort(key=lambda x: x._attr.get("order", sys.maxint))
+        self._children.sort(key=lambda x: x._attr.get("order", sys.maxsize))
         self._set_child_order()
 
 
@@ -1459,7 +1458,7 @@ class NoteBook (NoteBookNode):
                                             {"title": TRASH_NAME})
                 self._add_child(self._trash)
 
-            except NoteBookError, e:
+            except NoteBookError as e:
                 raise NoteBookError(_("Cannot create Trash folder"), e)
 
     
@@ -1549,7 +1548,7 @@ class NoteBook (NoteBookNode):
             # determine open icon filename
             newfilename_open = startname
             if number:
-                newfilename_open += u"-" + unicode(number)
+                newfilename_open += u"-" + str(number)
             else:
                 number = 2
             newfilename_open += u"-open" + ext
@@ -1691,9 +1690,9 @@ class NoteBook (NoteBookNode):
                       u'</notebook>\n')
             out.close()
 
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             raise NoteBookError(_("Cannot save notebook preferences"), e)
-        except Exception, e:
+        except Exception as e:
             raise NoteBookError(_("File format error"), e)
 
     
@@ -1705,10 +1704,10 @@ class NoteBook (NoteBookNode):
                 infile = self.open_file(PREF_FILE, "r", codec="utf-8")
             root = ET.fromstring(infile.read())
             tree = ET.ElementTree(root)
-        except IOError, e:
+        except IOError as e:
             raise NoteBookError(_("Cannot read notebook preferences %s")
                                 % self.get_file(PREF_FILE) , e)
-        except Exception, e:
+        except Exception as e:
             if recover:
                 if infile:
                     infile.close()
