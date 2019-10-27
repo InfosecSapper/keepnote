@@ -79,7 +79,7 @@ class NodeFSSimple(object):
     VALID_REGEX = re.compile(r'^[a-z0-9_\-., "\']+$')
 
     def __init__(self, rootpath):
-        self._rootpath = unicode(rootpath)
+        self._rootpath = str(rootpath)
         self._fansize = 2
 
     def _is_valid(self, nodeid):

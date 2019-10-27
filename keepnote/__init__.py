@@ -129,7 +129,7 @@ TRANSLATOR_CREDITS = (
 
 
 
-BASEDIR = os.path.dirname(unicode(__file__, FS_ENCODING))
+BASEDIR = os.path.dirname(str(__file__, FS_ENCODING))
 PLATFORM = None
 
 USER_PREF_DIR = u"keepnote"
@@ -148,7 +148,7 @@ PORTABLE_FILE = u"portable.txt"
 # TODO: cleanup, make get/set_basedir symmetrical
 
 def get_basedir():
-    return os.path.dirname(unicode(__file__, FS_ENCODING))
+    return os.path.dirname(str(__file__, FS_ENCODING))
 
 def set_basedir(basedir):
     global BASEDIR
@@ -195,8 +195,8 @@ def ensure_unicode(text, encoding="utf8"):
         return None
 
     # make sure text is unicode
-    if not isinstance(text, unicode):
-        return unicode(text, encoding)
+    if not isinstance(text, str):
+        return str(text, encoding)
     return text
 
 
@@ -213,7 +213,7 @@ def unicode_gtk(text):
     """
     if text is None:
         return None
-    return unicode(text, "utf8")
+    return str(text, "utf8")
 
 
 def print_error_log_header(out=None):
@@ -364,7 +364,7 @@ def get_user_documents(home=None):
         return home
     
     elif p == "windows":
-        return unicode(mswin.get_my_documents(), FS_ENCODING)
+        return str(mswin.get_my_documents(), FS_ENCODING)
     
     else:
         return u""
@@ -412,7 +412,7 @@ def init_user_pref_dir(pref_dir=None, home=None):
 
     # make directory
     if not os.path.exists(pref_dir):
-        os.makedirs(pref_dir, 0700)
+        os.makedirs(pref_dir, 0o700)
 
     # init empty pref file
     pref_file = get_user_pref_file(pref_dir)
@@ -477,11 +477,11 @@ def log_message(message, out=None):
 # Exceptions
 
 
-class EnvError (StandardError):
+class EnvError (Exception):
     """Exception that occurs when environment variables are ill-defined"""
     
     def __init__(self, msg, error=None):
-        StandardError.__init__(self)
+        Exception.__init__(self)
         self.msg = msg
         self.error = error
         
@@ -492,9 +492,9 @@ class EnvError (StandardError):
             return self.msg
 
 
-class KeepNoteError (StandardError):
+class KeepNoteError (Exception):
     def __init__(self, msg, error=None):
-        StandardError.__init__(self, msg)
+        Exception.__init__(self, msg)
         self.msg = msg
         self.error = error
     
@@ -508,11 +508,11 @@ class KeepNoteError (StandardError):
         return self.msg
 
 
-class KeepNotePreferenceError (StandardError):
+class KeepNotePreferenceError (Exception):
     """Exception that occurs when manipulating preferences"""
     
     def __init__(self, msg, error=None):
-        StandardError.__init__(self)
+        Exception.__init__(self)
         self.msg = msg
         self.error = error
         
@@ -618,7 +618,7 @@ class KeepNotePreferences (Pref):
             try:
                 init_user_pref_dir(self._pref_dir)
                 self.write()
-            except Exception, e:
+            except Exception as e:
                 raise KeepNotePreferenceError("Cannot initialize preferences", e)
 
         try:
@@ -648,7 +648,7 @@ class KeepNotePreferences (Pref):
                 # set data
                 self._data.clear()
                 self._data.update(data)
-        except Exception, e:
+        except Exception as e:
             raise KeepNotePreferenceError("Cannot read preferences", e)
         
                 
@@ -674,7 +674,7 @@ class KeepNotePreferences (Pref):
             
             out.close()
                                          
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             log_error(e, sys.exc_info()[2])
             raise NoteBookError(_("Cannot save preferences"), e)
 
@@ -885,7 +885,7 @@ class KeepNote (object):
         notebook.closing_event.remove(self._on_closing_notebook)
         del self._notebook_count[notebook]
 
-        for key, val in self._notebooks.iteritems():
+        for key, val in self._notebooks.items():
             if val == notebook:
                 del self._notebooks[key]
                 break
@@ -947,21 +947,21 @@ class KeepNote (object):
 
     def iter_notebooks(self):
         """Iterate through open notebooks"""
-        return self._notebooks.itervalues()
+        return self._notebooks.values()
 
 
     def save_notebooks(self, silent=False):
         """Save all opened notebooks"""
 
         # save all the notebooks
-        for notebook in self._notebooks.itervalues():
+        for notebook in self._notebooks.values():
             notebook.save()
 
 
     def get_node(self, nodeid):
         """Returns a node with 'nodeid' from any of the opened notebooks"""
         
-        for notebook in self._notebooks.itervalues():
+        for notebook in self._notebooks.values():
             node = notebook.get_node_by_id(nodeid)
             if node is not None:
                 return node
@@ -1055,7 +1055,7 @@ class KeepNote (object):
                     cmd[i] = filename
         
         # create proper encoding
-        cmd = map(lambda x: unicode(x), cmd)
+        cmd = map(lambda x: str(x), cmd)
         if get_platform() == "windows":
             cmd = [x.encode('mbcs') for x in cmd]
         else:
@@ -1064,13 +1064,13 @@ class KeepNote (object):
         # execute command
         try:
             proc = subprocess.Popen(cmd)
-        except OSError, e:
+        except OSError as e:
             raise KeepNoteError(
                 _(u"Error occurred while opening file with %s.\n\n" 
                   u"program: '%s'\n\n"
                   u"file: '%s'\n\n"
                   u"error: %s")
-                % (app.title, app.prog, filename, unicode(e)), e)
+                % (app.title, app.prog, filename, str(e)), e)
 
         # wait for process to return
         # TODO: perform waiting in Gtk loop
@@ -1195,7 +1195,7 @@ class KeepNote (object):
                     log_message(_("enabling extension '%s'\n") % ext.key)
                     enabled = ext.enable(True)
 
-            except extension.DependencyError, e:
+            except extension.DependencyError as e:
                 # could not enable due to failed dependency
                 log_message(_("  skipping extension '%s':\n") % ext.key)
                 for dep in ext.get_depends():
@@ -1203,7 +1203,7 @@ class KeepNote (object):
                         log_message(_("    failed dependency: %s\n") % 
                                     repr(dep))
 
-            except Exception, e:
+            except Exception as e:
                 # unknown error
                 log_error(e, sys.exc_info()[2])
 
@@ -1277,7 +1277,7 @@ class KeepNote (object):
 
     def get_installed_extensions(self):
         """Iterates through installed extensions"""
-        return self._extensions.iterkeys()
+        return self._extensions.keys()
 
     
     def get_imported_extensions(self):
@@ -1299,7 +1299,7 @@ class KeepNote (object):
         try:
             entry.ext = extension.import_extension(
                 self, entry.get_key(), entry.filename)
-        except KeepNotePreferenceError, e:
+        except KeepNotePreferenceError as e:
             log_error(e, sys.exc_info()[2])
             return None
         
@@ -1366,7 +1366,7 @@ class KeepNote (object):
             new_names = set(self._extensions.keys()) - exts
             new_exts = [self.get_extension(name) for name in new_names]
 
-        except Exception, e:
+        except Exception as e:
             self.error(_("Unable to install extension '%s'") % filename,
                        e, tracebk=sys.exc_info()[2])
 
@@ -1411,7 +1411,7 @@ class KeepNote (object):
         # delete extension from filesystem
         try:      
             shutil.rmtree(entry.filename)
-        except OSError, e:
+        except OSError as e:
             self.error(_("Unable to uninstall extension.  Do not have permission."))
             return False
 

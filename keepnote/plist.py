@@ -32,7 +32,7 @@ try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.elementtree.ElementTree as ET
-from StringIO import StringIO
+from io import StringIO
 from xml.sax.saxutils import escape
 import base64, datetime, re
 import sys
@@ -63,7 +63,7 @@ _unmarshallers = {
     # simple types
     "string": lambda x: x.text or u"",
     "data": lambda x: Data(base64.decodestring(x.text or u"")),
-    "date": lambda x: datetime.datetime(*map(int, re.findall("\d+", x.text))),
+    "date": lambda x: datetime.datetime(*map(int, re.findall(r"\d+", x.text))),
     "true": lambda x: True,
     "false": lambda x: False,
     "real": lambda x: float(x.text),
@@ -135,7 +135,7 @@ def dump(elm, out=sys.stdout, indent=0, depth=0, suppress=False):
             out.write(" " * depth)
         out.write(u"</array>")
 
-    elif isinstance(elm, basestring):
+    elif isinstance(elm, str):
         out.write(u"<string>%s</string>" % escape(elm))
 
     elif isinstance(elm, bool):
@@ -144,7 +144,7 @@ def dump(elm, out=sys.stdout, indent=0, depth=0, suppress=False):
         else:
             out.write(u"<false/>")
 
-    elif isinstance(elm, (int, long)):
+    elif isinstance(elm, int):
         out.write(u"<integer>%d</integer>" % elm)
 
     elif isinstance(elm, float):
@@ -190,7 +190,7 @@ def dump_etree(elm):
         for item in elm:
             elm2.append(dump_etree(item))
 
-    elif isinstance(elm, basestring):
+    elif isinstance(elm, str):
         elm2 = ET.Element("string")
         elm2.text = elm
 

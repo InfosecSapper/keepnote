@@ -51,7 +51,7 @@ def cat_funcs(funcs):
 class UndoStack (object):
     """UndoStack for maintaining undo and redo actions"""
     
-    def __init__(self, maxsize=sys.maxint):
+    def __init__(self, maxsize=sys.maxsize):
         """maxsize -- maximum size of undo list"""
 
         # stacks maintaining (undo,redo) pairs

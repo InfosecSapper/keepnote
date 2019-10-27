@@ -26,14 +26,15 @@
 #
 
 # python imports
-from cStringIO import StringIO
-from httplib import BAD_REQUEST
-from httplib import FORBIDDEN
-from httplib import NOT_FOUND
+from io import StringIO
+from http.client import BAD_REQUEST
+from http.client import FORBIDDEN
+from http.client import NOT_FOUND
 import json
 import mimetypes
 import os
 import urllib
+import urllib.parse
 
 # bottle imports
 from . import bottle
@@ -65,9 +66,9 @@ def format_node_path(prefix, nodeid="", filename=None):
     """
     nodeid = nodeid.replace("/", "%2F")
     if filename is not None:
-        return urllib.quote("%s%s/%s" % (prefix, nodeid, filename))
+        return urllib.parse.quote("%s%s/%s" % (prefix, nodeid, filename))
     else:
-        return urllib.quote(prefix + nodeid)
+        return urllib.parse.quote(prefix + nodeid)
 
 
 def format_node_url(host, prefix, nodeid, filename=None, port=80):
@@ -234,7 +235,7 @@ class BaseNoteBookHttpServer(object):
         """
         Read notebook node attr.
         """
-        nodeid = urllib.unquote(nodeid)
+        nodeid = urllib.parse.unquote(nodeid)
 
         if 'all' in request.query:
             # Render a simple tree
@@ -249,7 +250,7 @@ class BaseNoteBookHttpServer(object):
 
             return self.json_response(attr)
 
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'node not found ' + str(e))
 
@@ -258,7 +259,7 @@ class BaseNoteBookHttpServer(object):
         Create new notebook node.
         """
         if nodeid is not None:
-            nodeid = urllib.unquote(nodeid)
+            nodeid = urllib.parse.unquote(nodeid)
         else:
             nodeid = new_nodeid()
 
@@ -267,7 +268,7 @@ class BaseNoteBookHttpServer(object):
 
         try:
             self.conn.create_node(nodeid, attr)
-        except connlib.NodeExists, e:
+        except connlib.NodeExists as e:
             keepnote.log_error()
             abort(FORBIDDEN, 'node already exists.' + str(e))
 
@@ -275,7 +276,7 @@ class BaseNoteBookHttpServer(object):
 
     def update_node_view(self, nodeid):
         """Update notebook node attr."""
-        nodeid = urllib.unquote(nodeid)
+        nodeid = urllib.parse.unquote(nodeid)
 
         # update node
         data = request.body.read()
@@ -283,7 +284,7 @@ class BaseNoteBookHttpServer(object):
 
         try:
             self.conn.update_node(nodeid, attr)
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'node not found ' + str(e))
 
@@ -291,10 +292,10 @@ class BaseNoteBookHttpServer(object):
 
     def delete_node_view(self, nodeid):
         """Delete notebook node."""
-        nodeid = urllib.unquote(nodeid)
+        nodeid = urllib.parse.unquote(nodeid)
         try:
             self.conn.delete_node(nodeid)
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'node not found ' + str(e))
 
@@ -302,14 +303,14 @@ class BaseNoteBookHttpServer(object):
         """
         Check for node existence.
         """
-        nodeid = urllib.unquote(nodeid)
+        nodeid = urllib.parse.unquote(nodeid)
         if not self.conn.has_node(nodeid):
             abort(NOT_FOUND, 'node not found')
 
     def read_file_view(self, nodeid, filename):
         """Access notebook file."""
-        nodeid = urllib.unquote(nodeid)
-        filename = urllib.unquote(filename)
+        nodeid = urllib.parse.unquote(nodeid)
+        filename = urllib.parse.unquote(filename)
         if not filename:
             filename = '/'
 
@@ -334,10 +335,10 @@ class BaseNoteBookHttpServer(object):
                     # TODO: return stream.
                     return stream.read()
 
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'cannot find node ' + str(e))
-        except connlib.FileError, e:
+        except connlib.FileError as e:
             keepnote.log_error()
             abort(FORBIDDEN, 'Could not read file ' + str(e))
 
@@ -345,8 +346,8 @@ class BaseNoteBookHttpServer(object):
         """
         Write node file.
         """
-        nodeid = urllib.unquote(nodeid)
-        filename = urllib.unquote(filename)
+        nodeid = urllib.parse.unquote(nodeid)
+        filename = urllib.parse.unquote(filename)
         if not filename:
             filename = '/'
 
@@ -369,10 +370,10 @@ class BaseNoteBookHttpServer(object):
                 stream.write(request.body.read())
                 stream.close()
 
-            except connlib.UnknownNode, e:
+            except connlib.UnknownNode as e:
                 keepnote.log_error()
                 abort(NOT_FOUND, 'cannot find node ' + str(e))
-            except connlib.FileError, e:
+            except connlib.FileError as e:
                 keepnote.log_error()
                 abort(FORBIDDEN, 'Could not write file ' + str(e))
 
@@ -380,18 +381,18 @@ class BaseNoteBookHttpServer(object):
         """
         Delete node file.
         """
-        nodeid = urllib.unquote(nodeid)
-        filename = urllib.unquote(filename)
+        nodeid = urllib.parse.unquote(nodeid)
+        filename = urllib.parse.unquote(filename)
         if not filename:
             filename = '/'
 
         try:
             # delete file/dir
             self.conn.delete_file(nodeid, filename)
-        except connlib.UnknownNode, e:
+        except connlib.UnknownNode as e:
             keepnote.log_error()
             abort(NOT_FOUND, 'cannot find node ' + str(e))
-        except connlib.FileError, e:
+        except connlib.FileError as e:
             keepnote.log_error()
             abort(FORBIDDEN, 'cannot delete file ' + str(e))
 
@@ -399,8 +400,8 @@ class BaseNoteBookHttpServer(object):
         """
         Check node file existence.
         """
-        nodeid = urllib.unquote(nodeid)
-        filename = urllib.unquote(filename)
+        nodeid = urllib.parse.unquote(nodeid)
+        filename = urllib.parse.unquote(filename)
         if not filename:
             filename = '/'
 
@@ -419,7 +420,7 @@ class NoteBookHttpServer(BaseNoteBookHttpServer):
         Create new notebook node.
         """
         if nodeid is not None:
-            nodeid = urllib.unquote(nodeid)
+            nodeid = urllib.parse.unquote(nodeid)
         else:
             nodeid = new_nodeid()
 
@@ -431,7 +432,7 @@ class NoteBookHttpServer(BaseNoteBookHttpServer):
 
         try:
             self.conn.create_node(nodeid, attr)
-        except connlib.NodeExists, e:
+        except connlib.NodeExists as e:
             keepnote.log_error()
             abort(FORBIDDEN, 'node already exists.' + str(e))
 

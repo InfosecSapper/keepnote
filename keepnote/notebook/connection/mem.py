@@ -27,8 +27,8 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-import urlparse
-from StringIO import StringIO
+import urllib.parse
+from io import StringIO
 
 # keepnote imports
 import keepnote
@@ -202,7 +202,7 @@ class NoteBookConnectionMem (NoteBookConnection):
         elif query[0] == "search":
             assert query[1] == "title"
             return [(nodeid, node.attr["title"])
-                    for nodeid, node in self._nodes.iteritems()
+                    for nodeid, node in self._nodes.items()
                         if query[2] in node.attr.get("title", "")]
 
         elif query[0] == "search_fulltext":

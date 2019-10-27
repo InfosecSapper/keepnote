@@ -32,7 +32,7 @@ from itertools import chain
 try:
     import pysqlite2
     import pysqlite2.dbapi2 as sqlite
-except Exception, e:
+except Exception as e:
     import sqlite3  as sqlite
 #sqlite.enable_shared_cache(True)
 #sqlite.threadsafety = 0
@@ -61,7 +61,7 @@ def match_words(infile, words):
                 matches[word] = True
 
     # return True if all words are found (AND)
-    for val in matches.itervalues():
+    for val in matches.values():
         if not val:
             return False
     
@@ -93,7 +93,7 @@ def test_fts3(cur, tmpname="fts3test"):
             "CREATE VIRTUAL TABLE %s USING fts3(col TEXT);" % tmpname)
         cur.execute("DROP TABLE %s;" % tmpname)
         return True
-    except Exception, e:
+    except Exception as e:
         return False
 
 
@@ -255,7 +255,7 @@ class NodeIndex (object):
         #            """)
 
         # initialize attribute tables
-        for attr in self._attrs.itervalues():
+        for attr in self._attrs.values():
             attr.init(cur)
 
 
@@ -277,7 +277,7 @@ class NodeIndex (object):
     def add_node_attr(self, cur, nodeid, attr, fulltext=True):
 
         # update attrs
-        for attrindex in self._attrs.itervalues():
+        for attrindex in self._attrs.values():
             attrindex.add_node(cur, nodeid, attr)
 
         # update fulltext
@@ -288,7 +288,7 @@ class NodeIndex (object):
     def remove_node_attr(self, cur, nodeid):
         
         # update attrs
-        for attr in self._attrs.itervalues():
+        for attr in self._attrs.values():
             attr.remove_node(cur, nodeid)
             
         self._remove_text(cur, nodeid)

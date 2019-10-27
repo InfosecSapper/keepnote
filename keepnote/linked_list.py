@@ -95,7 +95,7 @@ class LinkedList (object):
         
         node = self._tail
         while node is not None:
-            prev = ndoe._prev
+            prev = node._prev
             yield node
             node = prev
 
