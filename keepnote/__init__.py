@@ -53,7 +53,7 @@ from keepnote.notebook import \
     get_unique_filename_list
 import keepnote.notebook as notebooklib
 import keepnote.notebook.connection
-import keepnote.notebook.connection.fs
+from keepnote.notebook.connection import fs
 import keepnote.notebook.connection.http
 import keepnote.timestamp
 import keepnote.xdg
@@ -74,8 +74,9 @@ from keepnote.pref import Pref
 from keepnote import tarfile
 import xml.dom.minidom
 import xml.sax.saxutils
-import sgmllib
-import htmlentitydefs
+# TODO: replace these modules:
+# import sgmllib
+# import htmlentitydefs
 import re
 import base64
 import string
@@ -126,10 +127,7 @@ TRANSLATOR_CREDITS = (
     u"Turkish: Yuce Tekol <yucetekol@gmail.com>\n"
 )
 
-
-
-
-BASEDIR = os.path.dirname(str(__file__, FS_ENCODING))
+BASEDIR = os.path.dirname(str(__file__))
 PLATFORM = None
 
 USER_PREF_DIR = u"keepnote"
@@ -148,7 +146,7 @@ PORTABLE_FILE = u"portable.txt"
 # TODO: cleanup, make get/set_basedir symmetrical
 
 def get_basedir():
-    return os.path.dirname(str(__file__, FS_ENCODING))
+    return os.path.dirname(str(__file__))
 
 def set_basedir(basedir):
     global BASEDIR
@@ -633,8 +631,8 @@ class KeepNotePreferences (Pref):
                 p = root.find("pref")
                 if p is None:
                     # convert from old preference version
-                    import keepnote.compat.pref as old
-                    old_pref = old.KeepNotePreferences()
+                    from . import compat as old
+                    old_pref = old.pref.KeepNotePreferences()
                     old_pref.read(get_user_pref_file(self._pref_dir))
                     data = old_pref._get_data()
                 else:
@@ -643,7 +641,7 @@ class KeepNotePreferences (Pref):
                     if d is not None:
                         data = plist.load_etree(d)
                     else:
-                        data = orderdict.OrderDict()
+                        data = keepnote.orderdict.OrderDict()
 
                 # set data
                 self._data.clear()
@@ -733,7 +731,7 @@ class KeepNote (object):
 
         # default protocols for notebooks
         self._conns = keepnote.notebook.connection.NoteBookConnections()
-        self._conns.add("file", keepnote.notebook.connection.fs.NoteBookConnectionFS)
+        self._conns.add("file", fs.NoteBookConnectionFS)
         self._conns.add("http", keepnote.notebook.connection.http.NoteBookConnectionHttp)
 
         # external apps
@@ -1050,7 +1048,7 @@ class KeepNote (object):
         if "%f" not in cmd:
             cmd.append(filename)
         else:
-            for i in xrange(len(cmd)):
+            for i in range(len(cmd)):
                 if cmd[i] == "%f":
                     cmd[i] = filename
         

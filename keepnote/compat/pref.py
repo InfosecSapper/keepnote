@@ -28,11 +28,11 @@ import os
 import shutil
 from xml.etree import ElementTree
 
-import keepnote
+from .. import keepnote
 from keepnote import FS_ENCODING
 from keepnote import xdg
 import keepnote.timestamp
-import keepnote.compat.xmlobject_v3 as xmlo
+from . import xmlobject_v3 as xmlo
 from keepnote.util import compose
 from keepnote import orderdict
 
@@ -85,7 +85,7 @@ def get_home():
     """Return HOME directory"""
     home = keepnote.ensure_unicode(os.getenv(u"HOME"), FS_ENCODING)
     if home is None:
-        raise EnvError("HOME environment variable must be specified")
+        raise EnvironmentError("HOME environment variable must be specified")
     return home
 
 
@@ -429,8 +429,11 @@ g_keepnote_pref_parser = xmlo.XmlObject(
         xmlo.Tag("recent_notebooks", tags=[
            xmlo.TagMany("notebook",
                 iterfunc=lambda s: range(len(s.recent_notebooks)),
-                get=lambda (s, i), x: s.recent_notebooks.append(x),
-                set=lambda (s, i): s.recent_notebooks[i]
+                # TODO: fix
+                # get=lambda (s, i), x: s.recent_notebooks.append(x),
+                # set=lambda (s, i): s.recent_notebooks[i]
+                get=lambda s, i, x: s.recent_notebooks.append(x),
+                set=lambda s, i: s.recent_notebooks[i]
                         )
            ]),
 
@@ -439,8 +442,11 @@ g_keepnote_pref_parser = xmlo.XmlObject(
             xmlo.Tag("disabled", tags=[
                 xmlo.TagMany("extension",
                 iterfunc=lambda s: range(len(s.disabled_extensions)),
-                get=lambda (s, i), x: s.disabled_extensions.append(x),
-                set=lambda (s, i): s.disabled_extensions[i]
+                # TODO: fix
+                # get=lambda (s, i), x: s.disabled_extensions.append(x),
+                # set=lambda (s, i): s.disabled_extensions[i]
+                get=lambda s, i, x: s.disabled_extensions.append(x),
+                set=lambda s, i: s.disabled_extensions[i]
                         )
                 ]),
             ]),
@@ -450,40 +456,40 @@ g_keepnote_pref_parser = xmlo.XmlObject(
 
            xmlo.TagMany("app",
                 iterfunc=lambda s: range(len(s.external_apps)),
-                before=lambda (s,i):
+                before=lambda s, i:
                         s.external_apps.append(ExternalApp("", "", "")),
                 tags=[
                     xmlo.Tag("title",
-                        get=lambda (s,i),x:
+                        get=lambda s, i, x:
                              setattr(s.external_apps[i], "title", x),
-                        set=lambda (s,i): s.external_apps[i].title),
+                        set=lambda s, i: s.external_apps[i].title),
                     xmlo.Tag("name",
-                        get=lambda (s,i),x:
+                        get=lambda s, i, x:
                              setattr(s.external_apps[i], "key", x),
-                        set=lambda (s,i): s.external_apps[i].key),
+                        set=lambda s, i: s.external_apps[i].key),
                     xmlo.Tag("program",                             
-                        get=lambda (s,i),x:
+                        get=lambda s, i, x:
                              setattr(s.external_apps[i], "prog", x),
-                        set=lambda (s,i): s.external_apps[i].prog)]
+                        set=lambda s, i: s.external_apps[i].prog)]
            )]
           
         ),
         xmlo.Tag("timestamp_formats", tags=[
             xmlo.TagMany("timestamp_format",
                 iterfunc=lambda s: range(len(s.timestamp_formats)),
-                before=lambda (s,i): setattr(s, "_last_timestamp_name", "") or
+                before=lambda s, i: setattr(s, "_last_timestamp_name", "") or
                                      setattr(s, "_last_timestamp_format", ""),
-                after=lambda (s,i):
+                after=lambda s, i:
                     s.timestamp_formats.__setitem__(
                         s._last_timestamp_name,
                         s._last_timestamp_format),
                 tags=[
                     xmlo.Tag("name",
-                        get=lambda (s,i),x: setattr(s, "_last_timestamp_name", x),
-                        set=lambda (s,i): s.timestamp_formats.keys()[i]),
+                        get=lambda s, i, x: setattr(s, "_last_timestamp_name", x),
+                        set=lambda s, i: s.timestamp_formats.keys()[i]),
                     xmlo.Tag("format",
-                        get=lambda (s,i),x: setattr(s, "_last_timestamp_format", x),
-                        set=lambda (s,i): s.timestamp_formats.values()[i])
+                        get=lambda s, i, x: setattr(s, "_last_timestamp_format", x),
+                        set=lambda s, i: s.timestamp_formats.values()[i])
                     ]
             )]
         )
