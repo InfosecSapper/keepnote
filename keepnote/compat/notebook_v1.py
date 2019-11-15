@@ -33,7 +33,7 @@ import time
 import re
 
 # keepnote imports
-import keepnote.compat.xmlobject_v1 as xmlo
+from . import xmlobject_v1 as xmlo
 from keepnote.listening import Listeners
 from keepnote.timestamp import \
      DEFAULT_TIMESTAMP_FORMATS, \

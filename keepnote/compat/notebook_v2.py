@@ -261,11 +261,11 @@ def new_nodeid():
 #=============================================================================
 # classes
 
-class NoteBookError (StandardError):
+class NoteBookError (Exception):
     """Exception that occurs when manipulating NoteBook's"""
     
     def __init__(self, msg, error=None):
-        StandardError.__init__(self)
+        Exception.__init__(self)
         self.msg = msg
         self.error = error
     
@@ -310,9 +310,9 @@ class NoteBookAttr (object):
         # writer function
         if write is None:
             if datatype == bool:
-                self.write = lambda x: unicode(int(x))
+                self.write = lambda x: str(int(x))
             else:
-                self.write = unicode
+                self.write = str
         else:
             self.write = write
 
@@ -356,13 +356,13 @@ def read_info_sort(key):
     #return _sort_info_backcompat.get(key, key)
 
 
-title_attr = NoteBookAttr("Title", unicode, "title")
+title_attr = NoteBookAttr("Title", str, "title")
 created_time_attr = NoteBookAttr("Created", int, "created_time", default=get_timestamp)
 modified_time_attr = NoteBookAttr("Modified", int, "modified_time", default=get_timestamp)
 
 g_default_attrs = [
     title_attr,
-    NoteBookAttr("Content type", unicode, "content_type"),
+    NoteBookAttr("Content type", str, "content_type"),
     NoteBookAttr("Order", int, "order"),
     created_time_attr,
     modified_time_attr,
@@ -371,8 +371,8 @@ g_default_attrs = [
     NoteBookAttr("Folder Sort", str, "info_sort", read=read_info_sort),
     NoteBookAttr("Folder Sort Direction", int, "info_sort_dir"),
     NoteBookAttr("Node ID", str, "nodeid", default=new_nodeid),
-    NoteBookAttr("Icon", unicode, "icon"),
-    NoteBookAttr("Icon Open", unicode, "icon_open")
+    NoteBookAttr("Icon", str, "icon"),
+    NoteBookAttr("Icon Open", str, "icon_open")
 ]
 
 
@@ -512,7 +512,7 @@ class NoteBookNode (object):
         self._attr = {
             "title": title,
             "content_type": content_type,
-            "order": sys.maxint,
+            "order": sys.maxsize,
             "created_time": None,
             "modified_time": None,
             "expanded": False,
@@ -552,7 +552,7 @@ class NoteBookNode (object):
 
     def iter_attr(self):
         """Iterate through attributes"""
-        return self._attr.iteritems()
+        return self._attr.items()
     
 
     def set_attr_timestamp(self, name, timestamp=None):
@@ -999,9 +999,9 @@ g_notebook_pref_parser = xmlo.XmlObject(
         xmlo.Tag("quick_pick_icons", tags=[
             xmlo.TagMany("icon",
                 iterfunc=lambda s: range(len(s.quick_pick_icons)),
-                get=lambda (s,i),x:
+                get=lambda s, i, x:
                     s.quick_pick_icons.append(x),
-                set=lambda (s,i): s.quick_pick_icons[i])
+                set=lambda s, i: s.quick_pick_icons[i])
         ])
     ]))
 
@@ -1436,7 +1436,7 @@ class NoteBookNodeMetaData (object):
             out.write("</node>\n")
             out.close()
         except Exception as e:
-            print e
+            print(e)
             raise NoteBookError("Cannot write meta data", e)
 
 

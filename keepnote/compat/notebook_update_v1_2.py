@@ -28,10 +28,8 @@ import os
 from xml.sax.saxutils import escape
 
 
-from keepnote.compat import notebook_v2 as notebooklib
+from . import notebook_v2 as notebooklib
 from keepnote import safefile
-
-
 
 
 def update_notebook(filename, desired_version, warn=lambda w: False,
