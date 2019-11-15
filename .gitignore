@@ -3,6 +3,3 @@
 
 ## Ignore IDE files:
 .vscode/*
-
-## Ignore virtualenv:
-.venv/*
