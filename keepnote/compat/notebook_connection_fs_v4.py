@@ -800,7 +800,7 @@ class NoteBookConnectionFS (NoteBookConnection):
         except:
             raise keepnote.compat.notebook_v4.NoteBookError(
                 _(u"Do not have permission to read folder contents: %s") 
-                % path, e)           
+                % path)           
         
         for filename in files:
             path2 = os.path.join(path, filename)
@@ -1064,7 +1064,7 @@ class NoteBookConnectionFS (NoteBookConnection):
     def rename_file(self, nodeid, filename, new_filename):
         """Rename a node file"""
 
-        path = self._get_node_path(nodeid) if _path is None else _path
+        path = self._get_node_path(nodeid) if __path__ is None else __path__
         filepath = get_node_filename(path, filename)
         new_filepath = get_node_filename(path, new_filename)
 

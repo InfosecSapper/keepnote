@@ -25,13 +25,17 @@
 #
 
 
-import os, tempfile, codecs, sys
+import os
+import sys
+import io
+import tempfile
+import codecs
 
 # NOTE: bypass easy_install's monkey patching of file
 # easy_install does not correctly emulate 'file'
-if type(file) != type:
+if type(__file__) != type:
     # HACK: this works as long as sys.stdout is not patched
-    file = type(sys.stdout)
+    __file__ = type(sys.stdout)
 
 
 def open(filename, mode="r", tmp=None, codec=None):
@@ -55,7 +59,7 @@ def open(filename, mode="r", tmp=None, codec=None):
     return stream
 
 
-class SafeFile (file):
+class SafeFile (__file__):
 
     def __init__(self, filename, mode="r", tmp=None):
         """
@@ -74,9 +78,9 @@ class SafeFile (file):
         
         # open file
         if self._tmp:
-            file.__init__(self, self._tmp, mode)
+            __file__.__init__(self, self._tmp, mode)
         else:
-            file.__init__(self, filename, mode)
+            __file__.__init__(self, filename, mode)
 
 
     def close(self):
@@ -87,7 +91,7 @@ class SafeFile (file):
             os.fsync(self.fileno())
         except:
             pass
-        file.close(self)
+        __file__.close(self)
 
         if self._tmp:
             # NOTE: windows will not allow rename when destination file exists
@@ -106,7 +110,7 @@ class SafeFile (file):
         Temp file does not replace existing file
         """
 
-        file.close(self)
+        __file__.close(self)
 
         if self._tmp:
             os.remove(self._tmp)

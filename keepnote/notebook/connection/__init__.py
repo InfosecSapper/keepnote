@@ -32,16 +32,16 @@ import urllib.parse
 # errors
 
 
-class ConnectionError (StandardError):
+class ConnectionError (Exception):
     def __init__(self, msg="", error=None):
-        StandardError.__init__(self, msg)
+        Exception.__init__(self, msg)
         self.error = error
 
     def repr(self):
         if self.error is not None:
-            return StandardError.repr(self) + ": " + repr(self.error)
+            return Exception.__repr__(self) + ": " + repr(self.error)
         else:
-            return StandardError.repr(self)
+            return Exception.__repr__(self)
 
 class UnknownNode (ConnectionError):
     def __init__(self, msg="unknown node"):
@@ -196,6 +196,9 @@ class NoteBookConnection (object):
 
         if nodeid is None or nodeid2 is None:
             raise UnknownFile("nodeid cannot be None")
+
+        filename = filename1
+        new_filename = filename2
         
         self.copy_file(nodeid, filename, nodeid, new_filename)
         self.delete_file(nodeid, filename)
