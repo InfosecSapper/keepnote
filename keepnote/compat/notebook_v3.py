@@ -33,8 +33,8 @@ import sys
 import shutil
 import re
 import traceback
-import urlparse
-import urllib2
+from urllib import parse
+from urllib import request
 import uuid
 
 # xml imports
@@ -148,7 +148,7 @@ def get_unique_filename(path, filename, ext=u"", sep=u" ", number=2,
     # try numbered suffixes
     i = number
     while True:
-        newname = os.path.join(path, filename + sep + unicode(i) + ext)
+        newname = os.path.join(path, filename + sep + str(i) + ext)
         if not os.path.exists(newname):
             if return_number:
                 return (newname, i)
@@ -175,7 +175,7 @@ def get_unique_filename_list(filenames, filename, ext=u"", sep=u" ", number=2):
     # try numbered suffixes
     i = number
     while True:
-        newname = filename + sep + unicode(i) + ext
+        newname = filename + sep + str(i) + ext
         if newname not in filenames:
             return newname
         i += 1
@@ -285,7 +285,7 @@ def get_notebook_version_etree(tree):
 
 def new_nodeid():
     """Generate a new node id"""
-    return unicode(uuid.uuid4())
+    return str(uuid.uuid4())
 
 
 def get_node_url(nodeid, host=u""):
@@ -347,11 +347,11 @@ def attach_file(filename, node, index=None):
 #=============================================================================
 # errors
 
-class NoteBookError (StandardError):
+class NoteBookError (Exception):
     """Exception that occurs when manipulating NoteBook's"""
     
     def __init__(self, msg, error=None):
-        StandardError.__init__(self)
+        Exception.__init__(self)
         self.msg = msg
         self.error = error
     
@@ -400,9 +400,9 @@ class AttrDef (object):
         # writer function
         if write is None:
             if datatype == bool:
-                self.write = lambda x: unicode(int(x))
+                self.write = lambda x: str(int(x))
             else:
-                self.write = unicode
+                self.write = str
         else:
             self.write = write
 
@@ -450,28 +450,28 @@ def read_info_sort(key):
     return _sort_info_backcompat.get(key, key)
 
 
-title_attr = AttrDef("Title", unicode, "title")
+title_attr = AttrDef("Title", str, "title")
 created_time_attr = AttrDef("Created", int, "created_time", default=get_timestamp)
 modified_time_attr = AttrDef("Modified", int, "modified_time", default=get_timestamp)
 
 g_default_attr_defs = [
     title_attr,
-    AttrDef("Content type", unicode, "content_type",
+    AttrDef("Content type", str, "content_type",
                  default=lambda: CONTENT_TYPE_DIR),
-    AttrDef("Order", int, "order", default=lambda: sys.maxint),
+    AttrDef("Order", int, "order", default=lambda: sys.maxsize),
     created_time_attr,
     modified_time_attr,
     AttrDef("Expaned", bool, "expanded", default=lambda: True),
     AttrDef("Expanded2", bool, "expanded2", default=lambda: True),
-    AttrDef("Folder Sort", unicode, "info_sort", read=read_info_sort,
+    AttrDef("Folder Sort", str, "info_sort", read=read_info_sort,
                  default=lambda: "order"),
     AttrDef("Folder Sort Direction", int, "info_sort_dir", 
                  default=lambda: 1),
-    AttrDef("Node ID", unicode, "nodeid", default=new_nodeid),
-    AttrDef("Icon", unicode, "icon"),
-    AttrDef("Icon Open", unicode, "icon_open"),
-    AttrDef("Filename", unicode, "payload_filename"),
-    AttrDef("Duplicate of", unicode, "duplicate_of")
+    AttrDef("Node ID", str, "nodeid", default=new_nodeid),
+    AttrDef("Icon", str, "icon"),
+    AttrDef("Icon Open", str, "icon_open"),
+    AttrDef("Filename", str, "payload_filename"),
+    AttrDef("Duplicate of", str, "duplicate_of")
 ]
 
 
@@ -594,7 +594,7 @@ class NoteBookNode (object):
         self._attr = {
             "title": title,
             "content_type": content_type,
-            "order": sys.maxint,
+            "order": sys.maxsize,
             "created_time": None,
             "modified_time": None,
             "expanded": True,
@@ -637,7 +637,7 @@ class NoteBookNode (object):
 
     def iter_attr(self):
         """Iterate through attributes of the node"""
-        return self._attr.iteritems()
+        return self._attr.items()
     
 
     def set_attr_timestamp(self, name, timestamp=None):
@@ -927,7 +927,7 @@ class NoteBookNode (object):
         """Return True if node has children"""
 
         try:
-            self.iter_temp_children().next()
+            self.iter_temp_children().__next__()
             return True
         except StopIteration:
             return False
@@ -1229,7 +1229,7 @@ class NoteBookGenericFile (NoteBookNode):
         
         try:
             # attempt url parse
-            parts = urlparse.urlparse(filename)
+            parts = parse.urlparse(filename)
             
             if os.path.exists(filename) or parts[0] == "":
                 # perform local copy
@@ -1237,7 +1237,7 @@ class NoteBookGenericFile (NoteBookNode):
             else:
                 # perform download
                 out = open(new_filename, "w")
-                infile = urllib2.urlopen(filename)
+                infile = request.urlopen(filename)
                 while True:
                     data = infile.read(1024*4)
                     if data == "":
@@ -1386,9 +1386,9 @@ g_notebook_pref_parser = xmlo.XmlObject(
         xmlo.Tag("quick_pick_icons", tags=[
             xmlo.TagMany("icon",
                 iterfunc=lambda s: range(len(s._quick_pick_icons)),
-                get=lambda (s,i),x:
+                get=lambda s, i, x:
                     s._quick_pick_icons.append(x),
-                set=lambda (s,i): s._quick_pick_icons[i])
+                set=lambda s, i: s._quick_pick_icons[i])
         ]),
     ]))
 

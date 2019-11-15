@@ -208,7 +208,7 @@ class TagAction (Action):
 
         # TODO: I can probably discard iter's.  Maybe make argument to
         # iter_buffer_contents
-        self.contents = filter(lambda (kind, it, param): 
+        self.contents = filter(lambda kind, it, param: 
             kind in ("begin", "end") and param == self.tag,
             buffer_contents_iter_to_offset(
                 iter_buffer_contents(self.textbuffer, start, end)))
@@ -233,7 +233,7 @@ class UndoHandler (object):
         """Callback for text insert"""
 
         # NOTE: GTK does not give us a proper UTF string, so fix it
-        text = unicode(text, "utf_8")
+        text = str(text, "utf_8")
         length = len(text)
 
         # setup next action

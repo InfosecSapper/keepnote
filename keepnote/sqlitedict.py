@@ -31,8 +31,9 @@ import os
 import tempfile
 import random
 import logging
-from cPickle import dumps, loads, HIGHEST_PROTOCOL as PICKLE_PROTOCOL
-from UserDict import DictMixin
+from pickle import dumps, loads, HIGHEST_PROTOCOL as PICKLE_PROTOCOL
+from collections.abc import UserDict
+from collections.abc import MutableMapping as DictMixin
 from Queue import Queue
 from threading import Thread
 
@@ -212,7 +213,7 @@ class SqliteDict(object, DictMixin):
         logger.info("deleting %s" % self.filename)
         try:
             os.remove(self.filename)
-        except IOError, e:
+        except IOError as e:
             logger.warning("failed to delete %s: %s" % (self.filename, e))
 
     def __del__(self):
@@ -367,4 +368,4 @@ if __name__ in '__main___':
         d.clear()
         assert not d
         d.close()
-    print 'all tests passed :-)'
+    print(" all tests passed :-)")
