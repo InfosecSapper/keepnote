@@ -24,13 +24,12 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from Gtk import gdk
-from gi.repository import Gtk.glade
-import gobject
-
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
+import GObject
 
 
 class FontSelector (Gtk.ComboBox):

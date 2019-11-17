@@ -29,12 +29,12 @@
 #
 
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from Gtk import gdk
-from gi.repository import Gtk.glade
-import gobject
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
+import GObject
 
 # keepnote imports
 import keepnote
@@ -244,7 +244,7 @@ class ContentEditor (MultiEditor):
         else:
             content_type = nodes[0].get_attr("content_type").split("/")
 
-            for i in xrange(len(content_type), 0, -1):
+            for i in range(len(content_type), 0, -1):
                 editor = self._editors.get("/".join(content_type[:i]), None)
                 if editor:
                     self.set_editor(editor)
@@ -253,4 +253,3 @@ class ContentEditor (MultiEditor):
                 self.set_editor(self._default_editor)
 
             MultiEditor.view_nodes(self, nodes)
-

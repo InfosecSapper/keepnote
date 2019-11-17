@@ -40,22 +40,23 @@ import threading
 import gi
 gi.require_version("Gtk","3.0")
 from gi.repository import Gtk
-from Gtk import gdk
-import gobject
+from gi.repository import Gdk
+from gi.repository import GLib
+from gi.repository import GObject
 
 
 # keepnote imports
 import keepnote
 from keepnote import log_error
-import keepnote.gui.richtext.richtext_tags
+from keepnote.gui.richtext import richtext_tags
 from keepnote import get_resource, ensure_unicode, get_platform, unicode_gtk
 from keepnote import tasklib
 from keepnote.notebook import \
      NoteBookError
 import keepnote.notebook as notebooklib
-import keepnote.gui.dialog_app_options
-import keepnote.gui.dialog_node_icon
-import keepnote.gui.dialog_wait
+from . import dialog_app_options
+from . import dialog_node_icon
+from . import dialog_wait
 from keepnote.gui.icons import \
     DEFAULT_QUICK_PICK_ICONS, uncache_node_icon
     
@@ -78,7 +79,7 @@ DEFAULT_FONT_SIZE = 10
 DEFAULT_FONT = "%s %d" % (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
 
 if keepnote.get_platform() == "darwin":
-    CLIPBOARD_NAME = gdk.SELECTION_PRIMARY
+    CLIPBOARD_NAME = Gdk.SELECTION_PRIMARY
 else:
     CLIPBOARD_NAME = "CLIPBOARD"
 
@@ -529,7 +530,7 @@ class KeepNote (keepnote.KeepNote):
     def open_notebook(self, filename, window=None, task=None):
         """Open notebook"""
 
-        from keepnote.gui import dialog_update_notebook
+        from . import dialog_update_notebook
         
         # HACK
         if isinstance(self._conns.get(filename), 
@@ -573,7 +574,7 @@ class KeepNote (keepnote.KeepNote):
                 sem.release() # notify that notebook is loaded
                 return False
                     
-            gobject.idle_add(func)
+            GLib.idle_add(func)
 
             # wait for notebook to load
             sem.acquire()
@@ -714,7 +715,7 @@ class KeepNote (keepnote.KeepNote):
 
             if not self._auto_save_registered:
                 self._auto_save_registered = True
-                gobject.timeout_add(self.pref.get("autosave_time"), 
+                GObject.timeout_add(self.pref.get("autosave_time"), 
                                     self.auto_save)
         else:
             self._auto_saving = False

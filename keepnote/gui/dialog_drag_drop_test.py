@@ -27,12 +27,11 @@
 
 import os
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-#from Gtk import gdk
-from gi.repository import Gtk.glade
-
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 # keepnote imports
 import keepnote
@@ -48,8 +47,7 @@ def parse_utf(text):
         len(text) > 3 and text[3] == '\x00'):
         return text.decode("utf16")
     else:
-        return unicode(text, "utf8")
-
+        return str(text, "utf8")
 
 
 class DragDropTestDialog (object):
@@ -122,5 +120,5 @@ class DragDropTestDialog (object):
         data = selection_data.data
         buf.insert_at_cursor("sel.targets = " + repr(selection_data.get_targets()) + "\n")
         buf.insert_at_cursor("type(sel.data) = " + str(type(data))+"\n")        
-        print "sel.data = " + repr(data)[:1000]+"\n"
+        print("sel.data = " + repr(data)[:1000]+"\n")
         buf.insert_at_cursor("sel.data = " + repr(data)[:5000]+"\n")

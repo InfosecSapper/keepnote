@@ -28,13 +28,11 @@
 import gettext
 import os
 
-
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-import gobject
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
-from gi.repository import Gtk.glade
+import GObject
 
 
 # keepnote imports
@@ -196,7 +194,7 @@ class NodeIconDialog (object):
             if filename:
                 try:
                     pixbuf = keepnote.gui.get_pixbuf(filename)
-                except gobject.GError:
+                except GObject.GError:
                     continue
                 list.append((pixbuf, iconfile))
             
@@ -352,7 +350,3 @@ class NodeIconDialog (object):
         iconview, icon, iconfile = self.get_iconview_selection()
         if iconfile:
             self.set_icon("icon_open", iconfile)
-            
-            
-
-    

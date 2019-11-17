@@ -25,14 +25,17 @@
 #
 
 # python imports
-import os, sys, threading, time, traceback
+import os
+import sys
+import threading
+import time
+import traceback
 
-
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from gi.repository import Gtk.glade
-import gobject
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+import GObject
 
 # keepnote imports
 import keepnote
@@ -105,8 +108,8 @@ class WaitDialog (object):
             # filter for messages we process
             messages = filter(lambda x: isinstance(x, tuple) and len(x) == 2,
                               self._task.get_messages())
-            texts = filter(lambda (a,b): a == "text", messages)
-            details = filter(lambda (a,b): a == "detail", messages)
+            texts = filter(lambda a, b: a == "text", messages)
+            details = filter(lambda a, b: a == "detail", messages)
 
             # update text
             if len(texts) > 0:
@@ -117,7 +120,7 @@ class WaitDialog (object):
             # repeat this timeout function
             return True
 
-        gobject.timeout_add(update_rate, gui_update)
+        GObject.timeout_add(update_rate, gui_update)
             
 
     def _on_task_update(self):
@@ -132,5 +135,3 @@ class WaitDialog (object):
 
         self.text.set_text("Canceling...")
         self._task.stop()
-
-        

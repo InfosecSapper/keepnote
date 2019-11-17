@@ -29,11 +29,11 @@ import os
 import sys
 import gettext
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from gi.repository import Gtk.glade
-from Gtk import gdk
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 # keepnote imports
 import keepnote
@@ -607,7 +607,7 @@ class NoteBookSection (Section):
 
             self.notebook_index_dir.set_text(
                 self.notebook.pref.get("index_dir", 
-                                       default=u"", type=basestring))
+                                       default=u"", type=str))
 
 
     def save_options(self, app):
@@ -864,7 +864,7 @@ class ApplicationOptionsDialog (object):
 
         # setup treeview
         self.overview = self.xml.get_widget("app_config_treeview")
-        self.overview_store = Gtk.TreeStore(str, object, gdk.Pixbuf)
+        self.overview_store = Gtk.TreeStore(str, object, Gdk.Pixbuf)
         self.overview.set_model(self.overview_store)
         self.overview.connect("cursor-changed", self.on_overview_select)
 
@@ -1019,7 +1019,7 @@ class ApplicationOptionsDialog (object):
         if icon is None:
             icon = icon="note.png"
         
-        if isinstance(icon, basestring):
+        if isinstance(icon, str):
             pixbuf = keepnote.gui.get_resource_pixbuf(icon, size=size)
         else:
             pixbuf = icon
@@ -1118,5 +1118,3 @@ class ApplicationOptionsDialog (object):
         self.finish()
         self.dialog.stop_emission("delete-event")
         return True
-
-

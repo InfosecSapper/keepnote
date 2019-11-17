@@ -28,16 +28,15 @@
 # python imports
 import os
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from Gtk import gdk
-from gi.repository import Gtk.glade
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 # keepnote imports
 import keepnote
 from keepnote import get_resource, unicode_gtk
-
 
 
 class KeepNoteFindDialog (object):

@@ -25,15 +25,17 @@
 #
 
 # python imports
-import gettext, urllib
+import gettext
+import urllib
 
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from gi.repository import Gtk, gobject, pango
-from Gtk import gdk
-
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+from gi.repository import Pango
 
 
 # keepnote imports
@@ -47,8 +49,6 @@ from keepnote.gui import treemodel, CLIPBOARD_NAME
 from keepnote.timestamp import get_str_timestamp
 
 _ = keepnote.translate
-
-
 
 MIME_NODE_COPY = "application/x-keepnote-node-copy"
 MIME_TREE_COPY = "application/x-keepnote-tree-copy"
@@ -469,12 +469,12 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
         
         # builtin column types
         if attr == self._attr_icon:
-            coltype = gdk.Pixbuf
+            coltype = Gdk.Pixbuf
             coltype_sort = None
             get = lambda node: get_node_icon(node, False,
                                              node in self.rich_model.fades)
         elif attr == self._attr_icon_open:
-            coltype = gdk.Pixbuf
+            coltype = Gdk.Pixbuf
             coltype_sort = None
             get = lambda node: get_node_icon(node, True,
                                              node in self.rich_model.fades)
@@ -575,7 +575,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
 
         # restore scroll
-        gobject.idle_add(lambda : self.scroll_to_point(*self.__scroll))
+        GObject.idle_add(lambda : self.scroll_to_point(*self.__scroll))
 
         # resume emitting selection changes
         self.__suppress_sel = False
@@ -683,7 +683,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 if len(path) > 1:
                     self.expand_to_path(path[:-1])
                 self.set_cursor(path)
-                gobject.idle_add(lambda: self.scroll_to_cell(path))
+                GObject.idle_add(lambda: self.scroll_to_cell(path))
         else:
             # unselect all nodes
             self.get_selection().unselect_all()
@@ -744,7 +744,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
             except:
                 pass
 
-        gobject.idle_add(lambda: self.scroll_to_cell(path))
+        GObject.idle_add(lambda: self.scroll_to_cell(path))
     
 
     def on_editing_canceled(self, cellrenderer):
@@ -785,7 +785,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                                   self.rich_model.get_node_column_pos())
         if path is not None:
             self.set_cursor(path)
-            gobject.idle_add(lambda: self.scroll_to_cell(path))
+            GObject.idle_add(lambda: self.scroll_to_cell(path))
 
         self.emit("edit-node", node, attr, new_val)
 
@@ -1077,7 +1077,7 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
         self._is_dragging = True
         self._drag_count = 0
-        gobject.timeout_add(200, self._on_drag_timer)
+        GObject.timeout_add(200, self._on_drag_timer)
 
         
     def _on_drag_motion(self, treeview, drag_context, x, y, eventtime,
@@ -1122,13 +1122,13 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
                 if allow:
                     self.set_drag_dest_row(target_path, drop_position)
                     self._dest_row = target_path, drop_position
-                    drag_context.drag_status(gdk.ACTION_MOVE, eventtime)
+                    drag_context.drag_status(Gdk.ACTION_MOVE, eventtime)
 
             elif "text/uri-list" in drag_context.targets:
                 if self._drop_allowed(None, target_node, drop_position):
                     self.set_drag_dest_row(target_path, drop_position)
                     self._dest_row = target_path, drop_position
-                    drag_context.drag_status(gdk.ACTION_COPY, eventtime)
+                    drag_context.drag_status(Gdk.ACTION_COPY, eventtime)
 
 
 
@@ -1334,35 +1334,35 @@ class KeepNoteBaseTreeView (Gtk.TreeView):
 
 
 
-gobject.type_register(KeepNoteBaseTreeView)
-gobject.signal_new("goto-node", KeepNoteBaseTreeView, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("activate-node", KeepNoteBaseTreeView, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("delete-node", KeepNoteBaseTreeView, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("goto-parent-node", KeepNoteBaseTreeView,
-                   gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, ())
-gobject.signal_new("copy-clipboard", KeepNoteBaseTreeView,
-                   gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, ())
-gobject.signal_new("copy-tree-clipboard", KeepNoteBaseTreeView,
-                   gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, ())
-gobject.signal_new("cut-clipboard", KeepNoteBaseTreeView,
-                   gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, ())
-gobject.signal_new("paste-clipboard", KeepNoteBaseTreeView,
-                   gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, ())
-gobject.signal_new("select-nodes", KeepNoteBaseTreeView,
-                   gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("edit-node", KeepNoteBaseTreeView,
-                   gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object, str, str))
-gobject.signal_new("drop-file", KeepNoteBaseTreeView,
-                   gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object, int, str))
-gobject.signal_new("error", KeepNoteBaseTreeView, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (str, object,))
+GObject.type_register(KeepNoteBaseTreeView)
+GObject.signal_new("goto-node", KeepNoteBaseTreeView, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))
+GObject.signal_new("activate-node", KeepNoteBaseTreeView, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))
+GObject.signal_new("delete-node", KeepNoteBaseTreeView, GObject.SIGNAL_RUN_LAST,
+                   GObject.TYPE_NONE, (object,))
+GObject.signal_new("goto-parent-node", KeepNoteBaseTreeView,
+                   GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ())
+GObject.signal_new("copy-clipboard", KeepNoteBaseTreeView,
+                   GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, ())
+GObject.signal_new("copy-tree-clipboard", KeepNoteBaseTreeView,
+                   GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, ())
+GObject.signal_new("cut-clipboard", KeepNoteBaseTreeView,
+                   GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, ())
+GObject.signal_new("paste-clipboard", KeepNoteBaseTreeView,
+                   GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, ())
+GObject.signal_new("select-nodes", KeepNoteBaseTreeView,
+                   GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))
+GObject.signal_new("edit-node", KeepNoteBaseTreeView,
+                   GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object, str, str))
+GObject.signal_new("drop-file", KeepNoteBaseTreeView,
+                   GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object, int, str))
+GObject.signal_new("error", KeepNoteBaseTreeView, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (str, object,))

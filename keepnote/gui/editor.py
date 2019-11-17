@@ -26,12 +26,12 @@
 #
 
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from Gtk import gdk
-from gi.repository import Gtk.glade
-import gobject
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
+import GObject
 
 # keepnote imports
 import keepnote
@@ -98,22 +98,20 @@ class KeepNoteEditor (Gtk.VBox):
 
 
 # add new signals to KeepNoteEditor
-gobject.type_register(KeepNoteEditor)
-gobject.signal_new("view-node", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-    gobject.TYPE_NONE, (object,))
-gobject.signal_new("visit-node", KeepNoteEditor, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (object,))
-gobject.signal_new("modified", KeepNoteEditor, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (object, bool))
-gobject.signal_new("font-change", KeepNoteEditor, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (object,))
-gobject.signal_new("error", KeepNoteEditor, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (str, object))
-gobject.signal_new("child-activated", KeepNoteEditor, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (object, object))
-gobject.signal_new("window-request", KeepNoteEditor, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (str,))
-gobject.signal_new("make-link", KeepNoteEditor, gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE, ())
-
-
+GObject.type_register(KeepNoteEditor)
+GObject.signal_new("view-node", KeepNoteEditor, GObject.SIGNAL_RUN_LAST,
+    GObject.TYPE_NONE, (object,))
+GObject.signal_new("visit-node", KeepNoteEditor, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (object,))
+GObject.signal_new("modified", KeepNoteEditor, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (object, bool))
+GObject.signal_new("font-change", KeepNoteEditor, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (object,))
+GObject.signal_new("error", KeepNoteEditor, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (str, object))
+GObject.signal_new("child-activated", KeepNoteEditor, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (object, object))
+GObject.signal_new("window-request", KeepNoteEditor, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (str,))
+GObject.signal_new("make-link", KeepNoteEditor, GObject.SIGNAL_RUN_LAST,
+                   GObject.TYPE_NONE, ())

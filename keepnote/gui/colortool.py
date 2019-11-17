@@ -25,13 +25,13 @@
 #
 
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from Gtk import gdk
-from gi.repository import Gtk.glade
-import gobject
-import pango
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+from gi.repository import Pango
 
 
 #=============================================================================
@@ -158,22 +158,22 @@ class ColorTextImage (Gtk.Image):
 
 
     def init_colors(self):
-        self._pixmap = gdk.Pixmap(None, self.width, self.height, 24)
+        self._pixmap = Gdk.Pixmap(None, self.width, self.height, 24)
         self._colormap = self._pixmap.get_colormap()
-        #self._colormap = Gtk.gdk.colormap_get_system()
-        #Gtk.gdk.screen_get_default().get_default_colormap()
+        #self._colormap = Gtk.Gdk.colormap_get_system()
+        #Gtk.Gdk.screen_get_default().get_default_colormap()
         self._gc = self._pixmap.new_gc()
 
         self._context = self.get_pango_context()
-        self._fontdesc = pango.FontDescription("sans bold 10")
+        self._fontdesc = Pango.FontDescription("sans bold 10")
 
-        if isinstance(self.fg_color, basestring):
+        if isinstance(self.fg_color, str):
             self.fg_color = self._colormap.alloc_color(self.fg_color)
         elif self.fg_color is None:
             self.fg_color = self._colormap.alloc_color(
                 self.get_style().text[Gtk.STATE_NORMAL])
 
-        if isinstance(self.bg_color, basestring):
+        if isinstance(self.bg_color, str):
             self.bg_color = self._colormap.alloc_color(self.bg_color)
         elif self.bg_color is None:
             self.bg_color = self._colormap.alloc_color(
@@ -214,7 +214,7 @@ class ColorTextImage (Gtk.Image):
 
         if self.letter:
             self._gc.foreground = self.fg_color
-            layout = pango.Layout(self._context)
+            layout = Pango.Layout(self._context)
             layout.set_text(FONT_LETTER)
             layout.set_font_description(self._fontdesc)
             self._pixmap.draw_layout(self._gc, self.marginx,
@@ -359,13 +359,13 @@ class ColorMenu (Gtk.Menu):
             self.realize()
 
 
-gobject.type_register(ColorMenu)
-gobject.signal_new("set-color", ColorMenu, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("set-colors", ColorMenu, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("get-colors", ColorMenu, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
+GObject.type_register(ColorMenu)
+GObject.signal_new("set-color", ColorMenu, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))
+GObject.signal_new("set-colors", ColorMenu, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))
+GObject.signal_new("get-colors", ColorMenu, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))
 
 
 #=============================================================================
@@ -428,13 +428,13 @@ class ColorTool (Gtk.MenuToolButton):
         self.menu.set_colors(self.colors)
 
 
-gobject.type_register(ColorTool)
-gobject.signal_new("set-color", ColorTool, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("set-colors", ColorTool, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
-gobject.signal_new("get-colors", ColorTool, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, ())
+GObject.type_register(ColorTool)
+GObject.signal_new("set-color", ColorTool, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))
+GObject.signal_new("set-colors", ColorTool, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))
+GObject.signal_new("get-colors", ColorTool, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, ())
 
 
 class FgColorTool (ColorTool):
@@ -568,7 +568,7 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
 
     def on_pick_pallete_color(self, widget, color):
         
-        self.colorsel.set_current_color(Gtk.gdk.Color(color))
+        self.colorsel.set_current_color(Gtk.Gdk.Color(color))
 
 
     def on_new_color(self, widget):
@@ -592,7 +592,7 @@ class ColorSelectionDialog (Gtk.ColorSelectionDialog):
 class ColorPallete (Gtk.IconView):
     def __init__(self, colors=DEFAULT_COLORS, nrows=1, ncols=7):
         Gtk.IconView.__init__(self)
-        self._model = Gtk.ListStore(Gtk.gdk.Pixbuf, object)
+        self._model = Gtk.ListStore(Gtk.Gdk.Pixbuf, object)
         self._cell_size = [30, 20]
 
         self.set_model(self._model)
@@ -637,7 +637,7 @@ class ColorPallete (Gtk.IconView):
         width, height = self._cell_size
 
         # make pixbuf
-        pixbuf = Gtk.gdk.Pixbuf(Gtk.gdk.COLORSPACE_RGB, False, 8, width, height)
+        pixbuf = Gtk.Gdk.Pixbuf(Gtk.Gdk.COLORSPACE_RGB, False, 8, width, height)
         self._draw_color(pixbuf, color, 0, 0, width, height)
         
         self._model.append([pixbuf, color])
@@ -687,28 +687,23 @@ class ColorPallete (Gtk.IconView):
         border_color = "#000000"
 
         # create pixmap
-        pixmap = gdk.Pixmap(None, width, height, 24)
+        pixmap = Gdk.Pixmap(None, width, height, 24)
         cmap = pixmap.get_colormap()
         gc = pixmap.new_gc()
         color1 = cmap.alloc_color(color)
         color2 = cmap.alloc_color(border_color)
 
         # draw fill
-        gc.foreground = color1 #Gtk.gdk.Color(* color)
+        gc.foreground = color1 #Gtk.Gdk.Color(* color)
         pixmap.draw_rectangle(gc, True, 0, 0, width, height)
         
         # draw border
-        gc.foreground = color2 #Gtk.gdk.Color(* border_color)
+        gc.foreground = color2 #Gtk.Gdk.Color(* border_color)
         pixmap.draw_rectangle(gc, False, 0, 0, width-1, height-1)
 
         pixbuf.get_from_drawable(pixmap, cmap, 0, 0, 0, 0, width, height)
 
 
-
-gobject.type_register(ColorPallete)
-gobject.signal_new("pick-color", ColorPallete, gobject.SIGNAL_RUN_LAST, 
-                   gobject.TYPE_NONE, (object,))
-
-
-
-
+GObject.type_register(ColorPallete)
+GObject.signal_new("pick-color", ColorPallete, GObject.SIGNAL_RUN_LAST, 
+                   GObject.TYPE_NONE, (object,))

@@ -27,20 +27,18 @@
 # python imports
 import os
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from Gtk import gdk
-from gi.repository import Gtk.glade
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
 
 # keepnote imports
 import keepnote
 from keepnote import get_resource
 
+
 # TODO: separate out error callback
-
-
-
 class ImageResizeDialog (object):
     """Image Resize dialog """
     
@@ -253,4 +251,3 @@ class ImageResizeDialog (object):
             self.snap_size = int(self.snap_entry.get_text())
         except ValueError:
             pass
-        

@@ -33,18 +33,20 @@ import os
 import tempfile
 import re
 import random
-import StringIO
-import urlparse
+import io
+import urllib.parse
 import uuid
 from xml.sax.saxutils import escape
 
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from gi.repository import Gtk, gobject, pango
-from Gtk import gdk
-from gi.repository import Gtk.keysyms   # this is necessary for py2exe discovery
+# Gtk imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
+from gi.repository import Pango
+#from Gtk import keysyms   # this is necessary for py2exe discovery
 
 # try to import spell check
 try:
@@ -93,7 +95,7 @@ from keepnote import translate as _
 DEFAULT_FONT = "Sans 10"
 TEXTVIEW_MARGIN = 5
 if keepnote.get_platform() == "darwin":
-    CLIPBOARD_NAME = gdk.SELECTION_PRIMARY
+    CLIPBOARD_NAME = Gdk.SELECTION_PRIMARY
 else:
     CLIPBOARD_NAME = "CLIPBOARD"
 RICHTEXT_ID = -3    # application defined integer for the clipboard
@@ -156,7 +158,7 @@ def parse_utf(text):
         return text.decode("utf16")
     else:
         text = text.replace("\x00", "")
-        return unicode(text, "utf8")
+        return str(text, "utf8")
 
 
 def parse_ie_html_format(text):
@@ -230,14 +232,14 @@ def replace_vars(text, values):
 #=============================================================================
 
 
-class RichTextError (StandardError):
+class RichTextError (Exception):
     """Class for errors with RichText"""
 
     # NOTE: this is only used for saving and loading in textview
     # should this stay here?
     
     def __init__(self, msg, error):
-        StandardError.__init__(self, msg)
+        Exception.__init__(self, msg)
         self.msg = msg
         self.error = error
     
@@ -251,7 +253,7 @@ class RichTextError (StandardError):
 class RichTextMenu (Gtk.Menu):
     """A popup menu for child widgets in a RichTextView"""
     def __inti__(self):
-        gkt.Menu.__init__(self)
+        Gtk.Menu.__init__(self)
         self._child = None
 
     def set_child(self, child):
@@ -293,7 +295,7 @@ class RichTextIO (object):
                                     textbuffer.tag_table,
                                     title=title)
             out.close()
-        except IOError, e:
+        except IOError as e:
             raise RichTextError("Could not save '%s'." % filename, e)
         
         textbuffer.set_modified(False)
@@ -333,7 +335,7 @@ class RichTextIO (object):
             # put cursor at begining
             textbuffer.place_cursor(textbuffer.get_start_iter())
             
-        except (HtmlError, IOError, Exception), e:
+        except (HtmlError, IOError, Exception) as e:
             err = e
             textbuffer.clear()
             if textview:
@@ -384,7 +386,7 @@ class RichTextIO (object):
             self._get_filename(html_filename, image.get_filename()))
 
     def _save_image(self, textbuffer, image, html_filename):
-        if child.save_needed():
+        if image.save_needed():
             image.write(self._get_filename(html_filename, image.get_filename()))
 
     def _get_filename(self, html_filename, filename):
@@ -406,7 +408,7 @@ class RichTextDragDrop (object):
         self._acceptable_targets.append(target)
 
     def extend_targets(self, targets):
-        self._acceptable_targets.extend(target)
+        self._acceptable_targets.extend(targets)
 
     def find_acceptable_target(self, targets):
         
@@ -731,7 +733,7 @@ class RichTextView (Gtk.TextView):
             # process html drop
 
             html = parse_utf(selection_data.data)
-            if taget == "HTML Format":
+            if target == "HTML Format":
                 # skip over headers
                 html = html[html.find("\r\n\r\n")+4:]
 
@@ -958,7 +960,7 @@ class RichTextView (Gtk.TextView):
 
         # setup variables
         if url is not None:
-            parts = urlparse.urlsplit(url)
+            parts = urllib.parse.urlsplit(url)
             url = url
             if parts.hostname:
                 host = parts.hostname
@@ -1056,7 +1058,7 @@ class RichTextView (Gtk.TextView):
             self._textbuffer.end_user_action()
         
             self.scroll_mark_onscreen(self._textbuffer.get_insert())
-        except Exception, e:
+        except Exception as e:
             pass
             
     
@@ -1107,7 +1109,7 @@ class RichTextView (Gtk.TextView):
             
         elif "text/html" in selection_data.target:
             # set html
-            stream = StringIO.StringIO()
+            stream = io.StringIO()
             self._html_buffer.set_output(stream)
             self._html_buffer.write(contents,
                                     self._textbuffer.tag_table,
@@ -1200,20 +1202,32 @@ class RichTextView (Gtk.TextView):
         pos = 3
 
         # insert additional menu options after paste
-        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
-        item.child.set_text(_("Paste As Plain Text"))
+        # GTK2:
+        #item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
+        #item.child.set_text(_("Paste As Plain Text"))
+        # GTK3:
+        item = Gtk.MenuItem().new_with_label("Paste As Plain Text")
+        # CONT:
         item.connect("activate", lambda item: self.paste_clipboard_as_text())
         item.show()
         menu.insert(item, pos)
-
-        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
-        item.child.set_text(_("Paste As Quote"))
+        
+        # GTK2:
+        #item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
+        #item.child.set_text(_("Paste As Quote"))
+        # GTK3:
+        item = Gtk.MenuItem().new_with_label("Paste As Quote")
+        # CONT:
         item.connect("activate", lambda item: self.paste_clipboard_as_quote())
         item.show()
         menu.insert(item, pos+1)
 
-        item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
-        item.child.set_text(_("Paste As Plain Text Quote"))
+        # GTK2:
+        #item = Gtk.ImageMenuItem(stock_id=Gtk.STOCK_PASTE, accel_group=None)
+        #item.child.set_text(_("Paste As Plain Text Quote"))
+        # GTK3:
+        item = Gtk.MenuItem().new_with_label("Paste AS Plain Text Quote")
+        # CONT:
         item.connect("activate", 
             lambda item: self.paste_clipboard_as_quote(plain_text=True))
         item.show()
@@ -1286,7 +1300,7 @@ class RichTextView (Gtk.TextView):
     def insert_image_from_file(self, imgfile, filename="image.png"):
         """Inserts an image from a file"""
         
-        pixbuf = gdk.pixbuf_new_from_file(imgfile)
+        pixbuf = Gdk.pixbuf_new_from_file(imgfile)
         img = RichTextImage()
         img.set_from_pixbuf(pixbuf)
         self.insert_image(img, filename)
@@ -1307,7 +1321,7 @@ class RichTextView (Gtk.TextView):
     def parse_html(self, html):
         
         contents = list(self._html_buffer.read(
-                StringIO.StringIO(html), partial=True, ignore_errors=True))
+                io.StringIO(html), partial=True, ignore_errors=True))
 
         # scan contents
         for kind, pos, param in contents:
@@ -1644,15 +1658,15 @@ class RichTextView (Gtk.TextView):
 
 
 # register new signals
-gobject.type_register(RichTextView)
-gobject.signal_new("modified", RichTextView, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (bool,))
-gobject.signal_new("font-change", RichTextView, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (object,))
-gobject.signal_new("child-activated", RichTextView, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (object,))
-gobject.signal_new("visit-url", RichTextView, gobject.SIGNAL_RUN_LAST, 
-    gobject.TYPE_NONE, (str,))
+GObject.type_register(RichTextView)
+GObject.signal_new("modified", RichTextView, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (bool,))
+GObject.signal_new("font-change", RichTextView, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (object,))
+GObject.signal_new("child-activated", RichTextView, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (object,))
+GObject.signal_new("visit-url", RichTextView, GObject.SIGNAL_RUN_LAST, 
+    GObject.TYPE_NONE, (str,))
 
 
 

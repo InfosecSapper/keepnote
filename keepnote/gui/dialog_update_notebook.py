@@ -26,14 +26,21 @@
 
 
 # python imports
-import os, sys, threading, time, traceback, shutil, gettext, thread
+import os
+import sys
+import threading
+import time
+import traceback
+import shutil
+import gettext
+import _thread
 
 
-# pygtk imports
-import pygtk
-pygtk.require('2.0')
-from gi.repository import Gtk.glade
-import gobject
+# GTK imports
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+import GObject
 
 # keepnote imports
 import keepnote
@@ -148,7 +155,7 @@ class UpdateNoteBookDialog (object):
             def func(task):
                 try:
                     shutil.copytree(notebook_filename, new_filename)
-                except Exception, e:
+                except Exception as e:
                     print >>sys.stderr, e
                     print >>sys.stderr, "'%s' '%s'" % (notebook_filename,
                                                        new_filename)
@@ -170,9 +177,3 @@ class UpdateNoteBookDialog (object):
                 return False
             
         return True
-                       
-
-
-        
-            
-
