@@ -3,3 +3,6 @@
 
 ## Ignore IDE files:
 .vscode/*
+
+## Ignore Python virtual environments
+.venv/*
